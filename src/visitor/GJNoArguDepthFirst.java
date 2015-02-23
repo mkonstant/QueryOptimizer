@@ -243,14 +243,15 @@ public class GJNoArguDepthFirst<R> implements GJNoArguVisitor<R> {
    }
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> <ALPHA_NUM_IDENT>
+    *       | Operators()
     */
    public R visit(Relation n) {
       return n.f0.accept(this);
    }
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> <ALPHA_NUM_IDENT>
     */
    public R visit(Attribute n) {
       return n.f0.accept(this);
@@ -297,10 +298,38 @@ public class GJNoArguDepthFirst<R> implements GJNoArguVisitor<R> {
    }
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> AtomPart()
+    * f1 -> ( "=" | ">" | "<" | "<=" | ">=" )
+    * f2 -> AtomPart()
     */
    public R visit(Atom n) {
-      return n.f0.accept(this);
+      R _ret=null;
+      n.f0.accept(this);
+      n.f1.accept(this);
+      n.f2.accept(this);
+      return _ret;
+   }
+
+   /**
+    * f0 -> <ALPHA_NUM_IDENT>
+    * f1 -> ( AtRel() )?
+    */
+   public R visit(AtomPart n) {
+      R _ret=null;
+      n.f0.accept(this);
+      n.f1.accept(this);
+      return _ret;
+   }
+
+   /**
+    * f0 -> "."
+    * f1 -> <ALPHA_NUM_IDENT>
+    */
+   public R visit(AtRel n) {
+      R _ret=null;
+      n.f0.accept(this);
+      n.f1.accept(this);
+      return _ret;
    }
 
 }

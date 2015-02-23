@@ -381,10 +381,32 @@ public class QueryParser implements QueryParserConstants {
   }
 
   final public Relation Relation() throws ParseException {
-   NodeToken n0;
-   Token n1;
-    n1 = jj_consume_token(STRING_LITERAL);
-                         n0 = JTBToolkit.makeNodeToken(n1);
+   NodeChoice n0;
+   NodeToken n1;
+   Token n2;
+   Operators n3;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ALPHA_NUM_IDENT:
+      n2 = jj_consume_token(ALPHA_NUM_IDENT);
+                             n1 = JTBToolkit.makeNodeToken(n2);
+        n0 = new NodeChoice(n1, 0);
+      break;
+    case SEL:
+    case PROJ:
+    case JOIN:
+    case GRB:
+    case INTER:
+    case UNION:
+    case DIFF:
+    case LPAREN:
+      n3 = Operators();
+        n0 = new NodeChoice(n3, 1);
+      break;
+    default:
+      jj_la1[4] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
      {if (true) return new Relation(n0);}
     throw new Error("Missing return statement in function");
   }
@@ -392,8 +414,8 @@ public class QueryParser implements QueryParserConstants {
   final public Attribute Attribute() throws ParseException {
    NodeToken n0;
    Token n1;
-    n1 = jj_consume_token(STRING_LITERAL);
-                         n0 = JTBToolkit.makeNodeToken(n1);
+    n1 = jj_consume_token(ALPHA_NUM_IDENT);
+                          n0 = JTBToolkit.makeNodeToken(n1);
      {if (true) return new Attribute(n0);}
     throw new Error("Missing return statement in function");
   }
@@ -444,7 +466,7 @@ public class QueryParser implements QueryParserConstants {
         n0 = new NodeChoice(n9, 4);
       break;
     default:
-      jj_la1[4] = jj_gen;
+      jj_la1[5] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -464,7 +486,7 @@ public class QueryParser implements QueryParserConstants {
         n1.addNode(n2);
       break;
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[6] = jj_gen;
       ;
     }
      {if (true) return new Condition(n0,n1);}
@@ -490,7 +512,7 @@ public class QueryParser implements QueryParserConstants {
            n0 = new NodeChoice(n3, 1);
       break;
     default:
-      jj_la1[6] = jj_gen;
+      jj_la1[7] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -500,11 +522,86 @@ public class QueryParser implements QueryParserConstants {
   }
 
   final public Atom Atom() throws ParseException {
+   AtomPart n0;
+   NodeChoice n1;
+   NodeToken n2;
+   Token n3;
+   NodeToken n4;
+   Token n5;
+   NodeToken n6;
+   Token n7;
+   NodeToken n8;
+   Token n9;
+   NodeToken n10;
+   Token n11;
+   AtomPart n12;
+    n0 = AtomPart();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case ASSIGN:
+      n3 = jj_consume_token(ASSIGN);
+                  n2 = JTBToolkit.makeNodeToken(n3);
+           n1 = new NodeChoice(n2, 0);
+      break;
+    case GT:
+      n5 = jj_consume_token(GT);
+                  n4 = JTBToolkit.makeNodeToken(n5);
+           n1 = new NodeChoice(n4, 1);
+      break;
+    case LT:
+      n7 = jj_consume_token(LT);
+                  n6 = JTBToolkit.makeNodeToken(n7);
+           n1 = new NodeChoice(n6, 2);
+      break;
+    case LTE:
+      n9 = jj_consume_token(LTE);
+                   n8 = JTBToolkit.makeNodeToken(n9);
+           n1 = new NodeChoice(n8, 3);
+      break;
+    case GTE:
+      n11 = jj_consume_token(GTE);
+                    n10 = JTBToolkit.makeNodeToken(n11);
+           n1 = new NodeChoice(n10, 4);
+      break;
+    default:
+      jj_la1[8] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    n12 = AtomPart();
+     {if (true) return new Atom(n0,n1,n12);}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public AtomPart AtomPart() throws ParseException {
    NodeToken n0;
    Token n1;
-    n1 = jj_consume_token(STRING_LITERAL);
-                         n0 = JTBToolkit.makeNodeToken(n1);
-     {if (true) return new Atom(n0);}
+   NodeOptional n2 = new NodeOptional();
+   AtRel n3;
+    n1 = jj_consume_token(ALPHA_NUM_IDENT);
+                          n0 = JTBToolkit.makeNodeToken(n1);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case 46:
+      n3 = AtRel();
+        n2.addNode(n3);
+      break;
+    default:
+      jj_la1[9] = jj_gen;
+      ;
+    }
+     {if (true) return new AtomPart(n0,n2);}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public AtRel AtRel() throws ParseException {
+   NodeToken n0;
+   Token n1;
+   NodeToken n2;
+   Token n3;
+    n1 = jj_consume_token(46);
+            n0 = JTBToolkit.makeNodeToken(n1);
+    n3 = jj_consume_token(ALPHA_NUM_IDENT);
+                          n2 = JTBToolkit.makeNodeToken(n3);
+     {if (true) return new AtRel(n0,n2);}
     throw new Error("Missing return statement in function");
   }
 
@@ -560,6 +657,11 @@ public class QueryParser implements QueryParserConstants {
     return false;
   }
 
+  private boolean jj_3R_6() {
+    if (jj_scan_token(ALPHA_NUM_IDENT)) return true;
+    return false;
+  }
+
   private boolean jj_3R_14() {
     if (jj_scan_token(JOIN)) return true;
     if (jj_scan_token(LSQPAREN)) return true;
@@ -574,11 +676,6 @@ public class QueryParser implements QueryParserConstants {
 
   private boolean jj_3_2() {
     if (jj_3R_5()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_6() {
-    if (jj_scan_token(STRING_LITERAL)) return true;
     return false;
   }
 
@@ -685,7 +782,7 @@ public class QueryParser implements QueryParserConstants {
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[7];
+  final private int[] jj_la1 = new int[10];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -693,10 +790,10 @@ public class QueryParser implements QueryParserConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x107780,0x7780,0x800,0x7000,0xf8000,0x0,0x0,};
+      jj_la1_0 = new int[] {0x107780,0x7780,0x800,0x7000,0x107780,0xf8000,0x0,0x0,0x2f000000,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x180,0x180,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x200,0x0,0x180,0x180,0x0,0x4000,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[4];
   private boolean jj_rescan = false;
@@ -713,7 +810,7 @@ public class QueryParser implements QueryParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -728,7 +825,7 @@ public class QueryParser implements QueryParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -739,7 +836,7 @@ public class QueryParser implements QueryParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -750,7 +847,7 @@ public class QueryParser implements QueryParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -760,7 +857,7 @@ public class QueryParser implements QueryParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -770,7 +867,7 @@ public class QueryParser implements QueryParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 7; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 10; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -882,12 +979,12 @@ public class QueryParser implements QueryParserConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[46];
+    boolean[] la1tokens = new boolean[47];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 10; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -899,7 +996,7 @@ public class QueryParser implements QueryParserConstants {
         }
       }
     }
-    for (int i = 0; i < 46; i++) {
+    for (int i = 0; i < 47; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

@@ -126,12 +126,13 @@ public interface Visitor {
    public void visit(Ops n);
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> <ALPHA_NUM_IDENT>
+    *       | Operators()
     */
    public void visit(Relation n);
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> <ALPHA_NUM_IDENT>
     */
    public void visit(Attribute n);
 
@@ -162,9 +163,23 @@ public interface Visitor {
    public void visit(ComplexCondition n);
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> AtomPart()
+    * f1 -> ( "=" | ">" | "<" | "<=" | ">=" )
+    * f2 -> AtomPart()
     */
    public void visit(Atom n);
+
+   /**
+    * f0 -> <ALPHA_NUM_IDENT>
+    * f1 -> ( AtRel() )?
+    */
+   public void visit(AtomPart n);
+
+   /**
+    * f0 -> "."
+    * f1 -> <ALPHA_NUM_IDENT>
+    */
+   public void visit(AtRel n);
 
 }
 

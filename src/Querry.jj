@@ -1,0 +1,229 @@
+options {
+  JAVA_UNICODE_ESCAPE = true;
+  STATIC = false;
+}
+
+
+PARSER_BEGIN(QueryParser)
+	package generated;
+	public class QueryParser {}
+PARSER_END(QueryParser)
+
+
+JAVACODE
+void error_skipto(int kind) {
+  ParseException e = generateParseException();  // generate the exception object.
+  System.out.println(e.getMessage());  // print the error message
+  Token t;
+  do {
+    t = getNextToken();
+System.out.println(t.toString()); 
+  } while (t.kind != kind);
+}
+
+
+SKIP : /* WHITE SPACE */
+{
+	  " "
+	| "\t"
+	| "\n"
+	| "\r"
+	| "\f"
+}
+
+
+SPECIAL_TOKEN : /* COMMENTS */
+{
+  	<SINGLE_LINE_COMMENT: "%" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+}
+
+
+
+
+TOKEN: /*KEYWORDS*/
+{
+	  < SEL:  "sel" >
+	| < PROJ: "proj" >
+	| < JOIN: "join" >
+	| < GRB: "groupby" >
+	| < HAVING: "having" >
+	| < INTER: "inter" >
+	| < UNION: "union" >
+	| < DIFF: "diff" >
+	| < SUM: "sum" >
+	| < MAX: "max" >
+	| < MIN: "min" >
+	| < AVG: "avg" >
+	| < COUNT: "count" >
+
+}
+
+
+TOKEN: /*OPERATORS*/
+{	  < LPAREN: "(" >
+	| < RPAREN: ")" >
+	| < LSQPAREN: "[" >
+	| < RSQPAREN: "]" >
+	
+	| < LT: "<" >
+	| < GT: ">" >
+	| < LTE: "<=" >
+	| < GTE: ">=" >
+	| < EQUAL: "==" >
+	| < ASSIGN: "=" >
+	| < NEQUAL: "!=" >
+
+	| < CONCATENATION: "++" >
+	| < PLUS: "+" >
+	| < MINUS: "-" >
+	| < MUL: "*" >
+	| < FLDIV: "/" >
+	| < DIV: "div" >
+	| < MOD: "mod" >
+	| < NOT: "not" >
+	| < AND: "and" >
+	| < OR: "or" >
+
+}
+
+
+TOKEN : /* LITERALS */
+{
+	
+  	  <ALPHA_NUM_IDENT: (["A"-"Z","a"-"z"](["A"-"Z","a"-"z","0"-"9","_"])* ) >
+	| <INTEGER_LITERAL: ( (["0"-"9"])+ | "0""x"(["0"-"9","A"-"F","a"-"f"])+ | "0""o"(["0"-"7"])+ ) >
+	| <FLOATING_POINT_LITERAL: ( (["0"-"9"])+"."(["0"-"9"])+ | (["0"-"9"])+"."(["0"-"9"])+["E","e"](["-","+"])?(["0"-"9"])+ | (["0"-"9"])+["E","e"](["-","+"])?(["0"-"9"])+)>
+	| <STRING_LITERAL: ( "\""(~["\"","\n"])*"\""   ) >
+}
+
+
+/***************************************************************************************************************************************************************************/
+//ITEMS
+
+void Query() : {}
+{
+	
+	(Operators() (LOOKAHEAD(2) Operators() )* )? 	
+
+}
+
+void Operators() : {}
+{
+
+			  SelectionOp()	
+			| ProjectionOp()
+			| JoinOp()
+			| GroupingOp()
+			| SetOps()
+			| LOOKAHEAD(2) ParOp()
+		
+		
+}
+
+
+
+void SelectionOp() : {}
+{	
+		"sel" "[" Condition() "]" "(" Relation() ")" 	
+}
+
+void ProjectionOp() : {}
+{
+		"proj" "[" Attribute() (LOOKAHEAD(2) "," Attribute())* "]" "(" Relation() ")" 	
+}
+
+void JoinOp() : {}
+{ 
+		"join" "[" Condition() "]" "(" Relation() ")" "(" Relation() ")" 
+}
+
+
+void GroupingOp() : {}
+{
+		"groupby" "["Attribute() (LOOKAHEAD(2) "," Attribute())* "]" UDF() (HavingClause() )?	
+	
+}
+
+void HavingClause() : {}
+{
+		"having" "[" Condition() "]" "(" Relation() ")" 
+	
+}
+
+
+void SetOps() : {}
+{
+	
+		Ops() "(" Relation() ")" "(" Relation() ")" 	
+	
+}
+
+void ParOp() : {}
+{ 
+	
+		 "(" Operators() ")" 
+}
+
+
+void Ops() : {}
+{
+		"inter" | "union" | "diff"
+}
+
+
+void Relation() : {}
+{
+		<ALPHA_NUM_IDENT> | Operators()
+			
+}
+
+void Attribute() : {}
+{
+		<ALPHA_NUM_IDENT>	
+}
+
+void UDF() : {}
+{
+		SimpleAggregations()	
+}
+
+void SimpleAggregations() : {}
+{
+		"min" | "max" | "sum" | "avg" | "count"	
+}
+
+
+/******************************************************************************************/
+
+void Condition() : {}
+{
+		Atom() (ComplexCondition())?
+}
+
+void ComplexCondition() : {}
+{
+		("or"|"and") Atom()
+}
+
+void Atom() : {}
+{
+		AtomPart() ( "=" | ">" | "<"| "<="| ">=" )   AtomPart()
+}
+
+
+void AtomPart() : {}
+{
+		<ALPHA_NUM_IDENT>  (AtRel())?
+}
+
+void AtRel() : {}
+{
+	 "."  <ALPHA_NUM_IDENT>
+}
+
+
+
+
+
+
+

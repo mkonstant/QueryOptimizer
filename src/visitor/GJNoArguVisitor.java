@@ -126,12 +126,13 @@ public interface GJNoArguVisitor<R> {
    public R visit(Ops n);
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> <ALPHA_NUM_IDENT>
+    *       | Operators()
     */
    public R visit(Relation n);
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> <ALPHA_NUM_IDENT>
     */
    public R visit(Attribute n);
 
@@ -162,9 +163,23 @@ public interface GJNoArguVisitor<R> {
    public R visit(ComplexCondition n);
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> AtomPart()
+    * f1 -> ( "=" | ">" | "<" | "<=" | ">=" )
+    * f2 -> AtomPart()
     */
    public R visit(Atom n);
+
+   /**
+    * f0 -> <ALPHA_NUM_IDENT>
+    * f1 -> ( AtRel() )?
+    */
+   public R visit(AtomPart n);
+
+   /**
+    * f0 -> "."
+    * f1 -> <ALPHA_NUM_IDENT>
+    */
+   public R visit(AtRel n);
 
 }
 

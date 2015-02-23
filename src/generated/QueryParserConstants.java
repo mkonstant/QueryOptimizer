@@ -140,6 +140,7 @@ public interface QueryParserConstants {
     "<FLOATING_POINT_LITERAL>",
     "<STRING_LITERAL>",
     "\",\"",
+    "\".\"",
   };
 
 }

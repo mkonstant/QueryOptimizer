@@ -6,13 +6,19 @@ package syntaxtree;
 
 /**
  * Grammar production:
- * f0 -> <STRING_LITERAL>
+ * f0 -> AtomPart()
+ * f1 -> ( "=" | ">" | "<" | "<=" | ">=" )
+ * f2 -> AtomPart()
  */
 public class Atom implements Node {
-   public NodeToken f0;
+   public AtomPart f0;
+   public NodeChoice f1;
+   public AtomPart f2;
 
-   public Atom(NodeToken n0) {
+   public Atom(AtomPart n0, NodeChoice n1, AtomPart n2) {
       f0 = n0;
+      f1 = n1;
+      f2 = n2;
    }
 
    public void accept(visitor.Visitor v) {

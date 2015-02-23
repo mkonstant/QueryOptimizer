@@ -203,14 +203,15 @@ public class DepthFirstVisitor implements Visitor {
    }
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> <ALPHA_NUM_IDENT>
+    *       | Operators()
     */
    public void visit(Relation n) {
       n.f0.accept(this);
    }
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> <ALPHA_NUM_IDENT>
     */
    public void visit(Attribute n) {
       n.f0.accept(this);
@@ -253,10 +254,32 @@ public class DepthFirstVisitor implements Visitor {
    }
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> AtomPart()
+    * f1 -> ( "=" | ">" | "<" | "<=" | ">=" )
+    * f2 -> AtomPart()
     */
    public void visit(Atom n) {
       n.f0.accept(this);
+      n.f1.accept(this);
+      n.f2.accept(this);
+   }
+
+   /**
+    * f0 -> <ALPHA_NUM_IDENT>
+    * f1 -> ( AtRel() )?
+    */
+   public void visit(AtomPart n) {
+      n.f0.accept(this);
+      n.f1.accept(this);
+   }
+
+   /**
+    * f0 -> "."
+    * f1 -> <ALPHA_NUM_IDENT>
+    */
+   public void visit(AtRel n) {
+      n.f0.accept(this);
+      n.f1.accept(this);
    }
 
 }

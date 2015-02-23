@@ -7,12 +7,15 @@ package syntaxtree;
 /**
  * Grammar production:
  * f0 -> <ALPHA_NUM_IDENT>
+ * f1 -> ( AtRel() )?
  */
-public class Attribute implements Node {
+public class AtomPart implements Node {
    public NodeToken f0;
+   public NodeOptional f1;
 
-   public Attribute(NodeToken n0) {
+   public AtomPart(NodeToken n0, NodeOptional n1) {
       f0 = n0;
+      f1 = n1;
    }
 
    public void accept(visitor.Visitor v) {

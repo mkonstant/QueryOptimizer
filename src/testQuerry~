@@ -1,0 +1,5 @@
+proj[customername]
+(sel[branch_city=Corinth](
+join[branch.branch_name=branch_name] (branch)(
+join[account_number=customer.account_number](
+(union(chekingaccounts)(savingsaccounts))(customer)

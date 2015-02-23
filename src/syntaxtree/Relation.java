@@ -6,12 +6,13 @@ package syntaxtree;
 
 /**
  * Grammar production:
- * f0 -> <STRING_LITERAL>
+ * f0 -> <ALPHA_NUM_IDENT>
+ *       | Operators()
  */
 public class Relation implements Node {
-   public NodeToken f0;
+   public NodeChoice f0;
 
-   public Relation(NodeToken n0) {
+   public Relation(NodeChoice n0) {
       f0 = n0;
    }
 

@@ -126,12 +126,13 @@ public interface GJVisitor<R,A> {
    public R visit(Ops n, A argu);
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> <ALPHA_NUM_IDENT>
+    *       | Operators()
     */
    public R visit(Relation n, A argu);
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> <ALPHA_NUM_IDENT>
     */
    public R visit(Attribute n, A argu);
 
@@ -162,8 +163,22 @@ public interface GJVisitor<R,A> {
    public R visit(ComplexCondition n, A argu);
 
    /**
-    * f0 -> <STRING_LITERAL>
+    * f0 -> AtomPart()
+    * f1 -> ( "=" | ">" | "<" | "<=" | ">=" )
+    * f2 -> AtomPart()
     */
    public R visit(Atom n, A argu);
+
+   /**
+    * f0 -> <ALPHA_NUM_IDENT>
+    * f1 -> ( AtRel() )?
+    */
+   public R visit(AtomPart n, A argu);
+
+   /**
+    * f0 -> "."
+    * f1 -> <ALPHA_NUM_IDENT>
+    */
+   public R visit(AtRel n, A argu);
 
 }
