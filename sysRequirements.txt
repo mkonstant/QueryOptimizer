@@ -1,0 +1,5 @@
+numberOfBuffers:100
+sizeOfBuffers:1000
+averageLatency:5.4
+transferTime:3.4
+timePenaltiesForWritingPages:4.2
