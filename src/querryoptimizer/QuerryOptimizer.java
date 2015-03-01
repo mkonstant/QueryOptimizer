@@ -37,12 +37,12 @@ public class QuerryOptimizer {
         
         
         // TODO code application logic here
-        String dbFile = null;
+         String dbFile = null;
         String sysFile = null;
         Catalog catalog = null;
         
-        dbFile = args[1];
-        sysFile = args[0];
+        dbFile = args[0];
+        sysFile = args[1];
         catalog = new Catalog(dbFile,sysFile);
         catalog.processingDataBaseFile();
         catalog.processingSystemInfoFile();
@@ -64,32 +64,32 @@ public class QuerryOptimizer {
                 System.out.println(attr.getMax());
                 System.out.println(attr.getMin());
                 System.out.println(attr.getType());
-                
-                
             }
             System.out.println("Primary Index : ");
             IndexInfo primaryIndex = tabInfo.getPrimaryIndex();
             System.out.println(primaryIndex.getHeight());
-            System.out.println(primaryIndex.getIndexName());
+            System.out.println(primaryIndex.getIndexName().toString());
             System.out.println(primaryIndex.getNumOfDistinctValues());
             System.out.println(primaryIndex.getStructure());
             System.out.println("Secondary Index : ");
             Map<String,IndexInfo> secondaryIndex = tabInfo.getSecondaryIndex();
             for(String key1 : secondaryIndex.keySet()){
+                System.out.println("key : " + key1);
                 IndexInfo indexInfo = secondaryIndex.get(key1);
                 System.out.println(indexInfo.getHeight());
-                System.out.println(indexInfo.getIndexName());
+                System.out.println(indexInfo.getIndexName().toString());
                 System.out.println(indexInfo.getNumOfDistinctValues());
                 System.out.println(indexInfo.getStructure());
             }
             System.out.println("Foreign Index : ");
             Map<String,ForeignIndexInfo> foreignIndex = tabInfo.getForeignIndex();
             for(String key1 : foreignIndex.keySet()){
+                System.out.println("key : " + key1);
                 ForeignIndexInfo index = foreignIndex.get(key1);
                 System.out.println(index.getHeight());
-                System.out.println(index.getIndexName());
+                System.out.println(index.getIndexName().toString());
                 System.out.println(index.getNumOfDistinctValues());
-                System.out.println(index.getOutAttr());
+                System.out.println(index.getOutAttr().toString());
                 System.out.println(index.getOutTable());
                 System.out.println(index.getStructure());
             }

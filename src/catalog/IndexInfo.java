@@ -6,12 +6,14 @@
 
 package catalog;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author jimakos
  */
 public class IndexInfo {
-    String indexName = null;
+    ArrayList<String> indexName = null;
     String structure = null;
     int numOfDistinctValues = -1;
     int height = -1;
@@ -26,7 +28,7 @@ public class IndexInfo {
     }
     
     
-    public void setIndexName(String indexName) {
+    public void setIndexName(ArrayList<String> indexName) {
         this.indexName = indexName;
     }
 
@@ -41,7 +43,7 @@ public class IndexInfo {
     }
 
    
-    public String getIndexName() {
+    public ArrayList<String> getIndexName() {
         return indexName;
     }
 

@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,7 +72,9 @@ public class Catalog {
         String del = ":";
         String del2 = ",|:| ";
         String del3 = ":| ";
-        String del4 = " |\\(|\\) ";
+        String del4 = "\\(|\\)|,";
+        String del5 = ",";
+        String del6 = "\\(|\\)";
         String []temp = null;
         String []temp2 = null;
         String []temp3 = null;
@@ -80,6 +83,7 @@ public class Catalog {
         TableInfo tabInfo = null;
         Map<String,IndexInfo> secondaryIndex = null;
         Map<String,ForeignIndexInfo> foreignIndex = null;
+        String indexNameStr = null;
         
         
         BufferedReader br = new BufferedReader(new FileReader(dbFile));
@@ -120,7 +124,19 @@ public class Catalog {
             if ((line = br.readLine()) != null){
                 temp = line.split(del3);
                 IndexInfo indexInfo = new IndexInfo();
-                indexInfo.setIndexName(temp[1]);
+                ArrayList<String>indexName = new ArrayList<String>();
+                if (temp[1].contains(",")){
+                    temp3 = temp[1].split(del5);
+                    for ( int i = 0 ; i < temp3.length ; i ++){
+                        indexName.add(temp3[i]);
+                    }
+                    indexInfo.setIndexName(indexName);
+                    
+                }
+                else{
+                    indexName.add(temp[1]);
+                    indexInfo.setIndexName(indexName);
+                }
                 indexInfo.setStructure(temp[2]);
                 indexInfo.setNumOfDistinctValues(Integer.parseInt(temp[3]));
                 if (temp.length > 4){
@@ -136,7 +152,20 @@ public class Catalog {
                     temp2 = temp[1].split(" ");
                     secondaryIndex = new HashMap<String,IndexInfo>();
                     IndexInfo indexInfo = new IndexInfo();
-                    indexInfo.setIndexName(temp2[0]);
+                    ArrayList<String>indexName = new ArrayList<String>();
+                    if (temp2[0].contains(",")){
+                        temp3 = temp2[0].split(del5);
+                        for ( int i = 0 ; i < temp3.length ; i ++){
+                            indexName.add(temp3[i]);
+                        }
+                        indexInfo.setIndexName(indexName);
+
+                    }
+                    else{
+                        indexName.add(temp2[0]);
+                        indexInfo.setIndexName(indexName);
+                    }
+                    //indexInfo.setIndexName(temp2[0]);
                     indexInfo.setStructure(temp2[1]);
                     indexInfo.setNumOfDistinctValues(Integer.parseInt(temp2[2]));
                     if (temp2.length > 3 ){
@@ -152,7 +181,20 @@ public class Catalog {
                 else{
                     temp = line.split(" ");
                     IndexInfo indexInfo = new IndexInfo();
-                    indexInfo.setIndexName(temp[0]);
+                    ArrayList<String>indexName = new ArrayList<String>();
+                    if (temp[0].contains(",")){
+                        temp3 = temp[0].split(del5);
+                        for ( int i = 0 ; i < temp3.length ; i ++){
+                            indexName.add(temp3[i]);
+                        }
+                        indexInfo.setIndexName(indexName);
+
+                    }
+                    else{
+                        indexName.add(temp[0]);
+                        indexInfo.setIndexName(indexName);
+                    }
+                    //indexInfo.setIndexName(temp[0]);
                     indexInfo.setStructure(temp[1]);
                     indexInfo.setNumOfDistinctValues(Integer.parseInt(temp[2]));
                     if (temp.length > 3 ){
@@ -167,35 +209,107 @@ public class Catalog {
             if ( line.contains("foreignIndex")){
                 temp = line.split(del);
                 if (temp.length > 1){
-                    temp2 = temp[1].split(del4);
+                    temp2 = temp[1].split(" ");
                     foreignIndex = new HashMap<String,ForeignIndexInfo>();
                     ForeignIndexInfo foreignIndexInfo = new ForeignIndexInfo();
-                    foreignIndexInfo.setIndexName(temp2[0]);
-                    foreignIndexInfo.setOutTable(temp2[1]);
-                    foreignIndexInfo.setOutAttr(temp2[2]);
-                    foreignIndexInfo.setStructure(temp2[3]);
-                    foreignIndexInfo.setNumOfDistinctValues(Integer.parseInt(temp2[4]));
-                    if (temp2.length > 5 ){
-                        foreignIndexInfo.setHeight(Integer.parseInt(temp2[5]));
+                    ArrayList<String> foreignName = new ArrayList<String>();
+                    
+                    if (temp2[0].contains(",")){
+                        temp3 = temp2[0].split(del5);
+                        for (int i = 0 ; i < temp3.length ; i  ++){
+                            foreignName.add(temp3[i]);
+                        }
+                        foreignIndexInfo.setIndexName(foreignName);
+                    }
+                    else{
+                        foreignName.add(temp2[0]);
+                        foreignIndexInfo.setIndexName(foreignName);
+                    }
+                    
+                    
+                    //foreignIndexInfo.setIndexName(temp2[0]);
+                    //foreignIndexInfo.setOutTable(temp2[1]);
+                    ArrayList<String> foreignOutAttr = new ArrayList<String>();
+                    if (temp2[1].contains(",")){
+                        temp3 = temp2[1].split(del4);
+                        for (int i = 1 ; i < temp3.length ; i  ++){
+                            foreignOutAttr.add(temp3[i]);
+                        }
+                        foreignIndexInfo.setOutAttr(foreignOutAttr);
+                        foreignIndexInfo.setOutTable(temp3[0]);
+                    }
+                    else{
+                        temp3 = temp2[1].split(del6);
+                        for (int i = 1 ; i < temp3.length ; i  ++){
+                            foreignOutAttr.add(temp3[i]);
+                        }
+                        foreignIndexInfo.setOutAttr(foreignOutAttr);
+                        foreignIndexInfo.setOutTable(temp3[0]);
+                    }
+                    
+                    //foreignIndexInfo.setOutAttr(temp2[2]);
+                    
+                    foreignIndexInfo.setStructure(temp2[2]);
+                    foreignIndexInfo.setNumOfDistinctValues(Integer.parseInt(temp2[3]));
+                    if (temp2.length > 4 ){
+                        foreignIndexInfo.setHeight(Integer.parseInt(temp2[4]));
                     }
                     foreignIndex.put(temp2[0], foreignIndexInfo);
                 }
             }
             tabInfo.setForeignIndex(foreignIndex);
+            
+            
             while ((line = br.readLine()) != null){
+                System.out.println("lineeeeeeeeeeeeeeeeeeeeeeeeeeeeeee = " +line);
                 if ( line.contains("cardinality")){
                     break;
                 }
                 else{
-                    temp = line.split(del4);
+                    temp = line.split(" ");
                     ForeignIndexInfo foreignIndexInfo = new ForeignIndexInfo();
-                    foreignIndexInfo.setIndexName(temp[0]);
-                    foreignIndexInfo.setOutTable(temp[1]);
-                    foreignIndexInfo.setOutAttr(temp[2]);
-                    foreignIndexInfo.setStructure(temp[3]);
-                    foreignIndexInfo.setNumOfDistinctValues(Integer.parseInt(temp[4]));
-                    if (temp.length > 5 ){
-                        foreignIndexInfo.setHeight(Integer.parseInt(temp[5]));
+                    
+                    ArrayList<String> foreignName = new ArrayList<String>();
+                    if (temp[0].contains(",")){
+                        temp2 = temp[0].split(del5);
+                        for (int i = 0 ; i < temp2.length ; i  ++){
+                            foreignName.add(temp2[i]);
+                        }
+                        foreignIndexInfo.setIndexName(foreignName);
+                    }
+                    else{
+                        foreignName.add(temp[0]);
+                        foreignIndexInfo.setIndexName(foreignName);
+                    }
+                    
+                    //foreignIndexInfo.setIndexName(temp[0]);
+                    //foreignIndexInfo.setOutTable(temp[1]);
+                    
+                    
+                    //foreignIndexInfo.setIndexName(temp2[0]);
+                    ArrayList<String> foreignOutAttr = new ArrayList<String>();
+                    //foreignIndexInfo.setOutTable(temp2[1]);
+                    if (temp[1].contains(",")){
+                        temp2 = temp[1].split(del4);
+                        for (int i = 1 ; i < temp2.length ; i  ++){
+                            foreignOutAttr.add(temp2[i]);
+                        }
+                        foreignIndexInfo.setOutAttr(foreignOutAttr);
+                        foreignIndexInfo.setOutTable(temp2[0]);
+                    }
+                    else{
+                        temp2 = temp[1].split(del6);
+                        for (int i = 1 ; i < temp2.length ; i  ++){
+                            foreignOutAttr.add(temp2[i]);
+                        }
+                        foreignIndexInfo.setOutAttr(foreignOutAttr);
+                        foreignIndexInfo.setOutTable(temp2[0]);
+                    }
+                    //foreignIndexInfo.setOutAttr(temp[2]);
+                    foreignIndexInfo.setStructure(temp[2]);
+                    foreignIndexInfo.setNumOfDistinctValues(Integer.parseInt(temp[3]));
+                    if (temp.length > 4 ){
+                        foreignIndexInfo.setHeight(Integer.parseInt(temp[4]));
                     }
                     foreignIndex.put(temp[0], foreignIndexInfo);
                 }

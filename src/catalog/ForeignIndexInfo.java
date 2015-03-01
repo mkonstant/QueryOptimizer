@@ -6,14 +6,16 @@
 
 package catalog;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author jimakos
  */
 public class ForeignIndexInfo {
-    String indexName = null;
+    ArrayList<String> indexName = null;
     String outTable = null;
-    String outAttr = null;
+    ArrayList<String> outAttr = null;
     String structure = null;
     int numOfDistinctValues = -1;
     int height = -1;
@@ -23,7 +25,7 @@ public class ForeignIndexInfo {
 
     }
     
-    public String getIndexName() {
+    public ArrayList<String> getIndexName() {
         return indexName;
     }
 
@@ -31,7 +33,7 @@ public class ForeignIndexInfo {
         return outTable;
     }
 
-    public String getOutAttr() {
+    public ArrayList<String> getOutAttr() {
         return outAttr;
     }
 
@@ -48,7 +50,7 @@ public class ForeignIndexInfo {
     }
     
 
-    public void setIndexName(String indexName) {
+    public void setIndexName(ArrayList<String> indexName) {
         this.indexName = indexName;
     }
 
@@ -56,7 +58,7 @@ public class ForeignIndexInfo {
         this.outTable = outTable;
     }
 
-    public void setOutAttr(String outAttr) {
+    public void setOutAttr(ArrayList<String> outAttr) {
         this.outAttr = outAttr;
     }
 
