@@ -64,6 +64,8 @@ public class QuerryOptimizer {
                 System.out.println(attr.getMax());
                 System.out.println(attr.getMin());
                 System.out.println(attr.getType());
+                
+                
             }
             System.out.println("Primary Index : ");
             IndexInfo primaryIndex = tabInfo.getPrimaryIndex();
