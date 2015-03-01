@@ -170,10 +170,22 @@ public interface Visitor {
    public void visit(Atom n);
 
    /**
+    * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
+    * f1 -> ( ComplexAtomPart() )?
+    */
+   public void visit(AtomPart n);
+
+   /**
+    * f0 -> ( "+" | "-" )
+    * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+    */
+   public void visit(ComplexAtomPart n);
+
+   /**
     * f0 -> <ALPHA_NUM_IDENT>
     * f1 -> ( AtRel() )?
     */
-   public void visit(AtomPart n);
+   public void visit(AtomAttr n);
 
    /**
     * f0 -> "."

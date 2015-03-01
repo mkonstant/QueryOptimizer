@@ -170,10 +170,22 @@ public interface GJVoidVisitor<A> {
    public void visit(Atom n, A argu);
 
    /**
+    * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
+    * f1 -> ( ComplexAtomPart() )?
+    */
+   public void visit(AtomPart n, A argu);
+
+   /**
+    * f0 -> ( "+" | "-" )
+    * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+    */
+   public void visit(ComplexAtomPart n, A argu);
+
+   /**
     * f0 -> <ALPHA_NUM_IDENT>
     * f1 -> ( AtRel() )?
     */
-   public void visit(AtomPart n, A argu);
+   public void visit(AtomAttr n, A argu);
 
    /**
     * f0 -> "."

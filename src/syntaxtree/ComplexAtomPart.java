@@ -6,14 +6,14 @@ package syntaxtree;
 
 /**
  * Grammar production:
- * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
- * f1 -> ( ComplexAtomPart() )?
+ * f0 -> ( "+" | "-" )
+ * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
  */
-public class AtomPart implements Node {
+public class ComplexAtomPart implements Node {
    public NodeChoice f0;
-   public NodeOptional f1;
+   public NodeChoice f1;
 
-   public AtomPart(NodeChoice n0, NodeOptional n1) {
+   public ComplexAtomPart(NodeChoice n0, NodeChoice n1) {
       f0 = n0;
       f1 = n1;
    }

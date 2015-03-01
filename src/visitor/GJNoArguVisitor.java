@@ -170,10 +170,22 @@ public interface GJNoArguVisitor<R> {
    public R visit(Atom n);
 
    /**
+    * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
+    * f1 -> ( ComplexAtomPart() )?
+    */
+   public R visit(AtomPart n);
+
+   /**
+    * f0 -> ( "+" | "-" )
+    * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+    */
+   public R visit(ComplexAtomPart n);
+
+   /**
     * f0 -> <ALPHA_NUM_IDENT>
     * f1 -> ( AtRel() )?
     */
-   public R visit(AtomPart n);
+   public R visit(AtomAttr n);
 
    /**
     * f0 -> "."

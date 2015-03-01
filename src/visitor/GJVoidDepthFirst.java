@@ -275,10 +275,28 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
    }
 
    /**
+    * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
+    * f1 -> ( ComplexAtomPart() )?
+    */
+   public void visit(AtomPart n, A argu) {
+      n.f0.accept(this, argu);
+      n.f1.accept(this, argu);
+   }
+
+   /**
+    * f0 -> ( "+" | "-" )
+    * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+    */
+   public void visit(ComplexAtomPart n, A argu) {
+      n.f0.accept(this, argu);
+      n.f1.accept(this, argu);
+   }
+
+   /**
     * f0 -> <ALPHA_NUM_IDENT>
     * f1 -> ( AtRel() )?
     */
-   public void visit(AtomPart n, A argu) {
+   public void visit(AtomAttr n, A argu) {
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
    }

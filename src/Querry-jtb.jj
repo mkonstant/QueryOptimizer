@@ -601,6 +601,86 @@ Atom Atom() :
 
 AtomPart AtomPart() :
 {
+   NodeChoice n0;
+   AtomAttr n1;
+   NodeToken n2;
+   Token n3;
+   NodeToken n4;
+   Token n5;
+   NodeToken n6;
+   Token n7;
+   NodeOptional n8 = new NodeOptional();
+   ComplexAtomPart n9;
+
+   
+}
+{
+   (
+      (
+         n1=AtomAttr()
+         { n0 = new NodeChoice(n1, 0); }
+      |
+         n3=<INTEGER_LITERAL> { n2 = JTBToolkit.makeNodeToken(n3); }
+         { n0 = new NodeChoice(n2, 1); }
+      |
+         n5=<FLOATING_POINT_LITERAL> { n4 = JTBToolkit.makeNodeToken(n5); }
+         { n0 = new NodeChoice(n4, 2); }
+      |
+         n7=<STRING_LITERAL> { n6 = JTBToolkit.makeNodeToken(n7); }
+         { n0 = new NodeChoice(n6, 3); }
+      )
+      
+   )
+   (
+      n9=ComplexAtomPart()
+      { n8.addNode(n9); }
+   )?
+   
+   { return new AtomPart(n0,n8); }
+}
+
+ComplexAtomPart ComplexAtomPart() :
+{
+   NodeChoice n0;
+   NodeToken n1;
+   Token n2;
+   NodeToken n3;
+   Token n4;
+   NodeChoice n5;
+   NodeToken n6;
+   Token n7;
+   NodeToken n8;
+   Token n9;
+
+   
+}
+{
+   (
+      (
+         n2="+" { n1 = JTBToolkit.makeNodeToken(n2); }
+         { n0 = new NodeChoice(n1, 0); }
+      |
+         n4="-" { n3 = JTBToolkit.makeNodeToken(n4); }
+         { n0 = new NodeChoice(n3, 1); }
+      )
+      
+   )
+   (
+      (
+         n7=<INTEGER_LITERAL> { n6 = JTBToolkit.makeNodeToken(n7); }
+         { n5 = new NodeChoice(n6, 0); }
+      |
+         n9=<FLOATING_POINT_LITERAL> { n8 = JTBToolkit.makeNodeToken(n9); }
+         { n5 = new NodeChoice(n8, 1); }
+      )
+      
+   )
+   
+   { return new ComplexAtomPart(n0,n5); }
+}
+
+AtomAttr AtomAttr() :
+{
    NodeToken n0;
    Token n1;
    NodeOptional n2 = new NodeOptional();
@@ -615,7 +695,7 @@ AtomPart AtomPart() :
       { n2.addNode(n3); }
    )?
    
-   { return new AtomPart(n0,n2); }
+   { return new AtomAttr(n0,n2); }
 }
 
 AtRel AtRel() :

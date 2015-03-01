@@ -265,10 +265,28 @@ public class DepthFirstVisitor implements Visitor {
    }
 
    /**
+    * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
+    * f1 -> ( ComplexAtomPart() )?
+    */
+   public void visit(AtomPart n) {
+      n.f0.accept(this);
+      n.f1.accept(this);
+   }
+
+   /**
+    * f0 -> ( "+" | "-" )
+    * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+    */
+   public void visit(ComplexAtomPart n) {
+      n.f0.accept(this);
+      n.f1.accept(this);
+   }
+
+   /**
     * f0 -> <ALPHA_NUM_IDENT>
     * f1 -> ( AtRel() )?
     */
-   public void visit(AtomPart n) {
+   public void visit(AtomAttr n) {
       n.f0.accept(this);
       n.f1.accept(this);
    }

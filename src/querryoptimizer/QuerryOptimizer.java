@@ -41,8 +41,8 @@ public class QuerryOptimizer {
         String sysFile = null;
         Catalog catalog = null;
         
-        dbFile = args[0];
-        sysFile = args[1];
+        dbFile = args[1];
+        sysFile = args[0];
         catalog = new Catalog(dbFile,sysFile);
         catalog.processingDataBaseFile();
         catalog.processingSystemInfoFile();
@@ -106,7 +106,7 @@ public class QuerryOptimizer {
             if(args.length == 0){
                 System.out.println("No input files given!");
                 System.exit(0);
-            }   fis = new FileInputStream(args[0]);
+            }   fis = new FileInputStream(args[2]);
             QueryParser parser = new QueryParser(fis);
             Query tree = parser.Query();
             //TestVisitor tv = new TestVisitor();

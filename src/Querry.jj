@@ -210,10 +210,23 @@ void Atom() : {}
 		AtomPart() ( "=" | ">" | "<"| "<="| ">=" )   AtomPart()
 }
 
-
 void AtomPart() : {}
 {
-		<ALPHA_NUM_IDENT>  (AtRel())?
+	( 	  AtomAttr() 
+		| <INTEGER_LITERAL>
+		| <FLOATING_POINT_LITERAL>
+		| <STRING_LITERAL>
+	) (ComplexAtomPart())?
+}
+
+void ComplexAtomPart() : {}
+{
+		( "+" | "-" ) (<INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+}
+
+void AtomAttr() : {}
+{
+		<ALPHA_NUM_IDENT>  (AtRel())? 
 }
 
 void AtRel() : {}
