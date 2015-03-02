@@ -77,63 +77,33 @@ public  class Join extends Operator{
         return conditions;
     }
     
-     @Override
-    public String toPrint(){
-        String temp= "|"+operatorName+"| join  |";
-        
-        
-                //add conditions 
-        
-        String cond="";
+    
+    
+    @Override
+    protected void prePrint(){
+        operation = "join";
+          //add conditions 
+        conditionsPrint="";
         for (int i = 0; i < conditions.size(); i++)
         {
-            cond += conditions.get(i).toPrint();
+            conditionsPrint += conditions.get(i).toPrint();
 	}
-        
-        if(cond.length()< 40)
-        {
-            int j = 40 - cond.length();
-            for(int i=0;i<j;i++)
-                cond+=" ";
-        }
-        
-
-        temp+= cond+"|";
-                
-               //add relation1
-        String rel1="";
-        if(relationOp1==null)
-            rel1+= relation1;
-        else
-            rel1+= relationOp1.getOpName();
-        
-        if(rel1.length()< 18)
-        {
-            int j = 18 - rel1.length();
-            for(int i=0;i<j;i++)
-                rel1+=" ";
-        }
-        
-        temp+=rel1+"|";
-        
        
-        //add relation2
-        String rel2="";
-        if(relationOp2==null)
-            rel2+= relation2;
+        //add relation1
+     
+        if(relationOp1==null)
+            relationPrint1+=relation1;
         else
-            rel2+= relationOp2.getOpName();
+            relationPrint1+= relationOp1.getOpName();
         
-        if(rel2.length()< 18)
-        {
-            int j = 18 - rel2.length();
-            for(int i=0;i<j;i++)
-                rel2+=" ";
-        }
-        temp+=rel2+"|";
-        
-        return temp;
+          //add relation2
+        if(relationOp2==null)
+            relationPrint2+= relation2;
+        else
+            relationPrint2+= relationOp2.getOpName();
+    
     }
-   
+    
+     
    
 }

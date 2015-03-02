@@ -10,7 +10,7 @@ package operations;
  * @author michalis
  */
 public  class SetOp extends Operator{
-    String operation; // union or inter or diff
+    
     
     //only one of the following 2 will be null
     String relation1 = null;
@@ -71,55 +71,28 @@ public  class SetOp extends Operator{
         return relationOp2;
     }
     
-     @Override
-    public String toPrint(){
-        String temp= "|"+operatorName+"| "+operation;
-        if(operation.length()==4){
-            temp+="  |";
-        }
-        else
-            temp+=" |";
-         //add conditions 
-        for(int i=0;i<40;i++)
-                temp+=" ";
-        temp+="|";
-        
-        
-         //add relation1
-        String rel1="";
-        if(relationOp1==null)
-            rel1+= relation1;
-        else
-            rel1+= relationOp1.getOpName();
-        
-        if(rel1.length()< 18)
-        {
-            int j = 18 - rel1.length();
-            for(int i=0;i<j;i++)
-                rel1+=" ";
-        }
-        
-        temp+=rel1+"|";
-        
+    
+    
+    @Override
+    protected void prePrint(){
        
-        //add relation2
-        String rel2="";
-        if(relationOp2==null)
-            rel2+= relation2;
+        //add relation1
+     
+        if(relationOp1==null)
+            relationPrint1+=relation1;
         else
-            rel2+= relationOp2.getOpName();
+            relationPrint1+= relationOp1.getOpName();
         
-        if(rel2.length()< 18)
-        {
-            int j = 18 - rel2.length();
-            for(int i=0;i<j;i++)
-                rel2+=" ";
-        }
-        temp+=rel2+"|";
-        
-        return temp;
+          //add relation2
+        if(relationOp2==null)
+            relationPrint2+= relation2;
+        else
+            relationPrint2+= relationOp2.getOpName();
+    
     }
 
+    
+    
 }
    
     

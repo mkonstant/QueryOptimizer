@@ -35,28 +35,116 @@ public class QuerryOptimizer {
     static ArrayList<Operator> operations;
     
     
-    public static void printPLan(){
+     public static void printPLan(){
         ArrayList<Operator> op  =operations;
+        int tempR1,maxR1="Relation1".length();
+        int tempR2,maxR2="Relation2".length();
+        int tempC,maxC="Condition".length();
+        int tempA,maxA="Attributes".length();
+        int tempAn,maxAn="Annotation".length();
+        String splitLine="+----------+-------+";
+        String headLine= "|Operation |  type |";
+        int l;
         Operator temp;
-        System.out.println("+----------+-------+----------------------------------------+------------------+------------------+");
-        System.out.println("|Operation |  type |         Condition/Attributes           | Relation1        | Relation2        |");
-        System.out.println("+----------+-------+----------------------------------------+------------------+------------------+");
-       
-        
+
         for (int i = 0; i < op.size(); i++)
         {
             
             temp = op.get(i);
             temp.setOpName("Operation"+i);
-            System.out.println(temp.toPrint());
-      
+            tempR1=temp.getRelationPrint1Lenght();
+            tempR2=temp.getRelationPrint2Lenght();
+            tempC=temp.getConditionsPrintLenght();
+            tempA=temp.getAttributesPrintLenght();
             
+            if(tempR1>maxR1)
+                maxR1=tempR1;
+            if(tempR2>maxR2)
+                maxR2=tempR2;
+            if(tempC>maxC)
+                maxC=tempC;
+            if(tempA>maxA)
+                maxA=tempA;
+
 	}
         
-       System.out.println("+----------+-------+----------------------------------------+------------------+------------------+");
+        //construct headline 
+        headLine+="Condition";
+        l = maxC - "Condition".length();        
+        for(int i=0;i<l;i++){
+                headLine+=" ";
+        }
+        headLine+="|";
+        
+        headLine+="Attributes";
+        l = maxA - "Attributes".length();        
+        for(int i=0;i<l;i++){
+                headLine+=" ";
+        }
+        headLine+="|";
+        
+        headLine+="Relation1";
+        l = maxR1 - "Relation1".length();        
+        for(int i=0;i<l;i++){
+                headLine+=" ";
+        }
+        headLine+="|";
+        
+        headLine+="Relation2";
+        l = maxR2 - "Relation2".length();        
+        for(int i=0;i<l;i++){
+                headLine+=" ";
+        }
+        headLine+="|";
+        headLine+="Annotation";
+        l = maxAn - "Annotation".length();        
+        for(int i=0;i<l;i++){
+                headLine+=" ";
+        }
+        headLine+="|";
+        
+        
+        
+        //construct splitline
+        for(int i=0;i<maxC;i++){
+                splitLine+="-";
+        }
+        splitLine+="+";
+        for(int i=0;i<maxA;i++){
+                splitLine+="-";
+        }
+        splitLine+="+";
+        for(int i=0;i<maxR1;i++){
+                splitLine+="-";
+        }
+        splitLine+="+";
+        for(int i=0;i<maxR2;i++){
+                splitLine+="-";
+        }
+        splitLine+="+";
+        for(int i=0;i<maxAn;i++){
+                splitLine+="-";
+        }
+        splitLine+="+";
         
 
+        System.out.println(splitLine);
+        System.out.println(headLine);
+        System.out.println(splitLine);
+        
+        for (int i = 0; i < op.size(); i++)
+        {
+            temp = op.get(i);
+            System.out.println(temp.toPrint(maxR1, maxR2, maxC, maxA,maxAn));
+	}
+        System.out.println(splitLine);
+   
     }
+    
+    
+    
+    
+  
     
     /**
      * @param args the command line arguments

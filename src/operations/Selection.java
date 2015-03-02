@@ -55,53 +55,22 @@ public class Selection extends Operator {
     }
 
     @Override
-    public String toPrint(){
-        String temp= "|"+operatorName+"|  sel  |";
-        
-        
-        //add conditions 
-        String cond="";
+    protected void prePrint(){
+        operation = "sel";
+         //add conditions 
+        conditionsPrint="";
         for (int i = 0; i < conditions.size(); i++)
         {
-            cond += conditions.get(i).toPrint();
+            conditionsPrint += conditions.get(i).toPrint();
 	}
         
-        if(cond.length()< 40)
-        {
-            int j = 40 - cond.length();
-            for(int i=0;i<j;i++)
-                cond+=" ";
-        }
-        
-        temp+=cond+"|";
-        
-        
         //add relation1
-        String rel1="";
+     
         if(relationOp1==null)
-            rel1+= "relation '"+relation1+"'";
+            relationPrint1+= relation1;
         else
-            rel1+= relationOp1.getOpName();
-        
-        if(rel1.length()< 18)
-        {
-            int j = 18 - rel1.length();
-            for(int i=0;i<j;i++)
-                rel1+=" ";
-        }
-        
-        temp+=rel1+"|";
-        
-         //add relation2
-         for(int i=0;i<18;i++)
-                temp+=" ";
-        temp+="|";
-        
-        
-        
-        return temp;
-    }
-   
+            relationPrint1+= relationOp1.getOpName();
     
+    }
     
 }
