@@ -19,7 +19,8 @@ public class TableInfo {
     Map<String,IndexInfo> secondaryIndex = null;
     Map<String,ForeignIndexInfo> foreignIndex = null;
     int carinality = -1;
-    int sizeOfTuples = -1;
+    int numberOfTuples = -1;
+    int sizeOfTuple = -1;
     
     
     
@@ -27,8 +28,12 @@ public class TableInfo {
         attributes = new HashMap<String,Attributes>();
         IndexInfo indexInfo = new IndexInfo();
     }
-    
 
+    
+    public int getSizeOfTuple() {
+        return sizeOfTuple;
+    }
+    
     public Map<String, ForeignIndexInfo> getForeignIndex() {
         return foreignIndex;
     }
@@ -53,11 +58,15 @@ public class TableInfo {
     }
 
     
-    public int getSizeOfTuples() {
-        return sizeOfTuples;
+    public int getNumberOfTuples() {
+        return numberOfTuples;
     }
 
     
+    public void setSizeOfTuple(int sizeOfTuple) {
+        this.sizeOfTuple = sizeOfTuple;
+    }
+
     public void setAttributes(Map<String, Attributes> attributes) {
         this.attributes = attributes;
     }
@@ -78,8 +87,8 @@ public class TableInfo {
     }
 
     
-    public void setSizeOfTuples(int sizeOfTuples) {
-        this.sizeOfTuples = sizeOfTuples;
+    public void setNumberOfTuples(int numberOfTuples) {
+        this.numberOfTuples = numberOfTuples;
     }
 
     public void setForeignIndex(Map<String, ForeignIndexInfo> foreignIndex) {

@@ -170,7 +170,8 @@ public class QuerryOptimizer {
             System.out.println("key = " + key);
             tabInfo = table.get(key);
             System.out.println("Cardinality : " + tabInfo.getCarinality());
-            System.out.println("Size Of Tuples : " + tabInfo.getSizeOfTuples());
+            System.out.println("Size of Tuple :" + tabInfo.getSizeOfTuple());
+            System.out.println("Size Of Tuples : " + tabInfo.getNumberOfTuples());
             System.out.println("Attributes :");
             Map<String,Attributes> attributes = tabInfo.getAttributes();
             for(String key1 : attributes.keySet()){

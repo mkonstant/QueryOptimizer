@@ -318,10 +318,17 @@ public class Catalog {
             //take cardinality
             temp = line.split(del);
             tabInfo.setCarinality(Integer.parseInt(temp[1]));
-            //take size of tuples
+            
+            //take size of tuple
             if ((line = br.readLine()) != null){
                 temp = line.split(del);
-                tabInfo.setSizeOfTuples(Integer.parseInt(temp[1]));
+                tabInfo.setSizeOfTuple(Integer.parseInt(temp[1]));
+            }
+            
+            //take size of tuple
+            if ((line = br.readLine()) != null){
+                temp = line.split(del);
+                tabInfo.setNumberOfTuples(Integer.parseInt(temp[1]));
             }
             
             catalog.put(tableName, tabInfo);
