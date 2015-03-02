@@ -6,14 +6,14 @@ package syntaxtree;
 
 /**
  * Grammar production:
- * f0 -> <ALPHA_NUM_IDENT>
+ * f0 -> AlphaNumIdent()
  * f1 -> ( AtRel() )?
  */
 public class AtomAttr implements Node {
-   public NodeToken f0;
+   public AlphaNumIdent f0;
    public NodeOptional f1;
 
-   public AtomAttr(NodeToken n0, NodeOptional n1) {
+   public AtomAttr(AlphaNumIdent n0, NodeOptional n1) {
       f0 = n0;
       f1 = n1;
    }

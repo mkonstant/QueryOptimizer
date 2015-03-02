@@ -21,8 +21,10 @@ import catalog.ForeignIndexInfo;
 import catalog.IndexInfo;
 import catalog.TableInfo;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import operations.Operator;
 
 /**
  *
@@ -30,6 +32,32 @@ import java.util.Map;
  */
 public class QuerryOptimizer {
 
+    static ArrayList<Operator> operations;
+    
+    
+    public static void printPLan(){
+        ArrayList<Operator> op  =operations;
+        Operator temp;
+        System.out.println("+----------+-------+----------------------------------------+------------------+------------------+");
+        System.out.println("|Operation |  type |         Condition/Attributes           | Relation1        | Relation2        |");
+        System.out.println("+----------+-------+----------------------------------------+------------------+------------------+");
+       
+        
+        for (int i = 0; i < op.size(); i++)
+        {
+            
+            temp = op.get(i);
+            temp.setOpName("Operation"+i);
+            System.out.println(temp.toPrint());
+      
+            
+	}
+        
+       System.out.println("+----------+-------+----------------------------------------+------------------+------------------+");
+        
+
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -111,8 +139,9 @@ public class QuerryOptimizer {
             }   fis = new FileInputStream(args[2]);
             QueryParser parser = new QueryParser(fis);
             Query tree = parser.Query();
-            //TestVisitor tv = new TestVisitor();
-            //tree.accept(tv,null);
+            TestVisitor tv = new TestVisitor();
+            tree.accept(tv,null);
+            operations = tv.getOperations();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(QuerryOptimizer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -123,7 +152,7 @@ public class QuerryOptimizer {
             }
         }
                     
-        
+       printPLan();
         
     }
     

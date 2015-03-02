@@ -126,13 +126,13 @@ public interface GJVisitor<R,A> {
    public R visit(Ops n, A argu);
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     *       | Operators()
     */
    public R visit(Relation n, A argu);
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     */
    public R visit(Attribute n, A argu);
 
@@ -170,27 +170,47 @@ public interface GJVisitor<R,A> {
    public R visit(Atom n, A argu);
 
    /**
-    * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public R visit(AtomPart n, A argu);
 
    /**
     * f0 -> ( "+" | "-" )
-    * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+    * f1 -> ( IntegerLiteral() | FloatLiteral() )
     */
    public R visit(ComplexAtomPart n, A argu);
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     * f1 -> ( AtRel() )?
     */
    public R visit(AtomAttr n, A argu);
 
    /**
     * f0 -> "."
-    * f1 -> <ALPHA_NUM_IDENT>
+    * f1 -> AlphaNumIdent()
     */
    public R visit(AtRel n, A argu);
+
+   /**
+    * f0 -> <ALPHA_NUM_IDENT>
+    */
+   public R visit(AlphaNumIdent n, A argu);
+
+   /**
+    * f0 -> <INTEGER_LITERAL>
+    */
+   public R visit(IntegerLiteral n, A argu);
+
+   /**
+    * f0 -> <FLOATING_POINT_LITERAL>
+    */
+   public R visit(FloatLiteral n, A argu);
+
+   /**
+    * f0 -> <STRING_LITERAL>
+    */
+   public R visit(StringLiteral n, A argu);
 
 }

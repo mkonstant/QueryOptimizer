@@ -126,13 +126,13 @@ public interface GJVoidVisitor<A> {
    public void visit(Ops n, A argu);
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     *       | Operators()
     */
    public void visit(Relation n, A argu);
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     */
    public void visit(Attribute n, A argu);
 
@@ -170,28 +170,48 @@ public interface GJVoidVisitor<A> {
    public void visit(Atom n, A argu);
 
    /**
-    * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public void visit(AtomPart n, A argu);
 
    /**
     * f0 -> ( "+" | "-" )
-    * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+    * f1 -> ( IntegerLiteral() | FloatLiteral() )
     */
    public void visit(ComplexAtomPart n, A argu);
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     * f1 -> ( AtRel() )?
     */
    public void visit(AtomAttr n, A argu);
 
    /**
     * f0 -> "."
-    * f1 -> <ALPHA_NUM_IDENT>
+    * f1 -> AlphaNumIdent()
     */
    public void visit(AtRel n, A argu);
+
+   /**
+    * f0 -> <ALPHA_NUM_IDENT>
+    */
+   public void visit(AlphaNumIdent n, A argu);
+
+   /**
+    * f0 -> <INTEGER_LITERAL>
+    */
+   public void visit(IntegerLiteral n, A argu);
+
+   /**
+    * f0 -> <FLOATING_POINT_LITERAL>
+    */
+   public void visit(FloatLiteral n, A argu);
+
+   /**
+    * f0 -> <STRING_LITERAL>
+    */
+   public void visit(StringLiteral n, A argu);
 
 }
 

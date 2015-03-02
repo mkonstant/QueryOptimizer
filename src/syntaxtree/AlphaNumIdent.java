@@ -6,21 +6,13 @@ package syntaxtree;
 
 /**
  * Grammar production:
- * f0 -> "."
- * f1 -> AlphaNumIdent()
+ * f0 -> <ALPHA_NUM_IDENT>
  */
-public class AtRel implements Node {
+public class AlphaNumIdent implements Node {
    public NodeToken f0;
-   public AlphaNumIdent f1;
 
-   public AtRel(NodeToken n0, AlphaNumIdent n1) {
+   public AlphaNumIdent(NodeToken n0) {
       f0 = n0;
-      f1 = n1;
-   }
-
-   public AtRel(AlphaNumIdent n0) {
-      f0 = new NodeToken(".");
-      f1 = n0;
    }
 
    public void accept(visitor.Visitor v) {

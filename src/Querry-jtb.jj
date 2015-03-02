@@ -430,19 +430,18 @@ Ops Ops() :
 Relation Relation() :
 {
    NodeChoice n0;
-   NodeToken n1;
-   Token n2;
-   Operators n3;
+   AlphaNumIdent n1;
+   Operators n2;
 
    
 }
 {
    (
-      n2=<ALPHA_NUM_IDENT> { n1 = JTBToolkit.makeNodeToken(n2); }
+      n1=AlphaNumIdent()
       { n0 = new NodeChoice(n1, 0); }
    |
-      n3=Operators()
-      { n0 = new NodeChoice(n3, 1); }
+      n2=Operators()
+      { n0 = new NodeChoice(n2, 1); }
    )
    
    { return new Relation(n0); }
@@ -450,13 +449,12 @@ Relation Relation() :
 
 Attribute Attribute() :
 {
-   NodeToken n0;
-   Token n1;
+   AlphaNumIdent n0;
 
    
 }
 {
-   n1=<ALPHA_NUM_IDENT> { n0 = JTBToolkit.makeNodeToken(n1); }
+   n0=AlphaNumIdent()
    
    { return new Attribute(n0); }
 }
@@ -603,14 +601,11 @@ AtomPart AtomPart() :
 {
    NodeChoice n0;
    AtomAttr n1;
-   NodeToken n2;
-   Token n3;
-   NodeToken n4;
-   Token n5;
-   NodeToken n6;
-   Token n7;
-   NodeOptional n8 = new NodeOptional();
-   ComplexAtomPart n9;
+   IntegerLiteral n2;
+   FloatLiteral n3;
+   StringLiteral n4;
+   NodeOptional n5 = new NodeOptional();
+   ComplexAtomPart n6;
 
    
 }
@@ -620,23 +615,23 @@ AtomPart AtomPart() :
          n1=AtomAttr()
          { n0 = new NodeChoice(n1, 0); }
       |
-         n3=<INTEGER_LITERAL> { n2 = JTBToolkit.makeNodeToken(n3); }
+         n2=IntegerLiteral()
          { n0 = new NodeChoice(n2, 1); }
       |
-         n5=<FLOATING_POINT_LITERAL> { n4 = JTBToolkit.makeNodeToken(n5); }
-         { n0 = new NodeChoice(n4, 2); }
+         n3=FloatLiteral()
+         { n0 = new NodeChoice(n3, 2); }
       |
-         n7=<STRING_LITERAL> { n6 = JTBToolkit.makeNodeToken(n7); }
-         { n0 = new NodeChoice(n6, 3); }
+         n4=StringLiteral()
+         { n0 = new NodeChoice(n4, 3); }
       )
       
    )
    (
-      n9=ComplexAtomPart()
-      { n8.addNode(n9); }
+      n6=ComplexAtomPart()
+      { n5.addNode(n6); }
    )?
    
-   { return new AtomPart(n0,n8); }
+   { return new AtomPart(n0,n5); }
 }
 
 ComplexAtomPart ComplexAtomPart() :
@@ -647,10 +642,8 @@ ComplexAtomPart ComplexAtomPart() :
    NodeToken n3;
    Token n4;
    NodeChoice n5;
-   NodeToken n6;
-   Token n7;
-   NodeToken n8;
-   Token n9;
+   IntegerLiteral n6;
+   FloatLiteral n7;
 
    
 }
@@ -667,11 +660,11 @@ ComplexAtomPart ComplexAtomPart() :
    )
    (
       (
-         n7=<INTEGER_LITERAL> { n6 = JTBToolkit.makeNodeToken(n7); }
+         n6=IntegerLiteral()
          { n5 = new NodeChoice(n6, 0); }
       |
-         n9=<FLOATING_POINT_LITERAL> { n8 = JTBToolkit.makeNodeToken(n9); }
-         { n5 = new NodeChoice(n8, 1); }
+         n7=FloatLiteral()
+         { n5 = new NodeChoice(n7, 1); }
       )
       
    )
@@ -681,35 +674,85 @@ ComplexAtomPart ComplexAtomPart() :
 
 AtomAttr AtomAttr() :
 {
-   NodeToken n0;
-   Token n1;
-   NodeOptional n2 = new NodeOptional();
-   AtRel n3;
+   AlphaNumIdent n0;
+   NodeOptional n1 = new NodeOptional();
+   AtRel n2;
 
    
 }
 {
-   n1=<ALPHA_NUM_IDENT> { n0 = JTBToolkit.makeNodeToken(n1); }
+   n0=AlphaNumIdent()
    (
-      n3=AtRel()
-      { n2.addNode(n3); }
+      n2=AtRel()
+      { n1.addNode(n2); }
    )?
    
-   { return new AtomAttr(n0,n2); }
+   { return new AtomAttr(n0,n1); }
 }
 
 AtRel AtRel() :
 {
    NodeToken n0;
    Token n1;
-   NodeToken n2;
-   Token n3;
+   AlphaNumIdent n2;
 
    
 }
 {
    n1="." { n0 = JTBToolkit.makeNodeToken(n1); }
-   n3=<ALPHA_NUM_IDENT> { n2 = JTBToolkit.makeNodeToken(n3); }
+   n2=AlphaNumIdent()
    
    { return new AtRel(n0,n2); }
+}
+
+AlphaNumIdent AlphaNumIdent() :
+{
+   NodeToken n0;
+   Token n1;
+
+   
+}
+{
+   n1=<ALPHA_NUM_IDENT> { n0 = JTBToolkit.makeNodeToken(n1); }
+   
+   { return new AlphaNumIdent(n0); }
+}
+
+IntegerLiteral IntegerLiteral() :
+{
+   NodeToken n0;
+   Token n1;
+
+   
+}
+{
+   n1=<INTEGER_LITERAL> { n0 = JTBToolkit.makeNodeToken(n1); }
+   
+   { return new IntegerLiteral(n0); }
+}
+
+FloatLiteral FloatLiteral() :
+{
+   NodeToken n0;
+   Token n1;
+
+   
+}
+{
+   n1=<FLOATING_POINT_LITERAL> { n0 = JTBToolkit.makeNodeToken(n1); }
+   
+   { return new FloatLiteral(n0); }
+}
+
+StringLiteral StringLiteral() :
+{
+   NodeToken n0;
+   Token n1;
+
+   
+}
+{
+   n1=<STRING_LITERAL> { n0 = JTBToolkit.makeNodeToken(n1); }
+   
+   { return new StringLiteral(n0); }
 }

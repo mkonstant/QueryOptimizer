@@ -213,7 +213,7 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
    }
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     *       | Operators()
     */
    public void visit(Relation n, A argu) {
@@ -221,7 +221,7 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
    }
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     */
    public void visit(Attribute n, A argu) {
       n.f0.accept(this, argu);
@@ -275,7 +275,7 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
    }
 
    /**
-    * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public void visit(AtomPart n, A argu) {
@@ -285,7 +285,7 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
 
    /**
     * f0 -> ( "+" | "-" )
-    * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+    * f1 -> ( IntegerLiteral() | FloatLiteral() )
     */
    public void visit(ComplexAtomPart n, A argu) {
       n.f0.accept(this, argu);
@@ -293,7 +293,7 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
    }
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     * f1 -> ( AtRel() )?
     */
    public void visit(AtomAttr n, A argu) {
@@ -303,11 +303,39 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
 
    /**
     * f0 -> "."
-    * f1 -> <ALPHA_NUM_IDENT>
+    * f1 -> AlphaNumIdent()
     */
    public void visit(AtRel n, A argu) {
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
+   }
+
+   /**
+    * f0 -> <ALPHA_NUM_IDENT>
+    */
+   public void visit(AlphaNumIdent n, A argu) {
+      n.f0.accept(this, argu);
+   }
+
+   /**
+    * f0 -> <INTEGER_LITERAL>
+    */
+   public void visit(IntegerLiteral n, A argu) {
+      n.f0.accept(this, argu);
+   }
+
+   /**
+    * f0 -> <FLOATING_POINT_LITERAL>
+    */
+   public void visit(FloatLiteral n, A argu) {
+      n.f0.accept(this, argu);
+   }
+
+   /**
+    * f0 -> <STRING_LITERAL>
+    */
+   public void visit(StringLiteral n, A argu) {
+      n.f0.accept(this, argu);
    }
 
 }

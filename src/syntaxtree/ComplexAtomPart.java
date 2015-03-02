@@ -7,7 +7,7 @@ package syntaxtree;
 /**
  * Grammar production:
  * f0 -> ( "+" | "-" )
- * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+ * f1 -> ( IntegerLiteral() | FloatLiteral() )
  */
 public class ComplexAtomPart implements Node {
    public NodeChoice f0;

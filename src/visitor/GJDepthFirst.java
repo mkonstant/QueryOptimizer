@@ -243,7 +243,7 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
    }
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     *       | Operators()
     */
    public R visit(Relation n, A argu) {
@@ -251,7 +251,7 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
    }
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     */
    public R visit(Attribute n, A argu) {
       return n.f0.accept(this, argu);
@@ -311,7 +311,7 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
    }
 
    /**
-    * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public R visit(AtomPart n, A argu) {
@@ -323,7 +323,7 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
 
    /**
     * f0 -> ( "+" | "-" )
-    * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+    * f1 -> ( IntegerLiteral() | FloatLiteral() )
     */
    public R visit(ComplexAtomPart n, A argu) {
       R _ret=null;
@@ -333,7 +333,7 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
    }
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     * f1 -> ( AtRel() )?
     */
    public R visit(AtomAttr n, A argu) {
@@ -345,13 +345,41 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
 
    /**
     * f0 -> "."
-    * f1 -> <ALPHA_NUM_IDENT>
+    * f1 -> AlphaNumIdent()
     */
    public R visit(AtRel n, A argu) {
       R _ret=null;
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       return _ret;
+   }
+
+   /**
+    * f0 -> <ALPHA_NUM_IDENT>
+    */
+   public R visit(AlphaNumIdent n, A argu) {
+      return n.f0.accept(this, argu);
+   }
+
+   /**
+    * f0 -> <INTEGER_LITERAL>
+    */
+   public R visit(IntegerLiteral n, A argu) {
+      return n.f0.accept(this, argu);
+   }
+
+   /**
+    * f0 -> <FLOATING_POINT_LITERAL>
+    */
+   public R visit(FloatLiteral n, A argu) {
+      return n.f0.accept(this, argu);
+   }
+
+   /**
+    * f0 -> <STRING_LITERAL>
+    */
+   public R visit(StringLiteral n, A argu) {
+      return n.f0.accept(this, argu);
    }
 
 }

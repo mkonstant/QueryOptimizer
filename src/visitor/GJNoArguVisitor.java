@@ -126,13 +126,13 @@ public interface GJNoArguVisitor<R> {
    public R visit(Ops n);
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     *       | Operators()
     */
    public R visit(Relation n);
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     */
    public R visit(Attribute n);
 
@@ -170,28 +170,48 @@ public interface GJNoArguVisitor<R> {
    public R visit(Atom n);
 
    /**
-    * f0 -> ( AtomAttr() | <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> | <STRING_LITERAL> )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public R visit(AtomPart n);
 
    /**
     * f0 -> ( "+" | "-" )
-    * f1 -> ( <INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+    * f1 -> ( IntegerLiteral() | FloatLiteral() )
     */
    public R visit(ComplexAtomPart n);
 
    /**
-    * f0 -> <ALPHA_NUM_IDENT>
+    * f0 -> AlphaNumIdent()
     * f1 -> ( AtRel() )?
     */
    public R visit(AtomAttr n);
 
    /**
     * f0 -> "."
-    * f1 -> <ALPHA_NUM_IDENT>
+    * f1 -> AlphaNumIdent()
     */
    public R visit(AtRel n);
+
+   /**
+    * f0 -> <ALPHA_NUM_IDENT>
+    */
+   public R visit(AlphaNumIdent n);
+
+   /**
+    * f0 -> <INTEGER_LITERAL>
+    */
+   public R visit(IntegerLiteral n);
+
+   /**
+    * f0 -> <FLOATING_POINT_LITERAL>
+    */
+   public R visit(FloatLiteral n);
+
+   /**
+    * f0 -> <STRING_LITERAL>
+    */
+   public R visit(StringLiteral n);
 
 }
 

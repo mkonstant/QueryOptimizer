@@ -6,7 +6,7 @@ package syntaxtree;
 
 /**
  * Grammar production:
- * f0 -> <ALPHA_NUM_IDENT>
+ * f0 -> AlphaNumIdent()
  *       | Operators()
  */
 public class Relation implements Node {
