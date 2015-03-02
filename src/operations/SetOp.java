@@ -73,8 +73,12 @@ public  class SetOp extends Operator{
     
      @Override
     public String toPrint(){
-        String temp= "|"+operatorName+"| "+operation+" |";
-        
+        String temp= "|"+operatorName+"| "+operation;
+        if(operation.length()==4){
+            temp+="  |";
+        }
+        else
+            temp+=" |";
          //add conditions 
         for(int i=0;i<40;i++)
                 temp+=" ";
