@@ -13,34 +13,19 @@ import java.util.ArrayList;
  */
 public abstract class Operator {
 
-    String operation; // union or inter or diff or sel or proj or join
-    String operatorName="";
-    String relationPrint1="";
-    String relationPrint2="";
-    String attributesPrint="";
-    String conditionsPrint="";
-    String annotation="";
-    public int getRelationPrint1Lenght(){
-        return relationPrint1.length();
-    }
-    public int getRelationPrint2Lenght(){
-        return relationPrint2.length();
-    }
-    public int getAttributesPrintLenght(){
-        return attributesPrint.length();
-    }
-    public int getConditionsPrintLenght(){
-        return conditionsPrint.length();
-    }
+    protected String operation; // union or inter or diff or sel or proj or join
+    protected String operatorName="";
+    protected String relationPrint1="";
+    protected String relationPrint2="";
+    protected String attributesPrint="";
+    protected String conditionsPrint="";
+    protected String annotation="";
     
+    protected int b1,n1;  
+    protected int b2,n2;
+    protected int bout, nout;
     
-    public void setOpName(String name){
-        prePrint();
-        operatorName = name;
-    }
-    public String getOpName(){return operatorName;}
-    
-    
+
     public void setOperation(String op){};
     public String getOperation(){return null;};
     
@@ -52,16 +37,72 @@ public abstract class Operator {
     public String getRelation2(){return null;};
     public Operator getRelationOp1(){return null;};
     public Operator getRelationOp2(){return null;};
-    
+    public boolean getHasHavingClause(){return false;};
     public void AddAttr(String attr){};
     public ArrayList<String> getAttrs(){return null;};
-    public boolean getHasHavingClause(){return false;};
     public void AddCondition(String attr1, String attr2, String action){};
     public ArrayList<Condition> getConditions(){return null;};
-    
     protected void prePrint(){};
-    public String toPrint(int maxR1,int maxR2, int maxC, int maxA,int maxAn){
-        
+    
+    public int getRelationPrint1Lenght(){
+        return relationPrint1.length();
+    }
+    
+    public int getRelationPrint2Lenght(){
+        return relationPrint2.length();
+    }
+    
+    public int getAttributesPrintLenght(){
+        return attributesPrint.length();
+    }
+    
+    public int getConditionsPrintLenght(){
+        return conditionsPrint.length();
+    }
+    
+    public void setOpName(String name){
+        prePrint();
+        operatorName = name;
+    }
+    public String getOpName(){
+        return operatorName;
+    }
+    
+        public void setB1(int b1){
+        this.b1=b1;
+    }
+
+    public void setB2(int b2){
+        this.b2=b2;
+    }
+    
+    public void setBout(int bout){
+        this.bout=bout;
+    }
+    
+    public void setN1(int n1){
+        this.n1=n1;
+    }
+
+    public void setN2(int n2){
+        this.n2=n2;
+    }
+    
+    public void setNout(int nout){
+        this.nout=nout;
+    }
+    
+    public int getBout(){
+        return bout;
+    }
+      
+    public int getNout(){
+        return nout;
+    }
+    
+    
+   
+    public String toPrint(int maxR1,int maxR2, int maxC, int maxA,int maxAn){        
         String temp= "|"+operatorName+"| "+operation;
         int l = 6 - operation.length();
         for(int i=0;i<l;i++){
@@ -69,8 +110,7 @@ public abstract class Operator {
         }
         temp+="|";
         
-       
-         //add conditions 
+        //add conditions 
         temp+=conditionsPrint;
         l = maxC- conditionsPrint.length();
         
@@ -112,7 +152,6 @@ public abstract class Operator {
         temp+="|";
    
         return temp;
-    
     }
   
     

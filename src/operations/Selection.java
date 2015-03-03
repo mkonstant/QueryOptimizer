@@ -18,6 +18,12 @@ public class Selection extends Operator {
     Operator relationOp1=null;
     
     ArrayList<Condition> conditions = null;
+
+    public Selection() {
+        operation = "sel";
+    }
+    
+    
     
     @Override
     public void setRelation1(String rel){
@@ -56,7 +62,7 @@ public class Selection extends Operator {
 
     @Override
     protected void prePrint(){
-        operation = "sel";
+        
          //add conditions 
         conditionsPrint="";
         for (int i = 0; i < conditions.size(); i++)

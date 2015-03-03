@@ -23,6 +23,12 @@ public  class Join extends Operator{
     Operator relationOp2=null;
     
    ArrayList<Condition> conditions = null;
+
+    public Join() {
+        operation = "join";
+    }
+   
+   
     
     @Override
     public void setRelation1(String rel){
@@ -81,7 +87,7 @@ public  class Join extends Operator{
     
     @Override
     protected void prePrint(){
-        operation = "join";
+        
           //add conditions 
         conditionsPrint="";
         for (int i = 0; i < conditions.size(); i++)

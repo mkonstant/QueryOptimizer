@@ -5,32 +5,65 @@
  */
 package evaluationCost;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author michalis
  */
 public class ProjectionCost {
     
-    int M; //num of buffers available for sorting
-    int br;  //blocks containing tupples of relation r
-    int bb;//buffer blocks per run
-    int nr;//number of tupples in r
-    int tranferTime;
-    int penaltyTime;
-    int latency;
+    private  int M; //num of buffers available for sorting
+    private  int br;  //blocks containing tupples of relation r
+    private int bb;//buffer blocks per run
+    private int nr;//number of tupples in r
+    private double tranferTime;
+    private double penaltyTime;
+    private double latency;
+    private double cost=0.0;
+    private ArrayList<String> annotation = new ArrayList<String>();
+    private ArrayList<String> sortedAnnotation = new ArrayList<String>();
+    private ArrayList<String> hasedAnnotation = new ArrayList<String>();
+    
+    
+    public String getAnnotation(){
+        String temp="";
+        
+        for(int i=0;i<annotation.size();i++)
+        {
+            if(i>0)
+                temp+="->";
+            temp += annotation.get(i);
+            
+        }
+        return temp;
+    }
     
     //no sort , no hash, provide dublicates
-    public int projectionCost(){
-        return br*tranferTime + (br/bb)*latency;
+    public void computeCost(){
+        double costSort = dublicateSort();
+        double costHash = dublicateHash(true);
+        
+        if(costHash> costSort){
+            annotation = sortedAnnotation;
+            cost = costSort;
+        }
+        else{
+            annotation = hasedAnnotation;
+            cost = costHash;
+        }
+        //return br*tranferTime + (br/bb)*latency;
     }
     
     
     //cost of dublicate elimiation with sort is equal to sorting one relation
-    public int dublicateSort(){
+    public double dublicateSort(){
+            sortedAnnotation.add("Sort to eliminate dublicates");
             return SortCost.externalSortCost(br, M, latency, penaltyTime,  tranferTime);
     }
     
-    public int dublicateHash(boolean partitioned){
+    public double dublicateHash(boolean partitioned){
+        hasedAnnotation.add("Hash to eliminate dublicates");
         int blocksTranfered=0;
         int blockWritten=0;
         //partitioning relations

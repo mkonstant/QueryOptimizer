@@ -17,8 +17,14 @@ public  class Projection extends Operator{
     String relation1 = null;
     Operator relationOp1=null;
     ArrayList<String> attrs = null;
+
+    public Projection() {
+        operation = "proj";
+    }
     
-     @Override
+    
+    
+    @Override
     public void AddAttr(String attr){
         if(attrs==null)
             attrs = new ArrayList<String>();
@@ -58,7 +64,7 @@ public  class Projection extends Operator{
     
     @Override
     protected void prePrint(){
-        operation = "proj";
+        
          //add conditions 
         attributesPrint="";
         for (int i = 0; i < attrs.size(); i++)

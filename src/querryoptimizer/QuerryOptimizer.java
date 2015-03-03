@@ -33,8 +33,50 @@ import operations.Operator;
 public class QuerryOptimizer {
 
     static ArrayList<Operator> operations;
+   
     
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws ParseException, IOException {
+        
+        
+        // TODO code application logic here
+        String dbFile = null;
+        String sysFile = null;
+        
+        
+        dbFile = args[0];
+        sysFile = args[1];
+        
+        //printCatalog(dbFile,sysFile);
+        
+        FileInputStream fis = null;
+        try {
+            if(args.length == 0){
+                System.out.println("No input files given!");
+                System.exit(0);
+            }   fis = new FileInputStream(args[2]);
+            QueryParser parser = new QueryParser(fis);
+            Query tree = parser.Query();
+            TestVisitor tv = new TestVisitor();
+            tree.accept(tv,null);
+            operations = tv.getOperations();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(QuerryOptimizer.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fis.close();
+            } catch (IOException ex) {
+                Logger.getLogger(QuerryOptimizer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+                    
+       printPLan();
+        
+    }
     
+        
      public static void printPLan(){
         ArrayList<Operator> op  =operations;
         int tempR1,maxR1="Relation1".length();
@@ -140,7 +182,7 @@ public class QuerryOptimizer {
         System.out.println(splitLine);
    
     }
-    
+     
      public static void printCatalog(String dbFile, String sysFile) throws IOException{
          Catalog catalog = null;
          catalog = new Catalog(dbFile,sysFile);
@@ -205,49 +247,5 @@ public class QuerryOptimizer {
          }
      }
     
-    
-    
-  
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws ParseException, IOException {
-        
-        
-        // TODO code application logic here
-        String dbFile = null;
-        String sysFile = null;
-        
-        
-        dbFile = args[0];
-        sysFile = args[1];
-        
-        printCatalog(dbFile,sysFile);
-        
-        FileInputStream fis = null;
-        try {
-            if(args.length == 0){
-                System.out.println("No input files given!");
-                System.exit(0);
-            }   fis = new FileInputStream(args[2]);
-            QueryParser parser = new QueryParser(fis);
-            Query tree = parser.Query();
-            TestVisitor tv = new TestVisitor();
-            tree.accept(tv,null);
-            operations = tv.getOperations();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(QuerryOptimizer.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fis.close();
-            } catch (IOException ex) {
-                Logger.getLogger(QuerryOptimizer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-                    
-       printPLan();
-        
-    }
     
 }

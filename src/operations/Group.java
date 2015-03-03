@@ -20,8 +20,14 @@ public  class Group extends Operator{
     //only one of the following 2 and only if hasHavingClause=true
     String relation1 = null;
     Operator relationOp1=null;
+
+    public Group() {
+        operation = "group";
+    }
     
  
+    
+    
     @Override
     public boolean getHasHavingClause(){
         return hasHavingClause;

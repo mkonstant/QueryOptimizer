@@ -5,37 +5,68 @@
  */
 package evaluationCost;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author michalis
  */
 public class JoinCost {
-    int M; //num of buffers available for sorting
-    int br;  //blocks containing tupples of relation r
-    int bs;//blocks containing tupples of relation s
-    int bb;//buffer blocks per run
-    int nr;//number of tupples in r
-    int ns;//number of tupples in s
-    int tranferTime;
-    int penaltyTime;
-    int latency;
-    /*
-    public int externalSortCost(int br){
+    private int M; //num of buffers available for sorting
+    private int br;  //blocks containing tupples of relation r
+    private int bs;//blocks containing tupples of relation s
+    private int bb;//buffer blocks per run
+    private int nr;//number of tupples in r
+    private int ns;//number of tupples in s
+    private double tranferTime;
+    private double penaltyTime;
+    private double latency;
+    private double cost;
+    private ArrayList<String> annotation = new ArrayList<String>();
+    private ArrayList<String> hashAnnotation = new ArrayList<String>();
+    private ArrayList<String> mergeAnnotation = new ArrayList<String>();
+    private ArrayList<String> blockNestedAnnotation = new ArrayList<String>();
+    private ArrayList<String> indexedNestedAnnotation = new ArrayList<String>();
+    public String getAnnotation(){
+        String temp="";
         
-        int mergePasses = (int) (Math.log10(br/M)/Math.log10(M-1)); 
-        int blocksTranfered = br * (2*mergePasses+1);
-        //writting back the result
-        int blockWritten = br;
-        
-        //seeks for sorting
-        int diskSeeks = 2*(br/M)+ br*(2*mergePasses-1) ;
-        //seeks for writting back
-        diskSeeks+=br;
-        return (diskSeeks*latency + blockWritten*penaltyTime + blocksTranfered*tranferTime);
+        for(int i=0;i<annotation.size();i++)
+        {
+            if(i>0)
+                temp+="->";
+            temp += annotation.get(i);
+            
+        }
+        return temp;
     }
-    */
     
-    public int blockNestedJoin(){
+
+    public void computeCost(){
+        double costMerge = mergeJoin(true, true);
+        double costHash = hashJoin(true, true);
+        double costBlockNested  = blockNestedJoin();
+        double costIndexedBlockNested = indexedBlockNestedJoin(true, true);
+        
+        cost= costMerge;
+        annotation = mergeAnnotation;
+        
+        if(costHash< cost){
+            annotation = hashAnnotation;
+            cost = costHash;
+        }
+        if(costBlockNested< cost){
+            annotation = blockNestedAnnotation;
+            cost = costBlockNested;
+        }
+        if(costIndexedBlockNested< cost){
+            annotation = indexedNestedAnnotation;
+            cost = costIndexedBlockNested;
+        }
+        
+        //return br*tranferTime + (br/bb)*latency;
+    }
+    
+    public double blockNestedJoin(){
         int outerR;
         int innerR;
         int blocksTranfered ;
@@ -67,15 +98,14 @@ public class JoinCost {
             //diskSeeks = 2*outerR;
         }
         
-        //writting back output   how much???? calculate distinct values ktl
-         int blockWritten = br+bs;
+        blockNestedAnnotation.add("block Nested loop join");
          
-         return (diskSeeks*latency + blocksTranfered*tranferTime + blockWritten*penaltyTime ); 
+         return (diskSeeks*latency + blocksTranfered*tranferTime ); 
          
     }
     
     
-      public int indexedBlockNestedJoin(boolean indexed1, boolean indexed2){
+      public double indexedBlockNestedJoin(boolean indexed1, boolean indexed2){
         int outerR, outerS;
         int innerR, innerS;
         int blocksTranfered ;
@@ -112,21 +142,18 @@ public class JoinCost {
         int selectionCost=0;
         
         //for each block of outer 1 seek and 1 block transfer + for each tupple selection on inner indexed
-        int cost = outerR *(latency+tranferTime) + outerS *selectionCost;
+        double cost = outerR *(latency+tranferTime) + outerS *selectionCost;
+         indexedNestedAnnotation.add("indexed block Nested loop join");
         
-        
-        //writting back output   how much???? calculate distinct values ktl
-         int blockWritten = br+bs;
-         
-         return (cost+ blockWritten*penaltyTime ); 
+        return cost;
          
     }
     
     
-    public int mergeJoin(boolean sorted1, boolean sorted2){ //relations have to be already sorted
+    public double mergeJoin(boolean sorted1, boolean sorted2){ //relations have to be already sorted
       
         //performing sorting
-        int sortTime=0;
+        double sortTime=0;
         if(!sorted1)
             sortTime= SortCost.externalSortCost(br, M, latency, penaltyTime,  tranferTime);
         if(!sorted2)
@@ -136,16 +163,13 @@ public class JoinCost {
          int blocksTranfered = br+bs;
          int diskSeeks = (br/bb) + (bs/bb);
          
-         //writting back output   how much???? calculate distinct values ktl
-         int blockWritten = br+bs;
+         mergeAnnotation.add("merge join");
          
-         
-         
-         return (diskSeeks*latency + blocksTranfered*tranferTime + blockWritten*penaltyTime + sortTime); 
+         return (diskSeeks*latency + blocksTranfered*tranferTime  + sortTime); 
          
     }
     
-    public int hashJoin(boolean partitioned1, boolean partinioned2){ //sunolika 3(br+bs)+ nh to opoio parleipetai 
+    public double hashJoin(boolean partitioned1, boolean partinioned2){ //sunolika 3(br+bs)+ nh to opoio parleipetai 
         int blocksTranfered=0;
         int blockWritten=0;
         
@@ -167,17 +191,11 @@ public class JoinCost {
         blocksTranfered+= br+bs;
         //2nh factor is too small coresponding to br+bs,it can be ignored
         int diskSeeks = 2*((br/bb) + (bs/bb));
-        
-        //writting back output   how much???? calculate distinct values ktl
-        blockWritten += br+bs;
-         
+        hashAnnotation.add("hash join");  
          
         return (diskSeeks*latency + blockWritten*penaltyTime + blocksTranfered*tranferTime); 
          
     }
-    
-    
-    
     
     
     //tha xrhsimopoihthei??? 
