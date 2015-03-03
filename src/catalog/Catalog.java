@@ -75,6 +75,7 @@ public class Catalog {
         String del4 = "\\(|\\)|,";
         String del5 = ",";
         String del6 = "\\(|\\)";
+        String del7 = ":|,";
         String []temp = null;
         String []temp2 = null;
         String []temp3 = null;
@@ -84,6 +85,7 @@ public class Catalog {
         Map<String,IndexInfo> secondaryIndex = null;
         Map<String,ForeignIndexInfo> foreignIndex = null;
         String indexNameStr = null;
+        ArrayList <String> key = null;
         
         
         BufferedReader br = new BufferedReader(new FileReader(dbFile));
@@ -120,6 +122,21 @@ public class Catalog {
                 }
             }
             
+            //take primary key
+            if ((line = br.readLine()) != null){
+                key = new ArrayList <String>();
+                if (line.contains(",")){
+                    temp = line.split(del7);
+                    for ( int i = 1 ; i < temp.length ; i ++ ){
+                        key.add(temp[i]);
+                    }
+                }
+                else{
+                    temp = line.split(del);
+                    key.add(temp[1]);
+                }
+                tabInfo.setKey(key);
+            }
             //take primary index
             if ((line = br.readLine()) != null){
                 temp = line.split(del3);

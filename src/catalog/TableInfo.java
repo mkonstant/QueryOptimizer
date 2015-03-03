@@ -6,6 +6,7 @@
 
 package catalog;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ public class TableInfo {
     int carinality = -1;
     int numberOfTuples = -1;
     int sizeOfTuple = -1;
+    ArrayList <String> key = null;
     
     
     
@@ -29,6 +31,11 @@ public class TableInfo {
         IndexInfo indexInfo = new IndexInfo();
     }
 
+    public ArrayList <String> getKey() {
+        return key;
+    }
+
+    
     
     public int getSizeOfTuple() {
         return sizeOfTuple;
@@ -62,6 +69,11 @@ public class TableInfo {
         return numberOfTuples;
     }
 
+    public void setKey(ArrayList <String> key) {
+        this.key = key;
+    }
+
+    
     
     public void setSizeOfTuple(int sizeOfTuple) {
         this.sizeOfTuple = sizeOfTuple;
