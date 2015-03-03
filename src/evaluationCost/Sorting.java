@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package evaluation;
+package evaluationCost;
 
 /**
  *
@@ -23,7 +23,9 @@ public class Sorting {
         diskSeeks =  (int) (2*(br/M)+ (br/bb)*(2*(Math.log10(br/M)/Math.log10(M-1))+1));
     }
     
-    public void mergeJoin(){
+    public void mergeJoin(){ //relations have to be already sorted
+        
+       
          blocksTranfered = br+bs;
          diskSeeks = (br/bb) + (bs/bb);
     }
