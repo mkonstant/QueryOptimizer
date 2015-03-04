@@ -5,6 +5,7 @@
  */
 package evaluationCost;
 
+import catalog.SystemInfo;
 import java.util.ArrayList;
 
 /**
@@ -24,6 +25,23 @@ public class ProjectionCost {
     private ArrayList<String> annotation = new ArrayList<String>();
     private ArrayList<String> sortedAnnotation = new ArrayList<String>();
     private ArrayList<String> hasedAnnotation = new ArrayList<String>();
+    private boolean sorted=false;
+
+    public ProjectionCost(SystemInfo si, int nr, int sizeOfTupple){
+        tranferTime = si.getTransferTime();
+        penaltyTime = si.getTimeForWritingPages();
+        latency = si.getLatency();
+        M = si.getNumOfBuffers();
+        bb= M/2;
+        br = (nr*sizeOfTupple) / si.getSizeOfBuffer();
+        this.nr=nr;
+    }
+    
+    
+    public boolean getSorted(){
+        return sorted;
+    }
+    
     
     
     public String getAnnotation(){
@@ -40,18 +58,28 @@ public class ProjectionCost {
     }
     
     //no sort , no hash, provide dublicates
-    public void computeCost(){
-        double costSort = dublicateSort();
-        double costHash = dublicateHash(true);
-        
-        if(costHash> costSort){
-            annotation = sortedAnnotation;
-            cost = costSort;
+    public void computeCost(boolean primary){
+        if(primary){ //projection sto primary key, no duplicates
+            cost = br*tranferTime + (br/bb)*latency;
+            annotation.add("Just projection,No duplicates");
         }
         else{
-            annotation = hasedAnnotation;
-            cost = costHash;
+            
+            double costSort = dublicateSort();
+            double costHash = dublicateHash(false);
+        
+            if(costHash> costSort){
+                annotation = sortedAnnotation;
+                cost = costSort;
+                sorted=true;
+            }
+            else{
+                annotation = hasedAnnotation;
+                cost = costHash;
+            }
         }
+        
+
         //return br*tranferTime + (br/bb)*latency;
     }
     
@@ -84,5 +112,8 @@ public class ProjectionCost {
          
         return (diskSeeks*latency + blockWritten*penaltyTime + blocksTranfered*tranferTime); 
     }
+    
+    
+    
     
 }

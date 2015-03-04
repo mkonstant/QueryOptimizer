@@ -1,0 +1,31 @@
+dbname:grocerydb
+
+table:chekingaccounts
+attr:account_number int 2 1000 100,branch_name varchar(50) aaa www 50,branch_city varchar(50) aaa www 50,customer_id int 2 1000 100
+primaryKey:account_number
+primaryIndex:account_number B+tree 200 3
+secondaryIndex:customer_name B+tree 100 4
+foreignIndex:customer_id customer(id) staticHashing 200
+cardinality:4
+sizeOfTuple:104
+numberOfTuples:1000
+
+table:savingaccounts
+attr:account_number int 2 1000 100,branch_name varchar(50) aaa www 50,branch_city varchar(50) aaa www 50,customer_id int 2 1000 100
+primaryKey:account_number
+primaryIndex:account_number B+tree 200 3
+secondaryIndex:customer_name B+tree 100 4
+foreignIndex:customer_id customer(id) staticHashing 200
+cardinality:4
+sizeOfTuple:104
+numberOfTuples:1000
+
+table:customer
+attr:id int 2 1000 100,branch_name varchar(50) aaa www 50,branch_city varchar(50) aaa www 50,customer_name varchar(50) aaa www 50
+primaryKey:id
+primaryIndex:id Extensible-Hashing 200
+secondaryIndex:customer_name B+Tree 100 2
+foreignIndex:
+cardinality:4
+sizeOfTuple:18
+numberOfTuples:1000

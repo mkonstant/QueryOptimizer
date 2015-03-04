@@ -62,7 +62,6 @@ public class JoinCost {
             annotation = indexedNestedAnnotation;
             cost = costIndexedBlockNested;
         }
-        
         //return br*tranferTime + (br/bb)*latency;
     }
     
@@ -143,7 +142,7 @@ public class JoinCost {
         
         //for each block of outer 1 seek and 1 block transfer + for each tupple selection on inner indexed
         double cost = outerR *(latency+tranferTime) + outerS *selectionCost;
-         indexedNestedAnnotation.add("indexed block Nested loop join");
+        indexedNestedAnnotation.add("indexed block Nested loop join");
         
         return cost;
          

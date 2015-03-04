@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import myExceptions.ProjectionAttributeException;
+import myExceptions.RelationException;
 import operations.Operator;
 
 /**
@@ -33,7 +35,7 @@ import operations.Operator;
 public class QuerryOptimizer {
 
     static ArrayList<Operator> operations;
-   
+    static Catalog catalog;
     
     /**
      * @param args the command line arguments
@@ -49,6 +51,14 @@ public class QuerryOptimizer {
         dbFile = args[0];
         sysFile = args[1];
         
+        
+        catalog = new Catalog(dbFile,sysFile);
+        catalog.processingDataBaseFile();
+        catalog.processingSystemInfoFile();
+        
+        Map<String,TableInfo> table = catalog.getCatalog();
+        
+         
         //printCatalog(dbFile,sysFile);
         
         FileInputStream fis = null;
@@ -71,9 +81,36 @@ public class QuerryOptimizer {
                 Logger.getLogger(QuerryOptimizer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-                    
-       printPLan();
+        try{
+            processPlan();
+        }
+        catch(RelationException ex){
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
+        catch(ProjectionAttributeException ex){
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
+        printPLan();
         
+    }
+    
+    
+    public static void processPlan(){
+       // ArrayList<Operator> op  =operations;
+        Operator temp;
+        for (int i = 0; i < operations.size(); i++)
+        {
+            
+            temp = operations.get(i);
+            temp.setCatalog(catalog);
+            temp.computeCost();
+            
+           
+
+	}
+    
     }
     
         
@@ -98,7 +135,8 @@ public class QuerryOptimizer {
             tempR2=temp.getRelationPrint2Lenght();
             tempC=temp.getConditionsPrintLenght();
             tempA=temp.getAttributesPrintLenght();
-            
+            tempAn=temp.getAnnotationLenght();
+                    
             if(tempR1>maxR1)
                 maxR1=tempR1;
             if(tempR2>maxR2)
@@ -107,6 +145,8 @@ public class QuerryOptimizer {
                 maxC=tempC;
             if(tempA>maxA)
                 maxA=tempA;
+            if(tempAn>maxAn)
+                maxAn=tempAn;
 
 	}
         

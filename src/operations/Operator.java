@@ -5,6 +5,8 @@
  */
 package operations;
 
+import catalog.Catalog;
+import catalog.TableInfo;
 import java.util.ArrayList;
 
 /**
@@ -20,10 +22,14 @@ public abstract class Operator {
     protected String attributesPrint="";
     protected String conditionsPrint="";
     protected String annotation="";
+    protected Catalog catalog;
+    
     
     protected int b1,n1;  
     protected int b2,n2;
     protected int bout, nout;
+    
+    protected TableInfo outTable;
     
 
     public void setOperation(String op){};
@@ -43,6 +49,15 @@ public abstract class Operator {
     public void AddCondition(String attr1, String attr2, String action){};
     public ArrayList<Condition> getConditions(){return null;};
     protected void prePrint(){};
+    public void computeCost(){};
+    
+    public void setCatalog(Catalog c){
+        catalog = c;
+    }
+    
+    public TableInfo getOutTable(){
+        return outTable;
+    }
     
     public int getRelationPrint1Lenght(){
         return relationPrint1.length();
@@ -59,6 +74,11 @@ public abstract class Operator {
     public int getConditionsPrintLenght(){
         return conditionsPrint.length();
     }
+    
+    public int getAnnotationLenght(){
+        return annotation.length();
+    }
+    
     
     public void setOpName(String name){
         prePrint();

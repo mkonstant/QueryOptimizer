@@ -59,6 +59,6 @@ public class Attributes {
     public int getDistinctValues() {
         return distinctValues;
     }
-    
-    
+
+
 }

@@ -24,6 +24,7 @@ public class TableInfo {
     int sizeOfTuple = -1;
     ArrayList <String> key = null;
     
+    boolean sorted=false; //only for output table f operations
     
     
     public TableInfo(){
@@ -31,6 +32,14 @@ public class TableInfo {
         IndexInfo indexInfo = new IndexInfo();
     }
 
+    public void setSorted(boolean s){
+        sorted=s;
+    }
+    
+    public boolean getSorted(){
+        return sorted;
+    }
+    
     public ArrayList <String> getKey() {
         return key;
     }

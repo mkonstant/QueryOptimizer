@@ -5,6 +5,14 @@
  */
 package operations;
 
+import catalog.Attributes;
+import catalog.TableInfo;
+import evaluationCost.ProjectionCost;
+import evaluationCost.SetOperationCost;
+import java.util.ArrayList;
+import java.util.Map;
+import myExceptions.RelationException;
+
 /**
  *
  * @author michalis
@@ -20,6 +28,10 @@ public  class SetOp extends Operator{
     String relation2= null;
     Operator relationOp2=null;
     
+    boolean s1=false,s2=false,h1=false,h2=false;
+    
+    SetOperationCost setCost;
+    TableInfo tInfo1,tInfo2;
     
     @Override
     public void setOperation(String op){
@@ -89,6 +101,87 @@ public  class SetOp extends Operator{
         else
             relationPrint2+= relationOp2.getOpName();
     
+    }
+    
+    @Override
+    public void computeCost(){
+        outTable = new TableInfo();
+        unionCompatible();
+        
+        Map<String,TableInfo> table = catalog.getCatalog();
+        
+        setCost = new SetOperationCost(catalog.getSystemInfo(), tInfo1.getNumberOfTuples(),tInfo1.getSizeOfTuple(),
+                                        tInfo2.getNumberOfTuples(),tInfo2.getSizeOfTuple());
+        setCost.computeCost(s1,s2,h1,h2);
+        outTable.setSorted(setCost.getSorted());  //if output is sorted
+        annotation = setCost.getAnnotation();
+    }
+    
+    
+    public void createOutput(){
+        
+    }
+    
+    
+    public void unionCompatible(){
+        Map<String,TableInfo> table = catalog.getCatalog();
+        
+        int n1=0,n2=0;
+        ArrayList<String> prKey;
+       
+        
+       
+        if(relation1!=null)//i have to deal with a database relation
+        {
+           if(table.containsKey(relation1))//error is not exists
+           {
+               tInfo1 = table.get(relation1);
+           }
+           else{
+               throw new RelationException(relation1);
+           }
+        }
+        else{//i have to deal with an operation's output
+            tInfo1 = relationOp1.getOutTable();
+        }
+        if(relation2!=null)//i have to deal with a database relation
+        {
+           if(table.containsKey(relation2))//error is not exists
+           {
+               tInfo2 = table.get(relation2);   
+           }
+           else{
+               throw new RelationException(relation2);
+           }
+        }
+        else{//i have to deal with an operation's output
+            tInfo2 = relationOp2.getOutTable();
+        }
+        
+        outTable.setAttributes(tInfo1.getAttributes());
+        outTable.setCarinality(tInfo1.getCarinality());
+        outTable.setSizeOfTuple(tInfo1.getSizeOfTuple());
+        outTable.setKey(tInfo1.getKey());
+        n1 = tInfo1.getNumberOfTuples();
+        n2 = tInfo2.getNumberOfTuples();       
+        
+        //change it for each operation
+        outTable.setNumberOfTuples(n1+n2);
+        
+        //in order to perform setoperation relations should have the same attributes   
+        Map<String,Attributes> attributes1 = tInfo1.getAttributes();
+        Map<String,Attributes> attributes2 = tInfo2.getAttributes();
+        if(attributes1.size()!=attributes2.size())
+            throw new RelationException("Relations have not the same attributes to perform '"+operation+"' operation");
+        
+        for(String key1 : attributes1.keySet()){
+            if(!attributes2.containsKey(key1))
+                throw new RelationException("Relations have not the same attributes to perform '"+operation+"' operation");
+            else if(!attributes1.get(key1).getType().equals(attributes2.get(key1).getType()))
+                throw new RelationException("Relations have not the same attributes to perform '"+operation+"' operation");              
+        }
+        
+        
     }
 
     

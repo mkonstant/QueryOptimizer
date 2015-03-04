@@ -5,7 +5,15 @@
  */
 package operations;
 
+import catalog.Attributes;
+import catalog.Catalog;
+import catalog.TableInfo;
+import evaluationCost.ProjectionCost;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import myExceptions.ProjectionAttributeException;
+import myExceptions.RelationException;
 
 /**
  *
@@ -17,6 +25,7 @@ public  class Projection extends Operator{
     String relation1 = null;
     Operator relationOp1=null;
     ArrayList<String> attrs = null;
+    ProjectionCost prCost ;
 
     public Projection() {
         operation = "proj";
@@ -64,7 +73,6 @@ public  class Projection extends Operator{
     
     @Override
     protected void prePrint(){
-        
          //add conditions 
         attributesPrint="";
         for (int i = 0; i < attrs.size(); i++)
@@ -80,10 +88,76 @@ public  class Projection extends Operator{
             relationPrint1+=relation1;
         else
             relationPrint1+= relationOp1.getOpName();
-        
-        
-    
     }
    
+    
+    @Override
+    public void computeCost(){
+        outTable = new TableInfo();
+        Map<String,TableInfo> table = catalog.getCatalog();
+        TableInfo tInfo=null;
+        boolean projOnkey=true;
+       
+        ArrayList<String> prKey;
+       
+
+               
+        if(relation1!=null)//i have to deal with a database relation
+        {
+           if(table.containsKey(relation1))//error is not exists
+           {
+               tInfo = table.get(relation1);
+               prKey = tInfo.getKey();
+               for(int i=0;i<prKey.size();i++){
+                   if(!attrs.contains(prKey.get(i)))
+                       projOnkey = false;
+               }             
+               prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo.getNumberOfTuples(),tInfo.getSizeOfTuple());
+               
+           }
+           else{
+                throw new RelationException("Relation '"+relation1+"' does not exist.");
+           }
+        }
+        else{//i have to deal with an operation's output
+            tInfo = relationOp1.getOutTable();
+            prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo.getNumberOfTuples(),tInfo.getSizeOfTuple());
+            projOnkey = tInfo.getSorted();
+        }
+        
+        //check if projection attribute exist in relation
+        Map<String,Attributes> attributes = tInfo.getAttributes();
+        Map<String,Attributes> outAttributes = new HashMap<String,Attributes>();
+        
+        for(int i=0; i<attrs.size();i++){
+            if(!attributes.containsKey(attrs.get(i)))
+                throw new ProjectionAttributeException(attrs.get(i));
+            else
+                outAttributes.put(attrs.get(i), attributes.get(attrs.get(i)));       
+        }
+        
+        
+        prCost.computeCost(projOnkey);
+        annotation = prCost.getAnnotation();
+        
+        //must compute new tupple size...folloing is too much
+        outTable.setSizeOfTuple(tInfo.getSizeOfTuple());
+             
+        
+        
+        outTable.setAttributes(outAttributes);
+        outTable.setKey(tInfo.getKey());
+        //overestimation if duplicate elimination is performed
+        outTable.setCarinality(attrs.size());
+        outTable.setNumberOfTuples(tInfo.getSizeOfTuple());
+        outTable.setSorted(prCost.getSorted());  //if output is sorted
+       
+       
+        
+       
+    
+    
+    }
+    
    
 }

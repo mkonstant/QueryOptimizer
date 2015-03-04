@@ -5,6 +5,7 @@
  */
 package evaluationCost;
 
+import catalog.SystemInfo;
 import java.util.ArrayList;
 
 /**
@@ -26,6 +27,20 @@ public class SetOperationCost {
     private ArrayList<String> annotation = new ArrayList<String>();
     private ArrayList<String> sortedAnnotation = new ArrayList<String>();
     private ArrayList<String> hasedAnnotation = new ArrayList<String>();
+    private boolean sorted=false;
+    
+    public SetOperationCost(SystemInfo si, int nr, int nrSize, int ns, int nsSize) {
+        tranferTime = si.getTransferTime();
+        penaltyTime = si.getTimeForWritingPages();
+        latency = si.getLatency();
+        M = si.getNumOfBuffers();
+        bb= M/2;
+        br = (nr*nrSize) / si.getSizeOfBuffer();
+        this.nr=nr;
+        bs = (ns*nsSize) / si.getSizeOfBuffer();
+        this.ns=ns;
+    }
+    
     
     public String getAnnotation(){
         String temp="";
@@ -33,7 +48,7 @@ public class SetOperationCost {
         for(int i=0;i<annotation.size();i++)
         {
             if(i>0)
-                temp+="->";
+                temp+=" -> ";
             temp += annotation.get(i);
             
         }
@@ -41,18 +56,23 @@ public class SetOperationCost {
     }
     
     
-    public void computeCost(){
-        double costSort = sortedSets(true, true);
-        double costHash = hashedSets(true, true);
+    public void computeCost(boolean s1, boolean s2, boolean h1, boolean h2){
+        double costSort = sortedSets(s1,s2);
+        double costHash = hashedSets(h1,h2);
         
         if(costHash> costSort){
             annotation = sortedAnnotation;
             cost = costSort;
+            sorted=true;
         }
         else{
             annotation = hasedAnnotation;
             cost = costHash;
         }
+    }
+    
+    public boolean getSorted(){
+        return sorted;
     }
     
     public double sortedSets(boolean sorted1 , boolean sorted2){
