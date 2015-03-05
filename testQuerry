@@ -1,1 +1,1 @@
-join[savingaccounts.account_number=account_number](savingaccounts)(chekingaccounts)
+join[savingaccounts.account_number=account_number](savingaccounts)(proj[account_number,branch_name](chekingaccounts))

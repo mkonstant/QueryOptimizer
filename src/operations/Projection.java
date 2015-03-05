@@ -140,12 +140,13 @@ public  class Projection extends Operator{
         prCost.computeCost(projOnkey);
         annotation = prCost.getAnnotation();
         
-        //must compute new tupple size...folloing is too much
-        outTable.setSizeOfTuple(tInfo.getSizeOfTuple());
-             
+        
         
         
         outTable.setAttributes(outAttributes);
+        //compute new tupple size from the type of Atributes given 
+        outTable.setSizeOfTuple();
+             
         outTable.setKey(tInfo.getKey());
         //overestimation if duplicate elimination is performed
         outTable.setCarinality(attrs.size());

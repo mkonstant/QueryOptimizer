@@ -87,6 +87,24 @@ public class TableInfo {
     public void setSizeOfTuple(int sizeOfTuple) {
         this.sizeOfTuple = sizeOfTuple;
     }
+    
+    //use for output operation tableInfo to compute new tuppleSIze
+    public void setSizeOfTuple() {
+        int temp=0;
+        String type;
+        for(String key1 : attributes.keySet()){
+                type = attributes.get(key1).getType();
+                if(type.equals("int") || type.equals("flaot"))
+                    temp+= 4;
+                else if(type.endsWith("double"))
+                    temp+=8;
+                else if(type.startsWith("varchar")){
+                    temp+= Integer.parseInt(type.split("\\(")[1].split("\\)")[0]);
+                }
+        }
+        this.sizeOfTuple = temp;
+    }
+    
 
     public void setAttributes(Map<String, Attributes> attributes) {
         this.attributes = attributes;

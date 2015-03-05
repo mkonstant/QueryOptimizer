@@ -11,6 +11,7 @@ import catalog.TableInfo;
 import evaluationCost.JoinCost;
 import evaluationCost.SetOperationCost;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.Vector;
@@ -249,27 +250,10 @@ public  class Join extends Operator{
         else{//i have to deal with an operation's output
             tInfo2 = relationOp2.getOutTable();
         }
-        
-        outTable.setAttributes(tInfo1.getAttributes());
-        //join attributes will be common
-        outTable.setCarinality(tInfo1.getCarinality()+tInfo2.getCarinality()-conditions.size());
-        //overestimation ... remove size of join attribute
-        outTable.setSizeOfTuple(tInfo1.getSizeOfTuple()+tInfo2.getSizeOfTuple());
-        outTable.setKey(tInfo1.getKey());
-        n1 = tInfo1.getNumberOfTuples();
-        n2 = tInfo2.getNumberOfTuples();       
-        
-        //overestimation...max number of tupples the max of the two
-        if(n1>n2)
-            outTable.setNumberOfTuples(n1);
-        else
-            outTable.setNumberOfTuples(n2);
-
-        
+                
         //in order to perform join,join attributes should be same type   
         Map<String,Attributes> attributes1 = tInfo1.getAttributes();
         Map<String,Attributes> attributes2 = tInfo2.getAttributes();
-        
         
         for(int i=0;i<conditions.size();i++){
             String type1;
@@ -304,10 +288,38 @@ public  class Join extends Operator{
                 throw new JoinAttributeTypeException(c.getAttr1(),c.getAttr2());
         }
         
+        //find the set of attributes of output operation
+        Map<String,Attributes> outAttributes = new HashMap<String,Attributes>();
+        for(String key1 : attributes1.keySet()){
+            outAttributes.put(key1, attributes1.get(key1));
+        }
+        for(String key1 : attributes2.keySet()){
+            String rel="";
+            if(relation2!=null){
+                rel = relation2;
+            }
+            if(!(conditions.contains(key1) || conditions.contains(rel+"."+key1)))
+                outAttributes.put(key1, attributes2.get(key1));
+        }
         
         
+        outTable.setAttributes(outAttributes);
+        //join attributes will be common
+        outTable.setCarinality(outAttributes.size());
+        //compute new tupple size from the type of Atributes given 
+        outTable.setSizeOfTuple();
+        outTable.setKey(tInfo1.getKey());
+        n1 = tInfo1.getNumberOfTuples();
+        n2 = tInfo2.getNumberOfTuples();       
+        
+        //overestimation...max number of tupples the max of the two
+        if(n1>n2)
+            outTable.setNumberOfTuples(n1);
+        else
+            outTable.setNumberOfTuples(n2);
         
     }
+        
 
      
    
