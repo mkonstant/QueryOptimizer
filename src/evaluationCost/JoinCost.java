@@ -5,6 +5,7 @@
  */
 package evaluationCost;
 
+import catalog.SystemInfo;
 import java.util.ArrayList;
 
 /**
@@ -22,18 +23,31 @@ public class JoinCost {
     private double penaltyTime;
     private double latency;
     private double cost;
-    private ArrayList<String> annotation = new ArrayList<String>();
+    private ArrayList<String> annotation ;
     private ArrayList<String> hashAnnotation = new ArrayList<String>();
     private ArrayList<String> mergeAnnotation = new ArrayList<String>();
     private ArrayList<String> blockNestedAnnotation = new ArrayList<String>();
     private ArrayList<String> indexedNestedAnnotation = new ArrayList<String>();
+    private boolean sorted=true;
+    
+    public JoinCost(SystemInfo si, int nr, int nrSize, int ns, int nsSize) {
+        tranferTime = si.getTransferTime();
+        penaltyTime = si.getTimeForWritingPages();
+        latency = si.getLatency();
+        M = si.getNumOfBuffers();
+        bb= M-2;
+        br = (nr*nrSize) / si.getSizeOfBuffer();
+        this.nr=nr;
+        bs = (ns*nsSize) / si.getSizeOfBuffer();
+        this.ns=ns;
+    }
     public String getAnnotation(){
         String temp="";
         
         for(int i=0;i<annotation.size();i++)
         {
             if(i>0)
-                temp+="->";
+                temp+=" -> ";
             temp += annotation.get(i);
             
         }
@@ -41,11 +55,11 @@ public class JoinCost {
     }
     
 
-    public void computeCost(){
-        double costMerge = mergeJoin(true, true);
-        double costHash = hashJoin(true, true);
+    public void computeCost(boolean s1,boolean s2, boolean h1, boolean h2, boolean i1,boolean i2){
+        double costMerge = mergeJoin(s1,s2);
+        double costHash = hashJoin(h1,h2);
         double costBlockNested  = blockNestedJoin();
-        double costIndexedBlockNested = indexedBlockNestedJoin(true, true);
+        //double costIndexedBlockNested = indexedBlockNestedJoin(i1, i2);
         
         cost= costMerge;
         annotation = mergeAnnotation;
@@ -53,16 +67,23 @@ public class JoinCost {
         if(costHash< cost){
             annotation = hashAnnotation;
             cost = costHash;
+            sorted=false;
         }
-        if(costBlockNested< cost){
+       if(costBlockNested< cost){
             annotation = blockNestedAnnotation;
             cost = costBlockNested;
+            sorted=false;
         }
-        if(costIndexedBlockNested< cost){
+       /* if(costIndexedBlockNested< cost){
             annotation = indexedNestedAnnotation;
             cost = costIndexedBlockNested;
-        }
+            sorted=false;
+        }*/
         //return br*tranferTime + (br/bb)*latency;
+    }
+    
+    public boolean getSorted(){
+        return sorted;
     }
     
     public double blockNestedJoin(){
@@ -99,7 +120,7 @@ public class JoinCost {
         
         blockNestedAnnotation.add("block Nested loop join");
          
-         return (diskSeeks*latency + blocksTranfered*tranferTime ); 
+        return (diskSeeks*latency + blocksTranfered*tranferTime ); 
          
     }
     
@@ -153,10 +174,19 @@ public class JoinCost {
       
         //performing sorting
         double sortTime=0;
-        if(!sorted1)
+        if(!sorted1){
+            mergeAnnotation.add("sort relation1");
             sortTime= SortCost.externalSortCost(br, M, latency, penaltyTime,  tranferTime);
-        if(!sorted2)
+        }
+        else
+            mergeAnnotation.add("Use sorted relation1");
+        if(!sorted2){
+            mergeAnnotation.add("sort relation2"); 
             sortTime= SortCost.externalSortCost(bs, M, latency, penaltyTime,  tranferTime);
+
+        }
+        else
+            mergeAnnotation.add("Use sorted relation2");
         
         //performing join
          int blocksTranfered = br+bs;
@@ -168,23 +198,30 @@ public class JoinCost {
          
     }
     
-    public double hashJoin(boolean partitioned1, boolean partinioned2){ //sunolika 3(br+bs)+ nh to opoio parleipetai 
+    public double hashJoin(boolean partitioned1, boolean partitioned2){ //sunolika 3(br+bs)+ nh to opoio parleipetai 
         int blocksTranfered=0;
         int blockWritten=0;
         
         //partitioning relations
         if(!partitioned1){
+            hashAnnotation.add("partition relation1");
             //reading for partitioning
             blocksTranfered = br;
             //writting after partitioning
             blockWritten = br;
         }
-        if(!partitioned1){
+        else
+            hashAnnotation.add("use hashIndex on relation1");
+        if(!partitioned2){
+            hashAnnotation.add("partition relation2");
             //reading for partitioning
             blocksTranfered += bs;
             //writting after partitioning
             blockWritten += bs;
         }
+        else
+            hashAnnotation.add("use hashIndex on relation2");
+       
         
         //reading for join
         blocksTranfered+= br+bs;

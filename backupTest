@@ -5,3 +5,6 @@ proj[customername]
 		)
 	)
 
+
+
+union(savingaccounts)(proj[account_number,branch_name,branch_city,customer_id](chekingaccounts))

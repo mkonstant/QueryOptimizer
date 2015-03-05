@@ -1,3 +1,1 @@
-
-
-union(savingaccounts)(proj[account_number,branch_name,branch_city,customer_id](chekingaccounts))
+join[savingaccounts.account_number=account_number](savingaccounts)(chekingaccounts)

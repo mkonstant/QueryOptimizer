@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import myExceptions.JoinAttributeException;
+import myExceptions.JoinAttributeTypeException;
 import myExceptions.ProjectionAttributeException;
 import myExceptions.RelationException;
 import operations.Operator;
@@ -89,6 +91,13 @@ public class QuerryOptimizer {
             System.exit(1);
         }
         catch(ProjectionAttributeException ex){
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }catch(JoinAttributeException ex){
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
+        catch(JoinAttributeTypeException ex){
             System.err.println(ex.getMessage());
             System.exit(1);
         }

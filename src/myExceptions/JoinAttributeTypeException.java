@@ -9,12 +9,12 @@ package myExceptions;
  *
  * @author michalis
  */
-public class ProjectionAttributeException extends RuntimeException {
+public class JoinAttributeTypeException extends RuntimeException {
     String message;
     
-    public ProjectionAttributeException(String string) {
+    public JoinAttributeTypeException(String string1,String string2) {
         
-        message = "Relation does not contain attribute '"+string+"' to perform projection on.";
+        message = "Join attributes '"+string1+"' and '"+string2+"' have not the same type.";
     }
 
     @Override

@@ -61,6 +61,24 @@ public class IndexInfo {
      public int getHeight() {
         return height;
     }
+     
+    public boolean equalsKey( ArrayList<String> tocheck) {
+        if(tocheck.size()!=indexName.size())
+            return false;
+        for(int i=0; i<indexName.size(); i++){
+            if(!tocheck.contains(indexName.get(i)))
+                return false;
+        }
+        return true;
+    }
+    
+    public boolean equalsKey( String tocheck) {
+        if(indexName.size() !=1)
+            return false;
+        if(!indexName.get(0).equals(tocheck))
+            return false;
+        return true;
+    }
     
      
 }
