@@ -107,11 +107,8 @@ public  class Projection extends Operator{
            if(table.containsKey(relation1))//error is not exists
            {
                tInfo = table.get(relation1);
-               prKey = tInfo.getKey();
-               for(int i=0;i<prKey.size();i++){
-                   if(!attrs.contains(prKey.get(i)))
-                       projOnkey = false;
-               }             
+               if(!tInfo.getPrimaryIndex().equalsKey(attrs))
+                    projOnkey = false;       
                prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo.getNumberOfTuples(),tInfo.getSizeOfTuple());
                
            }

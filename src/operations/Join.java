@@ -308,7 +308,7 @@ public  class Join extends Operator{
         outTable.setCarinality(outAttributes.size());
         //compute new tupple size from the type of Atributes given 
         outTable.setSizeOfTuple();
-        outTable.setKey(tInfo1.getKey());
+        //outTable.setKey(tInfo1.getKey());
         n1 = tInfo1.getNumberOfTuples();
         n2 = tInfo2.getNumberOfTuples();       
         

@@ -7,7 +7,6 @@ package operations;
 
 import catalog.Attributes;
 import catalog.TableInfo;
-import evaluationCost.ProjectionCost;
 import evaluationCost.SetOperationCost;
 import java.util.ArrayList;
 import java.util.Map;

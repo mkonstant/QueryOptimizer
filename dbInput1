@@ -4,8 +4,8 @@ table:chekingaccounts
 attr:account_number int 2 1000 100,branch_name varchar(50) aaa www 50,branch_city varchar(50) aaa www 50,customer_id int 2 1000 100
 primaryKey:account_number
 primaryIndex:account_number B+tree 200 3
-secondaryIndex:account_number staticHashing 100
-foreignIndex:customer_id customer(id) staticHashing 200
+secondaryIndex:account_number staticHashing 100 5
+foreignIndex:customer_id customer(id) staticHashing 200 5
 cardinality:4
 sizeOfTuple:104
 numberOfTuples:100000
@@ -14,8 +14,8 @@ table:savingaccounts
 attr:account_number int 2 1000 100,branch_name varchar(50) aaa www 50,branch_city varchar(50) aaa www 50,customer_id int 2 1000 100
 primaryKey:account_number
 primaryIndex:account_number B+tree 200 3
-secondaryIndex:account_number staticHashing 100
-foreignIndex:customer_id customer(id) staticHashing 200
+secondaryIndex:account_number staticHashing 100 3
+foreignIndex:customer_id customer(id) staticHashing 200 4
 cardinality:4
 sizeOfTuple:104
 numberOfTuples:100000
@@ -23,7 +23,7 @@ numberOfTuples:100000
 table:customer
 attr:id int 2 1000 100,branch_name varchar(50) aaa www 50,branch_city varchar(50) aaa www 50,customer_name varchar(50) aaa www 50
 primaryKey:id
-primaryIndex:id Extensible-Hashing 200
+primaryIndex:id Extensible-Hashing 200 4
 secondaryIndex:customer_name B+Tree 100 2
 foreignIndex:
 cardinality:4
