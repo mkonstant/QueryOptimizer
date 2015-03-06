@@ -79,4 +79,13 @@ public class Selection extends Operator {
     
     }
     
+    @Override
+    public void computeCost(){
+    
+    }
+    
+    public void checkVariables(){
+    
+    }
+    
 }

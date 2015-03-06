@@ -16,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author jimakos
  */
-public class Select {
+public class SelectCost {
     double cost = -1;
     ArrayList<String> selectFields = null;
     TableInfo tabinfo = null;
@@ -28,7 +28,7 @@ public class Select {
     int br = -1;
     
 
-    public Select(ArrayList<String> selectFields, TableInfo tabInfo, boolean symbol){
+    public SelectCost(ArrayList<String> selectFields, TableInfo tabInfo, boolean symbol){
         this.selectFields = selectFields;
         this.tabinfo = tabInfo;
         this.symbol = symbol;
@@ -36,7 +36,7 @@ public class Select {
     
     
     public void calculateVariables(){
-    
+        
     }
     
     
