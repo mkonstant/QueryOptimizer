@@ -56,14 +56,14 @@ public class SelectCost {
     
     public double treePrimaryEqualWithKey(){
         
-        cost = ( h + 1 ) * ( tS + tT );
+        //cost = ( h + 1 ) * ( tS + tT );
         
         return cost;
     }
     
     public double treePrimaryEqualNonKey(){
     
-        cost = h * ( tT + tS ) + b *tT;
+        //cost = h * ( tT + tS ) + b *tT;
         
         return cost;
     }
@@ -80,14 +80,14 @@ public class SelectCost {
     
     public double treeSecondaryEqualWithKey(){
         
-        cost = ( h + 1 ) * ( tS + tT );
+        //cost = ( h + 1 ) * ( tS + tT );
         
         return cost;
     }
     
     public double treeSecondaryEqualNonKey(){
     
-        cost = ( h + n ) * ( tS + tT );
+        //cost = ( h + n ) * ( tS + tT );
         
         return cost;
     }
@@ -104,14 +104,14 @@ public class SelectCost {
     
     public double treePrimaryCompare(){
     
-        cost = h * ( tS + tT) + b * tT;
+        //cost = h * ( tS + tT) + b * tT;
         
         return cost;
     }
     
     public double treeSecondaryCompare(){
     
-        cost = ( h + n ) * ( tT + tS );
+        //cost = ( h + n ) * ( tT + tS );
         
         return cost;
     }

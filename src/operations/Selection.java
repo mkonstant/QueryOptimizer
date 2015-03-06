@@ -5,7 +5,10 @@
  */
 package operations;
 
+import catalog.TableInfo;
 import java.util.ArrayList;
+import java.util.Map;
+import myExceptions.SelectAttributeException;
 
 /**
  *
@@ -15,7 +18,8 @@ public class Selection extends Operator {
     
     //only one of the following 2 will be null
     String relation1 = null;
-    Operator relationOp1=null;
+    Operator relationOp1 = null;
+    TableInfo tabInfo = null; 
     
     ArrayList<Condition> conditions = null;
 
@@ -81,11 +85,59 @@ public class Selection extends Operator {
     
     @Override
     public void computeCost(){
-    
+        
+        this.checkVariables();
+        if ( this.complexCondtion == null ){
+            
+        }
+        else{
+        
+        }
+        
     }
     
-    public void checkVariables(){
-    
+    public void checkVariables( ){
+        Map<String,TableInfo> table = catalog.getCatalog();
+        tabInfo = null;
+        String del = "//.";
+        String []temp = null;
+        
+        
+        if(relation1!=null) {
+            tabInfo = table.get(relation1);
+        }
+        else{
+            tabInfo = relationOp1.getOutTable();
+        }
+        
+        if ( this.complexCondtion == null ){
+            if ( conditions.get(0).getAttr1().contains(".")){
+                temp = conditions.get(0).getAttr1().split(del);
+                if ( !tabInfo.getAttributes().containsKey(temp[1])){
+                    throw new SelectAttributeException(conditions.get(0).getAttr1());
+                }
+            }
+            else{
+                if ( !tabInfo.getAttributes().containsKey(conditions.get(0).getAttr1())){
+                    throw new SelectAttributeException(conditions.get(0).getAttr1());
+                }
+            }
+        }
+        else{
+            for ( int i = 0 ; i < conditions.size() ; i ++ ){
+                if ( conditions.get(i).getAttr1().contains(".")){
+                    temp = conditions.get(i).getAttr1().split(del);
+                    if ( !tabInfo.getAttributes().containsKey(temp[1])){
+                        throw new SelectAttributeException(conditions.get(i).getAttr1());
+                    }
+                }
+                else{
+                    if ( !tabInfo.getAttributes().containsKey(conditions.get(i).getAttr1())){
+                        throw new SelectAttributeException(conditions.get(i).getAttr1());
+                    }
+                }
+            }
+        }
     }
     
 }
