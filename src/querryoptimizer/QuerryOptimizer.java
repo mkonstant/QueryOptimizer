@@ -53,17 +53,19 @@ public class QuerryOptimizer {
         dbFile = args[0];
         sysFile = args[1];
         
+        //printCatalog(dbFile,sysFile);
         
         catalog = new Catalog(dbFile,sysFile);
         catalog.processingDataBaseFile();
         catalog.processingSystemInfoFile();
         
+       
         Map<String,TableInfo> table = catalog.getCatalog();
         
          
-        //printCatalog(dbFile,sysFile);
         
-       /* FileInputStream fis = null;
+        
+        FileInputStream fis = null;
         try {
             if(args.length == 0){
                 System.out.println("No input files given!");
@@ -101,7 +103,7 @@ public class QuerryOptimizer {
             System.err.println(ex.getMessage());
             System.exit(1);
         }
-        printPLan();*/
+        printPLan();
         
     }
     
