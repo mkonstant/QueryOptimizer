@@ -165,6 +165,9 @@ public class GJNoArguDepthFirst<R> implements GJNoArguVisitor<R> {
     * f4 -> "]"
     * f5 -> UDF()
     * f6 -> ( HavingClause() )?
+    * f7 -> "("
+    * f8 -> Relation()
+    * f9 -> ")"
     */
    public R visit(GroupingOp n) {
       R _ret=null;
@@ -175,6 +178,9 @@ public class GJNoArguDepthFirst<R> implements GJNoArguVisitor<R> {
       n.f4.accept(this);
       n.f5.accept(this);
       n.f6.accept(this);
+      n.f7.accept(this);
+      n.f8.accept(this);
+      n.f9.accept(this);
       return _ret;
    }
 
@@ -183,9 +189,6 @@ public class GJNoArguDepthFirst<R> implements GJNoArguVisitor<R> {
     * f1 -> "["
     * f2 -> Condition()
     * f3 -> "]"
-    * f4 -> "("
-    * f5 -> Relation()
-    * f6 -> ")"
     */
    public R visit(HavingClause n) {
       R _ret=null;
@@ -193,9 +196,6 @@ public class GJNoArguDepthFirst<R> implements GJNoArguVisitor<R> {
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
       return _ret;
    }
 
@@ -277,7 +277,7 @@ public class GJNoArguDepthFirst<R> implements GJNoArguVisitor<R> {
 
    /**
     * f0 -> Atom()
-    * f1 -> ( ComplexCondition() )?
+    * f1 -> ( ComplexCondition() )*
     */
    public R visit(Condition n) {
       R _ret=null;

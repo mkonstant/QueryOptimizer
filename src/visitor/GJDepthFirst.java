@@ -165,6 +165,9 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
     * f4 -> "]"
     * f5 -> UDF()
     * f6 -> ( HavingClause() )?
+    * f7 -> "("
+    * f8 -> Relation()
+    * f9 -> ")"
     */
    public R visit(GroupingOp n, A argu) {
       R _ret=null;
@@ -175,6 +178,9 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
       n.f4.accept(this, argu);
       n.f5.accept(this, argu);
       n.f6.accept(this, argu);
+      n.f7.accept(this, argu);
+      n.f8.accept(this, argu);
+      n.f9.accept(this, argu);
       return _ret;
    }
 
@@ -183,9 +189,6 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
     * f1 -> "["
     * f2 -> Condition()
     * f3 -> "]"
-    * f4 -> "("
-    * f5 -> Relation()
-    * f6 -> ")"
     */
    public R visit(HavingClause n, A argu) {
       R _ret=null;
@@ -193,9 +196,6 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
-      n.f4.accept(this, argu);
-      n.f5.accept(this, argu);
-      n.f6.accept(this, argu);
       return _ret;
    }
 
@@ -277,7 +277,7 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
 
    /**
     * f0 -> Atom()
-    * f1 -> ( ComplexCondition() )?
+    * f1 -> ( ComplexCondition() )*
     */
    public R visit(Condition n, A argu) {
       R _ret=null;

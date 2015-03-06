@@ -7,13 +7,13 @@ package syntaxtree;
 /**
  * Grammar production:
  * f0 -> Atom()
- * f1 -> ( ComplexCondition() )?
+ * f1 -> ( ComplexCondition() )*
  */
 public class Condition implements Node {
    public Atom f0;
-   public NodeOptional f1;
+   public NodeListOptional f1;
 
-   public Condition(Atom n0, NodeOptional n1) {
+   public Condition(Atom n0, NodeListOptional n1) {
       f0 = n0;
       f1 = n1;
    }

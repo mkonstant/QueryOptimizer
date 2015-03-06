@@ -143,6 +143,9 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
     * f4 -> "]"
     * f5 -> UDF()
     * f6 -> ( HavingClause() )?
+    * f7 -> "("
+    * f8 -> Relation()
+    * f9 -> ")"
     */
    public void visit(GroupingOp n, A argu) {
       n.f0.accept(this, argu);
@@ -152,6 +155,9 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
       n.f4.accept(this, argu);
       n.f5.accept(this, argu);
       n.f6.accept(this, argu);
+      n.f7.accept(this, argu);
+      n.f8.accept(this, argu);
+      n.f9.accept(this, argu);
    }
 
    /**
@@ -159,18 +165,12 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
     * f1 -> "["
     * f2 -> Condition()
     * f3 -> "]"
-    * f4 -> "("
-    * f5 -> Relation()
-    * f6 -> ")"
     */
    public void visit(HavingClause n, A argu) {
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       n.f2.accept(this, argu);
       n.f3.accept(this, argu);
-      n.f4.accept(this, argu);
-      n.f5.accept(this, argu);
-      n.f6.accept(this, argu);
    }
 
    /**
@@ -247,7 +247,7 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
 
    /**
     * f0 -> Atom()
-    * f1 -> ( ComplexCondition() )?
+    * f1 -> ( ComplexCondition() )*
     */
    public void visit(Condition n, A argu) {
       n.f0.accept(this, argu);

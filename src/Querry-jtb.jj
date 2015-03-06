@@ -298,6 +298,11 @@ GroupingOp GroupingOp() :
    UDF n12;
    NodeOptional n13 = new NodeOptional();
    HavingClause n14;
+   NodeToken n15;
+   Token n16;
+   Relation n17;
+   NodeToken n18;
+   Token n19;
 
    
 }
@@ -321,8 +326,11 @@ GroupingOp GroupingOp() :
       n14=HavingClause()
       { n13.addNode(n14); }
    )?
+   n16="(" { n15 = JTBToolkit.makeNodeToken(n16); }
+   n17=Relation()
+   n19=")" { n18 = JTBToolkit.makeNodeToken(n19); }
    
-   { return new GroupingOp(n0,n2,n4,n5,n10,n12,n13); }
+   { return new GroupingOp(n0,n2,n4,n5,n10,n12,n13,n15,n17,n18); }
 }
 
 HavingClause HavingClause() :
@@ -334,11 +342,6 @@ HavingClause HavingClause() :
    Condition n4;
    NodeToken n5;
    Token n6;
-   NodeToken n7;
-   Token n8;
-   Relation n9;
-   NodeToken n10;
-   Token n11;
 
    
 }
@@ -347,11 +350,8 @@ HavingClause HavingClause() :
    n3="[" { n2 = JTBToolkit.makeNodeToken(n3); }
    n4=Condition()
    n6="]" { n5 = JTBToolkit.makeNodeToken(n6); }
-   n8="(" { n7 = JTBToolkit.makeNodeToken(n8); }
-   n9=Relation()
-   n11=")" { n10 = JTBToolkit.makeNodeToken(n11); }
    
-   { return new HavingClause(n0,n2,n4,n5,n7,n9,n10); }
+   { return new HavingClause(n0,n2,n4,n5); }
 }
 
 SetOps SetOps() :
@@ -511,7 +511,7 @@ SimpleAggregations SimpleAggregations() :
 Condition Condition() :
 {
    Atom n0;
-   NodeOptional n1 = new NodeOptional();
+   NodeListOptional n1 = new NodeListOptional();
    ComplexCondition n2;
 
    
@@ -521,7 +521,8 @@ Condition Condition() :
    (
       n2=ComplexCondition()
       { n1.addNode(n2); }
-   )?
+   )*
+   { n1.nodes.trimToSize(); }
    
    { return new Condition(n0,n1); }
 }

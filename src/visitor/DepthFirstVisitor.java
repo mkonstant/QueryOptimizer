@@ -133,6 +133,9 @@ public class DepthFirstVisitor implements Visitor {
     * f4 -> "]"
     * f5 -> UDF()
     * f6 -> ( HavingClause() )?
+    * f7 -> "("
+    * f8 -> Relation()
+    * f9 -> ")"
     */
    public void visit(GroupingOp n) {
       n.f0.accept(this);
@@ -142,6 +145,9 @@ public class DepthFirstVisitor implements Visitor {
       n.f4.accept(this);
       n.f5.accept(this);
       n.f6.accept(this);
+      n.f7.accept(this);
+      n.f8.accept(this);
+      n.f9.accept(this);
    }
 
    /**
@@ -149,18 +155,12 @@ public class DepthFirstVisitor implements Visitor {
     * f1 -> "["
     * f2 -> Condition()
     * f3 -> "]"
-    * f4 -> "("
-    * f5 -> Relation()
-    * f6 -> ")"
     */
    public void visit(HavingClause n) {
       n.f0.accept(this);
       n.f1.accept(this);
       n.f2.accept(this);
       n.f3.accept(this);
-      n.f4.accept(this);
-      n.f5.accept(this);
-      n.f6.accept(this);
    }
 
    /**
@@ -237,7 +237,7 @@ public class DepthFirstVisitor implements Visitor {
 
    /**
     * f0 -> Atom()
-    * f1 -> ( ComplexCondition() )?
+    * f1 -> ( ComplexCondition() )*
     */
    public void visit(Condition n) {
       n.f0.accept(this);

@@ -13,6 +13,9 @@ package syntaxtree;
  * f4 -> "]"
  * f5 -> UDF()
  * f6 -> ( HavingClause() )?
+ * f7 -> "("
+ * f8 -> Relation()
+ * f9 -> ")"
  */
 public class GroupingOp implements Node {
    public NodeToken f0;
@@ -22,8 +25,11 @@ public class GroupingOp implements Node {
    public NodeToken f4;
    public UDF f5;
    public NodeOptional f6;
+   public NodeToken f7;
+   public Relation f8;
+   public NodeToken f9;
 
-   public GroupingOp(NodeToken n0, NodeToken n1, Attribute n2, NodeListOptional n3, NodeToken n4, UDF n5, NodeOptional n6) {
+   public GroupingOp(NodeToken n0, NodeToken n1, Attribute n2, NodeListOptional n3, NodeToken n4, UDF n5, NodeOptional n6, NodeToken n7, Relation n8, NodeToken n9) {
       f0 = n0;
       f1 = n1;
       f2 = n2;
@@ -31,9 +37,12 @@ public class GroupingOp implements Node {
       f4 = n4;
       f5 = n5;
       f6 = n6;
+      f7 = n7;
+      f8 = n8;
+      f9 = n9;
    }
 
-   public GroupingOp(Attribute n0, NodeListOptional n1, UDF n2, NodeOptional n3) {
+   public GroupingOp(Attribute n0, NodeListOptional n1, UDF n2, NodeOptional n3, Relation n4) {
       f0 = new NodeToken("groupby");
       f1 = new NodeToken("[");
       f2 = n0;
@@ -41,6 +50,9 @@ public class GroupingOp implements Node {
       f4 = new NodeToken("]");
       f5 = n2;
       f6 = n3;
+      f7 = new NodeToken("(");
+      f8 = n4;
+      f9 = new NodeToken(")");
    }
 
    public void accept(visitor.Visitor v) {

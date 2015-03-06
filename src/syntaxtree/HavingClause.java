@@ -10,37 +10,25 @@ package syntaxtree;
  * f1 -> "["
  * f2 -> Condition()
  * f3 -> "]"
- * f4 -> "("
- * f5 -> Relation()
- * f6 -> ")"
  */
 public class HavingClause implements Node {
    public NodeToken f0;
    public NodeToken f1;
    public Condition f2;
    public NodeToken f3;
-   public NodeToken f4;
-   public Relation f5;
-   public NodeToken f6;
 
-   public HavingClause(NodeToken n0, NodeToken n1, Condition n2, NodeToken n3, NodeToken n4, Relation n5, NodeToken n6) {
+   public HavingClause(NodeToken n0, NodeToken n1, Condition n2, NodeToken n3) {
       f0 = n0;
       f1 = n1;
       f2 = n2;
       f3 = n3;
-      f4 = n4;
-      f5 = n5;
-      f6 = n6;
    }
 
-   public HavingClause(Condition n0, Relation n1) {
+   public HavingClause(Condition n0) {
       f0 = new NodeToken("having");
       f1 = new NodeToken("[");
       f2 = n0;
       f3 = new NodeToken("]");
-      f4 = new NodeToken("(");
-      f5 = n1;
-      f6 = new NodeToken(")");
    }
 
    public void accept(visitor.Visitor v) {

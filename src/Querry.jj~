@@ -173,13 +173,13 @@ void Ops() : {}
 
 void Relation() : {}
 {
-		<ALPHA_NUM_IDENT> | Operators()
+		AlphaNumIdent() | Operators()
 			
 }
 
 void Attribute() : {}
 {
-		<ALPHA_NUM_IDENT>	
+		AlphaNumIdent()	
 }
 
 void UDF() : {}
@@ -213,25 +213,25 @@ void Atom() : {}
 void AtomPart() : {}
 {
 	( 	  AtomAttr() 
-		| <INTEGER_LITERAL>
-		| <FLOATING_POINT_LITERAL>
-		| <STRING_LITERAL>
+		| IntegerLiteral()
+		| FloatLiteral() 
+		| StringLiteral() 
 	) (ComplexAtomPart())?
 }
 
 void ComplexAtomPart() : {}
 {
-		( "+" | "-" ) (<INTEGER_LITERAL> | <FLOATING_POINT_LITERAL> )
+		( "+" | "-" ) (IntegerLiteral() | FloatLiteral()  )
 }
 
 void AtomAttr() : {}
 {
-		<ALPHA_NUM_IDENT>  (AtRel())? 
+		AlphaNumIdent()  (AtRel())? 
 }
 
 void AtRel() : {}
 {
-	 "."  <ALPHA_NUM_IDENT>
+	 "."  AlphaNumIdent()
 }
 
 /**************************************************************************************************/
@@ -250,6 +250,11 @@ void IntegerLiteral() : {}
 void FloatLiteral() : {} 
 {
 	<FLOATING_POINT_LITERAL>
+}
+
+void StringLiteral() : {} 
+{
+	<STRING_LITERAL>
 }
 
 

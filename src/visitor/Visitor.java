@@ -86,6 +86,9 @@ public interface Visitor {
     * f4 -> "]"
     * f5 -> UDF()
     * f6 -> ( HavingClause() )?
+    * f7 -> "("
+    * f8 -> Relation()
+    * f9 -> ")"
     */
    public void visit(GroupingOp n);
 
@@ -94,9 +97,6 @@ public interface Visitor {
     * f1 -> "["
     * f2 -> Condition()
     * f3 -> "]"
-    * f4 -> "("
-    * f5 -> Relation()
-    * f6 -> ")"
     */
    public void visit(HavingClause n);
 
@@ -152,7 +152,7 @@ public interface Visitor {
 
    /**
     * f0 -> Atom()
-    * f1 -> ( ComplexCondition() )?
+    * f1 -> ( ComplexCondition() )*
     */
    public void visit(Condition n);
 
