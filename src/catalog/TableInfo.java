@@ -9,6 +9,7 @@ package catalog;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -22,7 +23,7 @@ public class TableInfo {
     int carinality = -1;
     int numberOfTuples = -1;
     int sizeOfTuple = -1;
-    ArrayList <String> key = null;
+    Set <String> key = null;
     
     boolean sorted=false; //only for output table f operations
     
@@ -40,7 +41,7 @@ public class TableInfo {
         return sorted;
     }
     
-    public ArrayList <String> getKey() {
+    public Set <String> getKey() {
         return key;
     }
 
@@ -78,7 +79,7 @@ public class TableInfo {
         return numberOfTuples;
     }
 
-    public void setKey(ArrayList <String> key) {
+    public void setKey(Set <String> key) {
         this.key = key;
     }
 
@@ -94,7 +95,7 @@ public class TableInfo {
         String type;
         for(String key1 : attributes.keySet()){
                 type = attributes.get(key1).getType();
-                if(type.equals("int") || type.equals("flaot"))
+                if(type.equals("int") || type.equals("float"))
                     temp+= 4;
                 else if(type.endsWith("double"))
                     temp+=8;

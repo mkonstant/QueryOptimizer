@@ -12,7 +12,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -85,7 +87,10 @@ public class Catalog {
         Map<String,IndexInfo> secondaryIndex = null;
         Map<String,ForeignIndexInfo> foreignIndex = null;
         String indexNameStr = null;
-        ArrayList <String> key = null;
+        Set <String> key = null;
+        Set<String>indexName = null;
+        Set<String> foreignName = null;
+        Set<String> foreignOutAttr = null;
         
         
         BufferedReader br = new BufferedReader(new FileReader(dbFile));
@@ -124,7 +129,7 @@ public class Catalog {
             
             //take primary key
             if ((line = br.readLine()) != null){
-                key = new ArrayList <String>();
+                key = new HashSet <String>();
                 if (line.contains(",")){
                     temp = line.split(del7);
                     for ( int i = 1 ; i < temp.length ; i ++ ){
@@ -141,7 +146,7 @@ public class Catalog {
             if ((line = br.readLine()) != null){
                 temp = line.split(del3);
                 IndexInfo indexInfo = new IndexInfo();
-                ArrayList<String>indexName = new ArrayList<String>();
+                indexName = new HashSet<String>();
                 if (temp[1].contains(",")){
                     temp3 = temp[1].split(del5);
                     for ( int i = 0 ; i < temp3.length ; i ++){
@@ -156,9 +161,8 @@ public class Catalog {
                 }
                 indexInfo.setStructure(temp[2]);
                 indexInfo.setNumOfDistinctValues(Integer.parseInt(temp[3]));
-                if (temp.length > 4){
-                    indexInfo.setHeight(Integer.parseInt(temp[4]));
-                }
+                indexInfo.setCostFactor(Integer.parseInt(temp[4]));
+                
                 tabInfo.setPrimaryIndex(indexInfo);
             }
             
@@ -169,7 +173,7 @@ public class Catalog {
                     temp2 = temp[1].split(" ");
                     secondaryIndex = new HashMap<String,IndexInfo>();
                     IndexInfo indexInfo = new IndexInfo();
-                    ArrayList<String>indexName = new ArrayList<String>();
+                    indexName = new HashSet<String>();
                     if (temp2[0].contains(",")){
                         temp3 = temp2[0].split(del5);
                         for ( int i = 0 ; i < temp3.length ; i ++){
@@ -185,9 +189,8 @@ public class Catalog {
                     //indexInfo.setIndexName(temp2[0]);
                     indexInfo.setStructure(temp2[1]);
                     indexInfo.setNumOfDistinctValues(Integer.parseInt(temp2[2]));
-                    if (temp2.length > 3 ){
-                        indexInfo.setHeight(Integer.parseInt(temp2[3]));
-                    }
+                    indexInfo.setCostFactor(Integer.parseInt(temp2[3]));
+                    
                     secondaryIndex.put(temp2[0], indexInfo);
                 }
             }
@@ -198,7 +201,7 @@ public class Catalog {
                 else{
                     temp = line.split(" ");
                     IndexInfo indexInfo = new IndexInfo();
-                    ArrayList<String>indexName = new ArrayList<String>();
+                    indexName = new HashSet<String>();
                     if (temp[0].contains(",")){
                         temp3 = temp[0].split(del5);
                         for ( int i = 0 ; i < temp3.length ; i ++){
@@ -214,9 +217,8 @@ public class Catalog {
                     //indexInfo.setIndexName(temp[0]);
                     indexInfo.setStructure(temp[1]);
                     indexInfo.setNumOfDistinctValues(Integer.parseInt(temp[2]));
-                    if (temp.length > 3 ){
-                        indexInfo.setHeight(Integer.parseInt(temp[3]));
-                    }
+                    indexInfo.setCostFactor(Integer.parseInt(temp[3]));
+                    
                     secondaryIndex.put(temp[0], indexInfo);
                 }
             }
@@ -229,7 +231,7 @@ public class Catalog {
                     temp2 = temp[1].split(" ");
                     foreignIndex = new HashMap<String,ForeignIndexInfo>();
                     ForeignIndexInfo foreignIndexInfo = new ForeignIndexInfo();
-                    ArrayList<String> foreignName = new ArrayList<String>();
+                    foreignName = new HashSet<String>();
                     
                     if (temp2[0].contains(",")){
                         temp3 = temp2[0].split(del5);
@@ -246,7 +248,7 @@ public class Catalog {
                     
                     //foreignIndexInfo.setIndexName(temp2[0]);
                     //foreignIndexInfo.setOutTable(temp2[1]);
-                    ArrayList<String> foreignOutAttr = new ArrayList<String>();
+                    foreignOutAttr = new HashSet<String>();
                     if (temp2[1].contains(",")){
                         temp3 = temp2[1].split(del4);
                         for (int i = 1 ; i < temp3.length ; i  ++){
@@ -268,9 +270,8 @@ public class Catalog {
                     
                     foreignIndexInfo.setStructure(temp2[2]);
                     foreignIndexInfo.setNumOfDistinctValues(Integer.parseInt(temp2[3]));
-                    if (temp2.length > 4 ){
-                        foreignIndexInfo.setHeight(Integer.parseInt(temp2[4]));
-                    }
+                    foreignIndexInfo.setCostFactor(Integer.parseInt(temp2[4]));
+                    
                     foreignIndex.put(temp2[0], foreignIndexInfo);
                 }
             }
@@ -278,7 +279,7 @@ public class Catalog {
             
             
             while ((line = br.readLine()) != null){
-                System.out.println("lineeeeeeeeeeeeeeeeeeeeeeeeeeeeeee = " +line);
+                //System.out.println("lineeeeeeeeeeeeeeeeeeeeeeeeeeeeeee = " +line);
                 if ( line.contains("cardinality")){
                     break;
                 }
@@ -286,7 +287,7 @@ public class Catalog {
                     temp = line.split(" ");
                     ForeignIndexInfo foreignIndexInfo = new ForeignIndexInfo();
                     
-                    ArrayList<String> foreignName = new ArrayList<String>();
+                    foreignName = new HashSet<String>();
                     if (temp[0].contains(",")){
                         temp2 = temp[0].split(del5);
                         for (int i = 0 ; i < temp2.length ; i  ++){
@@ -304,7 +305,7 @@ public class Catalog {
                     
                     
                     //foreignIndexInfo.setIndexName(temp2[0]);
-                    ArrayList<String> foreignOutAttr = new ArrayList<String>();
+                    foreignOutAttr = new HashSet<String>();
                     //foreignIndexInfo.setOutTable(temp2[1]);
                     if (temp[1].contains(",")){
                         temp2 = temp[1].split(del4);
@@ -325,9 +326,8 @@ public class Catalog {
                     //foreignIndexInfo.setOutAttr(temp[2]);
                     foreignIndexInfo.setStructure(temp[2]);
                     foreignIndexInfo.setNumOfDistinctValues(Integer.parseInt(temp[3]));
-                    if (temp.length > 4 ){
-                        foreignIndexInfo.setHeight(Integer.parseInt(temp[4]));
-                    }
+                    foreignIndexInfo.setCostFactor(Integer.parseInt(temp[4]));
+                    
                     foreignIndex.put(temp[0], foreignIndexInfo);
                 }
             }

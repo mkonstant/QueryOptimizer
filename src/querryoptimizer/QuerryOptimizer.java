@@ -49,7 +49,7 @@ public class QuerryOptimizer {
         String dbFile = null;
         String sysFile = null;
         
-        
+        System.out.println(dbFile);
         dbFile = args[0];
         sysFile = args[1];
         
@@ -63,7 +63,7 @@ public class QuerryOptimizer {
          
         //printCatalog(dbFile,sysFile);
         
-        FileInputStream fis = null;
+       /* FileInputStream fis = null;
         try {
             if(args.length == 0){
                 System.out.println("No input files given!");
@@ -101,7 +101,7 @@ public class QuerryOptimizer {
             System.err.println(ex.getMessage());
             System.exit(1);
         }
-        printPLan();
+        printPLan();*/
         
     }
     
@@ -260,7 +260,7 @@ public class QuerryOptimizer {
              }
              System.out.println("Primary Index : ");
              IndexInfo primaryIndex = tabInfo.getPrimaryIndex();
-             System.out.println(primaryIndex.getHeight());
+             System.out.println(primaryIndex.getCostFactor());
              System.out.println(primaryIndex.getIndexName().toString());
              System.out.println(primaryIndex.getNumOfDistinctValues());
              System.out.println(primaryIndex.getStructure());
@@ -269,7 +269,7 @@ public class QuerryOptimizer {
              for(String key1 : secondaryIndex.keySet()){
                  System.out.println("key : " + key1);
                  IndexInfo indexInfo = secondaryIndex.get(key1);
-                 System.out.println(indexInfo.getHeight());
+                 System.out.println(indexInfo.getCostFactor());
                  System.out.println(indexInfo.getIndexName().toString());
                  System.out.println(indexInfo.getNumOfDistinctValues());
                  System.out.println(indexInfo.getStructure());
@@ -279,7 +279,7 @@ public class QuerryOptimizer {
              for(String key1 : foreignIndex.keySet()){
                  System.out.println("key : " + key1);
                  ForeignIndexInfo index = foreignIndex.get(key1);
-                 System.out.println(index.getHeight());
+                 System.out.println(index.getCostFactor());
                  System.out.println(index.getIndexName().toString());
                  System.out.println(index.getNumOfDistinctValues());
                  System.out.println(index.getOutAttr().toString());

@@ -7,25 +7,26 @@
 package catalog;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  *
  * @author jimakos
  */
 public class ForeignIndexInfo {
-    ArrayList<String> indexName = null;
+    Set<String> indexName = null;
     String outTable = null;
-    ArrayList<String> outAttr = null;
+    Set<String> outAttr = null;
     String structure = null;
     int numOfDistinctValues = -1;
-    int height = -1;
+    int costFactor = -1;
 
     
     public ForeignIndexInfo(){
 
     }
     
-    public ArrayList<String> getIndexName() {
+    public Set<String> getIndexName() {
         return indexName;
     }
 
@@ -33,7 +34,7 @@ public class ForeignIndexInfo {
         return outTable;
     }
 
-    public ArrayList<String> getOutAttr() {
+    public Set<String> getOutAttr() {
         return outAttr;
     }
 
@@ -45,12 +46,12 @@ public class ForeignIndexInfo {
         return numOfDistinctValues;
     }
 
-    public int getHeight() {
-        return height;
+    public int getCostFactor() {
+        return costFactor;
     }
     
 
-    public void setIndexName(ArrayList<String> indexName) {
+    public void setIndexName(Set<String> indexName) {
         this.indexName = indexName;
     }
 
@@ -58,7 +59,7 @@ public class ForeignIndexInfo {
         this.outTable = outTable;
     }
 
-    public void setOutAttr(ArrayList<String> outAttr) {
+    public void setOutAttr(Set<String> outAttr) {
         this.outAttr = outAttr;
     }
 
@@ -70,8 +71,8 @@ public class ForeignIndexInfo {
         this.numOfDistinctValues = numOfDistinctValues;
     }
 
-    public void setHeight(int height) {
-        this.height = height;
+    public void setCostFactor(int costFactor) {
+        this.costFactor = costFactor;
     }
     
     

@@ -6,7 +6,7 @@ primaryKey:id,name
 primaryIndex:id B+tree 200 3
 secondaryIndex:email B+tree 100 4
 name B+tree 200 3
-foreignIndex:id take(id) staticHashing 200
+foreignIndex:id take(id) staticHashing 200 1000
 cardinality:4
 sizeOfTuple:104
 numberOfTuples:1000
@@ -14,7 +14,7 @@ numberOfTuples:1000
 table:take
 attr:id int 2 1000 100,prod_id int 2 1000 100,date date aaa www 50
 primaryKey:id
-primaryIndex:id,date Extensible-Hashing 200
+primaryIndex:id,date Extensible-Hashing 200 1000
 secondaryIndex:prod_id B+Tree 100 2
 foreignIndex:
 cardinality:3

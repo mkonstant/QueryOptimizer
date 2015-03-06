@@ -7,28 +7,29 @@
 package catalog;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  *
  * @author jimakos
  */
 public class IndexInfo {
-    ArrayList<String> indexName = null;
+    Set<String> indexName = null;
     String structure = null;
     int numOfDistinctValues = -1;
-    int height = -1;
+    int costFactor = -1;
 
     
     public IndexInfo(){
     }
 
 
-    public void setHeight(int height) {
-        this.height = height;
+    public void setCostFactor(int costFactor) {
+        this.costFactor = costFactor;
     }
     
     
-    public void setIndexName(ArrayList<String> indexName) {
+    public void setIndexName(Set<String> indexName) {
         this.indexName = indexName;
     }
 
@@ -43,7 +44,7 @@ public class IndexInfo {
     }
 
    
-    public ArrayList<String> getIndexName() {
+    public Set<String> getIndexName() {
         return indexName;
     }
 
@@ -58,15 +59,15 @@ public class IndexInfo {
     }
     
     
-     public int getHeight() {
-        return height;
+     public int getCostFactor() {
+        return costFactor;
     }
      
     public boolean equalsKey( ArrayList<String> tocheck) {
         if(tocheck.size()!=indexName.size())
             return false;
-        for(int i=0; i<indexName.size(); i++){
-            if(!tocheck.contains(indexName.get(i)))
+        for (String index : indexName) {
+            if(!tocheck.contains(index))
                 return false;
         }
         return true;
@@ -75,7 +76,7 @@ public class IndexInfo {
     public boolean equalsKey( String tocheck) {
         if(indexName.size() !=1)
             return false;
-        if(!indexName.get(0).equals(tocheck))
+        if(!indexName.contains(tocheck))
             return false;
         return true;
     }
