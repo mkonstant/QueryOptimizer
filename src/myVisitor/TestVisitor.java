@@ -6,6 +6,7 @@
 package myVisitor;
 
 import java.util.ArrayList;
+import myExceptions.ComplexConditionException;
 import operations.Group;
 import operations.Join;
 import operations.Operator;
@@ -51,6 +52,8 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
    public ArrayList<Operator> getOperations(){
        return operations;
    } 
+   
+   String complexCondition;
    
    int count=0;
    
@@ -187,7 +190,7 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
       return null;
    }
 
-   /**
+ /**
     * f0 -> "groupby"
     * f1 -> "["
     * f2 -> Attribute()
@@ -195,6 +198,9 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
     * f4 -> "]"
     * f5 -> UDF()
     * f6 -> ( HavingClause() )?
+    * f7 -> "("
+    * f8 -> Relation()
+    * f9 -> ")"
     */
    public String visit(GroupingOp n, String argu) {
       temp= new Group();
@@ -205,21 +211,6 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
       n.f5.accept(this, argu);
       n.f6.accept(this, argu);
       operations.add(temp);
-      return null;
-   }
-
-   /**
-    * f0 -> "having"
-    * f1 -> "["
-    * f2 -> Condition()
-    * f3 -> "]"
-    * f4 -> "("
-    * f5 -> Relation()
-    * f6 -> ")"
-    */
-   public String visit(HavingClause n, String argu) {
-      
-      n.f2.accept(this, argu);
       
       Operator tempResult = temp;
       
@@ -235,6 +226,20 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
         tempResult.setRelation2(relation);
       }
       temp = tempResult;
+      return null;
+   }
+
+   /**
+    * f0 -> "having"
+    * f1 -> "["
+    * f2 -> Condition()
+    * f3 -> "]"
+    */
+   public String visit(HavingClause n, String argu) {
+      
+      n.f2.accept(this, argu);
+      
+      
       return null;
    }
 
@@ -339,14 +344,18 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
       return n.f0.choice.toString();
    }
 
-   /**
+     /**
     * f0 -> Atom()
     * f1 -> ( ComplexCondition() )?
     */
    public String visit(Condition n, String argu) {
-      
+      String cc = complexCondition;
+       
       n.f0.accept(this, argu);
       n.f1.accept(this, argu);
+      
+      temp.setComplexCondition(complexCondition);
+      complexCondition = cc;
       return null;
    }
 
@@ -355,7 +364,14 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
     * f1 -> Atom()
     */
    public String visit(ComplexCondition n, String argu) {
-      
+      if(complexCondition==null){
+          complexCondition = n.f0.choice.toString();
+      }
+      else{
+          if(!complexCondition.equals(n.f0.choice.toString())){
+              throw new ComplexConditionException();
+          }
+      }
       //n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       return null;

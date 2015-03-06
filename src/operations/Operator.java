@@ -23,6 +23,7 @@ public abstract class Operator {
     protected String conditionsPrint="";
     protected String annotation="";
     protected Catalog catalog;
+    protected String complexCondtion=null;
     
     
     protected int b1,n1;  
@@ -53,6 +54,14 @@ public abstract class Operator {
     
     public void setCatalog(Catalog c){
         catalog = c;
+    }
+    
+    public String getComplexCondtion(){
+        return complexCondtion;
+    }
+    
+    public void setComplexCondition(String complexCondition){
+        this.complexCondtion = complexCondition;
     }
     
     public TableInfo getOutTable(){

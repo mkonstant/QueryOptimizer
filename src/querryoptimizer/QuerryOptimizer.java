@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import myExceptions.ComplexConditionException;
 import myExceptions.JoinAttributeException;
 import myExceptions.JoinAttributeTypeException;
 import myExceptions.ProjectionAttributeException;
@@ -77,7 +78,11 @@ public class QuerryOptimizer {
             operations = tv.getOperations();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(QuerryOptimizer.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+        }catch(ComplexConditionException ex){
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
+        finally {
             try {
                 fis.close();
             } catch (IOException ex) {
