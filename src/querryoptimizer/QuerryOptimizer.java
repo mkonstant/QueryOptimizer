@@ -49,7 +49,6 @@ public class QuerryOptimizer {
         String dbFile = null;
         String sysFile = null;
         
-        System.out.println(dbFile);
         dbFile = args[0];
         sysFile = args[1];
         
