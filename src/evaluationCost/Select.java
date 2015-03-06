@@ -35,57 +35,85 @@ public class Select {
     }
     
     
-    public void calculate(){
+    public void calculateVariables(){
     
     }
     
     
-    public void linearSearch(){
-    
+    public double linearSearch(){
+        
+        cost =  tS + (br *tT);
+        
+        return cost;
     }
     
-    public void linearSearchWithKey(){
-    
+    public double linearSearchWithKey(){
+        
+        cost = tS + ( ( br/2 )  * tS );
+        
+        return cost;
     }
     
-    public void treePrimaryEqualWithKey(){
-    
+    public double treePrimaryEqualWithKey(){
+        
+        cost = ( h + 1 ) * ( tS + tT );
+        
+        return cost;
     }
     
-    public void treePrimaryEqualNonKey(){
+    public double treePrimaryEqualNonKey(){
     
+        cost = h * ( tT + tS ) + b *tT;
+        
+        return cost;
     }
     
-    public void hashingPrimaryEqualWithKey(){
+    public double hashingPrimaryEqualWithKey(){
     
+        return cost;
     }
     
-    public void hashingPrimaryEqualNonKey(){
-    
+    public double hashingPrimaryEqualNonKey(){
+        
+        return cost;
     }
     
-    public void treeSecondaryEqualWithKey(){
-    
+    public double treeSecondaryEqualWithKey(){
+        
+        cost = ( h + 1 ) * ( tS + tT );
+        
+        return cost;
     }
     
-    public void treeSecondaryEqualNonKey(){
+    public double treeSecondaryEqualNonKey(){
     
+        cost = ( h + n ) * ( tS + tT );
+        
+        return cost;
     }
     
-    public void hashingSecondaryEqualWithKey(){
+    public double hashingSecondaryEqualWithKey(){
     
+        return cost;
     }
     
-    public void hashingSecondaryEqualNonKey(){
+    public double hashingSecondaryEqualNonKey(){
     
+        return cost;
     }
     
-    public void treePrimaryCompare(){
+    public double treePrimaryCompare(){
     
+        cost = h * ( tS + tT) + b * tT;
+        
+        return cost;
     }
     
-    public void treeSecondaryCompare(){
+    public double treeSecondaryCompare(){
     
+        cost = ( h + n ) * ( tT + tS );
+        
+        return cost;
     }
 
     public double getCost() {
