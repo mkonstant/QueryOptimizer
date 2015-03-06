@@ -21,6 +21,12 @@ public class Select {
     ArrayList<String> selectFields = null;
     TableInfo tabinfo = null;
     boolean symbol = false;
+    double tS = -1;
+    double tT = -1;
+    int costFactor = -1;
+    int b = -1;
+    int br = -1;
+    
 
     public Select(ArrayList<String> selectFields, TableInfo tabInfo, boolean symbol){
         this.selectFields = selectFields;
@@ -50,11 +56,27 @@ public class Select {
     
     }
     
-    public void treeSecondaryEqualWitheKey(){
+    public void hashingPrimaryEqualWithKey(){
+    
+    }
+    
+    public void hashingPrimaryEqualNonKey(){
+    
+    }
+    
+    public void treeSecondaryEqualWithKey(){
     
     }
     
     public void treeSecondaryEqualNonKey(){
+    
+    }
+    
+    public void hashingSecondaryEqualWithKey(){
+    
+    }
+    
+    public void hashingSecondaryEqualNonKey(){
     
     }
     
