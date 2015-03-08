@@ -334,7 +334,7 @@ public class Catalog {
             
             //take cardinality
             temp = line.split(del);
-            tabInfo.setCarinality(Integer.parseInt(temp[1]));
+            tabInfo.setCardinality(Integer.parseInt(temp[1]));
             
             //take size of tuple
             if ((line = br.readLine()) != null){

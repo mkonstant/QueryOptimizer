@@ -20,7 +20,7 @@ public class TableInfo {
     IndexInfo primaryIndex = null;
     Map<String,IndexInfo> secondaryIndex = null;
     Map<String,ForeignIndexInfo> foreignIndex = null;
-    int carinality = -1;
+    int cardinality = -1;
     int numberOfTuples = -1;
     int sizeOfTuple = -1;
     Set <String> key = null;
@@ -70,8 +70,8 @@ public class TableInfo {
     }
 
     
-    public int getCarinality() {
-        return carinality;
+    public int getCardinality() {
+        return cardinality;
     }
 
     
@@ -122,8 +122,8 @@ public class TableInfo {
     }
 
     
-    public void setCarinality(int carinality) {
-        this.carinality = carinality;
+    public void setCardinality(int carinality) {
+        this.cardinality = carinality;
     }
 
     

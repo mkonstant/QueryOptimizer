@@ -11,6 +11,7 @@ import catalog.IndexInfo;
 import catalog.SystemInfo;
 import catalog.TableInfo;
 import java.util.ArrayList;
+import operations.Condition;
 
 /**
  *
@@ -18,25 +19,29 @@ import java.util.ArrayList;
  */
 public class SelectCost {
     double cost = -1;
-    ArrayList<String> selectFields = null;
-    TableInfo tabinfo = null;
-    boolean symbol = false;
+    TableInfo tabInfo = null;
     double tS = -1;
     double tT = -1;
     int costFactor = -1;
     int b = -1;
     int br = -1;
+    Condition condition = null;
+    String message = null;
+    SystemInfo sysInfo = null;
+    int numOfBlocks = -1;
     
 
-    public SelectCost(ArrayList<String> selectFields, TableInfo tabInfo, boolean symbol){
-        this.selectFields = selectFields;
-        this.tabinfo = tabInfo;
-        this.symbol = symbol;
+    public SelectCost(Condition condition, TableInfo tabInfo, SystemInfo sysInfo){
+        this.condition = condition;
+        this.tabInfo = tabInfo;
+        this.sysInfo = sysInfo;
     }
     
     
     public void calculateVariables(){
-        
+        tS = sysInfo.getLatency();
+        tT = sysInfo.getTransferTime();
+        numOfBlocks = (tabInfo.getNumberOfTuples() * tabInfo.getCardinality())/sysInfo.getSizeOfBuffer();// paizei na kanpume overestimated
     }
     
     
@@ -49,7 +54,7 @@ public class SelectCost {
     
     public double linearSearchWithKey(){
         
-        cost = tS + ( ( br/2 )  * tS );
+        cost = tS + ( ( br/2 )  * tT );
         
         return cost;
     }
@@ -116,6 +121,11 @@ public class SelectCost {
         return cost;
     }
 
+    public String getMessage() {
+        return message;
+    }
+    
+
     public double getCost() {
         return cost;
     }
@@ -123,5 +133,10 @@ public class SelectCost {
     public void setCost(double cost) {
         this.cost = cost;
     }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    
     
 }

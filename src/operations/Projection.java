@@ -146,7 +146,7 @@ public  class Projection extends Operator{
              
         outTable.setKey(tInfo.getKey());
         //overestimation if duplicate elimination is performed
-        outTable.setCarinality(attrs.size());
+        outTable.setCardinality(attrs.size());
         outTable.setNumberOfTuples(tInfo.getSizeOfTuple());
         outTable.setSorted(prCost.getSorted());  //if output is sorted
        

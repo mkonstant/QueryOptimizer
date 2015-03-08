@@ -305,7 +305,7 @@ public  class Join extends Operator{
         
         outTable.setAttributes(outAttributes);
         //join attributes will be common
-        outTable.setCarinality(outAttributes.size());
+        outTable.setCardinality(outAttributes.size());
         //compute new tupple size from the type of Atributes given 
         outTable.setSizeOfTuple();
         //outTable.setKey(tInfo1.getKey());

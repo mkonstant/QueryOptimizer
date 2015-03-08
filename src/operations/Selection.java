@@ -6,6 +6,7 @@
 package operations;
 
 import catalog.TableInfo;
+import evaluationCost.SelectCost;
 import java.util.ArrayList;
 import java.util.Map;
 import myExceptions.SelectAttributeException;
@@ -20,6 +21,9 @@ public class Selection extends Operator {
     String relation1 = null;
     Operator relationOp1 = null;
     TableInfo tabInfo = null; 
+    ArrayList<Double> allCosts = null;
+    ArrayList<String> messages = null;
+    Map<String,TableInfo> table = null;
     
     ArrayList<Condition> conditions = null;
 
@@ -85,19 +89,39 @@ public class Selection extends Operator {
     
     @Override
     public void computeCost(){
+        SelectCost selCost = null;
+        allCosts = new ArrayList<Double>();
+        messages = new ArrayList<String>();
         
         this.checkVariables();
         if ( this.complexCondtion == null ){
+            if(relation1!=null) {
+                tabInfo = table.get(relation1);
+            }
+            else{
+                tabInfo = relationOp1.getOutTable();
+            }
+            
+            selCost = new SelectCost(conditions.get(0),tabInfo,catalog.getSystemInfo());
             
         }
         else{
-        
+            for ( int i = 0 ; i < conditions.size() ; i ++ ){
+                if(relation1!=null) {
+                    tabInfo = table.get(relation1);
+                }
+                else{
+                    tabInfo = relationOp1.getOutTable();
+                }
+                selCost = new SelectCost(conditions.get(i),tabInfo,catalog.getSystemInfo());
+            }
+                    
         }
         
     }
     
     public void checkVariables( ){
-        Map<String,TableInfo> table = catalog.getCatalog();
+        table = catalog.getCatalog();
         tabInfo = null;
         String del = "//.";
         String []temp = null;

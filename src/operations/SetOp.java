@@ -158,7 +158,7 @@ public  class SetOp extends Operator{
         }
         
         outTable.setAttributes(tInfo1.getAttributes());
-        outTable.setCarinality(tInfo1.getCarinality());
+        outTable.setCardinality(tInfo1.getCardinality());
         outTable.setSizeOfTuple(tInfo1.getSizeOfTuple());
         outTable.setKey(tInfo1.getKey());
         n1 = tInfo1.getNumberOfTuples();
