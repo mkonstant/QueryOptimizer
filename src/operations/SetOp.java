@@ -27,7 +27,7 @@ public  class SetOp extends Operator{
     String relation2= null;
     Operator relationOp2=null;
     
-    boolean s1=false,s2=false,h1=false,h2=false;
+    boolean s1=true,s2=true,h1=false,h2=false;
     
     SetOperationCost setCost;
     TableInfo tInfo1,tInfo2;
@@ -109,8 +109,7 @@ public  class SetOp extends Operator{
         
         Map<String,TableInfo> table = catalog.getCatalog();
         
-        setCost = new SetOperationCost(catalog.getSystemInfo(), tInfo1.getNumberOfTuples(),tInfo1.getSizeOfTuple(),
-                                        tInfo2.getNumberOfTuples(),tInfo2.getSizeOfTuple());
+        setCost = new SetOperationCost(catalog.getSystemInfo(), tInfo1,tInfo2);
         setCost.computeCost(s1,s2,h1,h2);
         outTable.setSorted(setCost.getSorted());  //if output is sorted
         annotation = setCost.getAnnotation();
@@ -133,29 +132,23 @@ public  class SetOp extends Operator{
         if(relation1!=null)//i have to deal with a database relation
         {
            if(table.containsKey(relation1))//error is not exists
-           {
                tInfo1 = table.get(relation1);
-           }
-           else{
+           else
                throw new RelationException(relation1);
-           }
         }
-        else{//i have to deal with an operation's output
+        else   //i have to deal with an operation's output
             tInfo1 = relationOp1.getOutTable();
-        }
+        
         if(relation2!=null)//i have to deal with a database relation
         {
            if(table.containsKey(relation2))//error is not exists
-           {
                tInfo2 = table.get(relation2);   
-           }
-           else{
+           else
                throw new RelationException(relation2);
-           }
         }
-        else{//i have to deal with an operation's output
+        else//i have to deal with an operation's output
             tInfo2 = relationOp2.getOutTable();
-        }
+        
         
         outTable.setAttributes(tInfo1.getAttributes());
         outTable.setCardinality(tInfo1.getCardinality());

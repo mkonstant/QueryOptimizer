@@ -16,6 +16,11 @@ public class ComplexConditionException extends RuntimeException {
         
         message = "Only conjuctions or disjunctions of condtions are supported, not both.";
     }
+    
+    public ComplexConditionException(String bla) {
+        if(bla ==null)
+        message = "Disjunctions of condtions on joins are not supported.";
+    }
 
     @Override
     public String getMessage() {

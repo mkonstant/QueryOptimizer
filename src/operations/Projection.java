@@ -136,9 +136,7 @@ public  class Projection extends Operator{
         
         prCost.computeCost(projOnkey);
         annotation = prCost.getAnnotation();
-        
-        
-        
+
         
         outTable.setAttributes(outAttributes);
         //compute new tupple size from the type of Atributes given 

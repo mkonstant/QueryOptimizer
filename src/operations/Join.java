@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Spliterator;
 import java.util.Vector;
+import java.util.concurrent.CompletionException;
+import myExceptions.ComplexConditionException;
 import myExceptions.JoinAttributeException;
 import myExceptions.JoinAttributeTypeException;
 import myExceptions.RelationException;
@@ -106,6 +108,8 @@ public  class Join extends Operator{
         conditionsPrint="";
         for (int i = 0; i < conditions.size(); i++)
         {
+            if(i>0)
+                conditionsPrint+=" "+complexCondtion+" ";
             conditionsPrint += conditions.get(i).toPrint();
 	}
        
@@ -223,6 +227,10 @@ public  class Join extends Operator{
         ArrayList<String> prKey;
        
         
+        //no join on disjunctions of conditons
+        if(complexCondtion.equals("or"))
+            throw new ComplexConditionException(null);
+        
         //get the right tableInfo from relation or operation output
         if(relation1!=null)//i have to deal with a database relation
         {
@@ -254,33 +262,20 @@ public  class Join extends Operator{
         //in order to perform join,join attributes should be same type   
         Map<String,Attributes> attributes1 = tInfo1.getAttributes();
         Map<String,Attributes> attributes2 = tInfo2.getAttributes();
+        ArrayList<String> conAttr2 = new ArrayList<String>();
         
         for(int i=0;i<conditions.size();i++){
             String type1;
             String type2;
             Condition c = conditions.get(i);
-            if(!attributes1.containsKey(c.getAttr1())){
-                if(c.getAttr1().contains(".") && relation1 !=null){                  
-                    String[] relAt= c.getAttr1().split("\\.");
-                    if(!(relAt[0].equals(relation1) && attributes1.containsKey(relAt[1])))
-                        throw new JoinAttributeException(c.getAttr1());  
-                    type1 = attributes1.get(relAt[1]).getType();
-                }
-                else
+            if(!attributes1.containsKey(c.getAttr1()))
                     throw new JoinAttributeException(c.getAttr1());
-            }
             else
                 type1 = attributes1.get(c.getAttr1()).getType();
-            if(!attributes2.containsKey(c.getAttr2())){
-                if(c.getAttr2().contains(".") && relation2 !=null){                  
-                    String[] relAt= c.getAttr2().split("\\.");
-                    if(!(relAt[0].equals(relation2) && attributes1.containsKey(relAt[1])))
-                        throw new JoinAttributeException(c.getAttr2());  
-                    type2 = attributes2.get(relAt[1]).getType();
-                }
-                else
+            
+            conAttr2.add(c.getAttr2());
+            if(!attributes2.containsKey(c.getAttr2()))
                     throw new JoinAttributeException(c.getAttr2());
-            }
             else
                 type2 = attributes2.get(c.getAttr2()).getType();
             
@@ -294,11 +289,7 @@ public  class Join extends Operator{
             outAttributes.put(key1, attributes1.get(key1));
         }
         for(String key1 : attributes2.keySet()){
-            String rel="";
-            if(relation2!=null){
-                rel = relation2;
-            }
-            if(!(conditions.contains(key1) || conditions.contains(rel+"."+key1)))
+            if(!conAttr2.contains(key1) )
                 outAttributes.put(key1, attributes2.get(key1));
         }
         
@@ -319,8 +310,4 @@ public  class Join extends Operator{
             outTable.setNumberOfTuples(n2);
         
     }
-        
-
-     
-   
 }

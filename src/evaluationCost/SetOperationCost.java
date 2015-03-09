@@ -6,6 +6,7 @@
 package evaluationCost;
 
 import catalog.SystemInfo;
+import catalog.TableInfo;
 import java.util.ArrayList;
 
 /**
@@ -28,19 +29,78 @@ public class SetOperationCost {
     private ArrayList<String> sortedAnnotation = new ArrayList<String>();
     private ArrayList<String> hasedAnnotation = new ArrayList<String>();
     private boolean sorted=false;
+    private TableInfo tInfo1;
+    private TableInfo tInfo2;
     
-    public SetOperationCost(SystemInfo si, int nr, int nrSize, int ns, int nsSize) {
+    public SetOperationCost(SystemInfo si, TableInfo tInfo1 , TableInfo tInfo2) {
         tranferTime = si.getTransferTime();
         penaltyTime = si.getTimeForWritingPages();
         latency = si.getLatency();
         M = si.getNumOfBuffers();
+        
         bb= M/2;
-        br = (nr*nrSize) / si.getSizeOfBuffer();
-        this.nr=nr;
-        bs = (ns*nsSize) / si.getSizeOfBuffer();
-        this.ns=ns;
+        
+        this.nr= tInfo1.getNumberOfTuples();
+        br = (nr*tInfo1.getSizeOfTuple()) / si.getSizeOfBuffer();
+        this.ns= tInfo2.getNumberOfTuples();
+        bs = (ns*tInfo2.getSizeOfTuple()) / si.getSizeOfBuffer();
+        
+        this.tInfo1 = tInfo1;
+        this.tInfo2 = tInfo2;
+        
     }
+    /*
     
+    private void checkCommonIndexes(){
+        boolean sorted1=false;
+        boolean sorted2=false;
+        boolean hashed1=false;
+        boolean hashed2=false;
+        String primaryStructure1 ;
+        String primaryStructure2 ;
+        
+        boolean fromOperator1 = tInfo1.getOperator();
+        boolean fromOperator2 = tInfo2.getOperator();
+        
+        if(fromOperator1 || fromOperator2){ //one of the two is output of operation
+        
+        
+        }
+        else{
+            //check sorted - B+tree on same key
+            primaryStructure1 = tInfo1.getPrimaryIndex().getStructure();
+            if(primaryStructure1.equals("B+tree")){ //relation1 sorted
+                sorted1=true;
+            }
+            else{
+                hashed1=true;
+            }
+            
+            primaryStructure2 = tInfo1.getPrimaryIndex().getStructure();
+            if(primaryStructure2.equals("B+tree")){ //relation1 sorted
+                sorted2=true;
+            }
+            else{
+                hashed2=true;
+            }
+            
+            if(sorted1 && sorted2){ //both sorted on same attributes
+                if(tInfo1.getPrimaryIndex().equalsKey(tInfo2.getPrimaryIndex().getIndexName())){
+                
+                }
+            
+            }
+           
+            
+        
+        
+        
+        
+        }
+        
+        
+    }
+    */
     
     public String getAnnotation(){
         String temp="";

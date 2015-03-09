@@ -112,6 +112,10 @@ public class QuerryOptimizer {
             System.err.println(ex.getMessage());
             System.exit(1);
         }
+        catch(ComplexConditionException ex){
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
         printPLan();
         
     }
