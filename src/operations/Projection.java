@@ -147,11 +147,8 @@ public  class Projection extends Operator{
         outTable.setCardinality(attrs.size());
         outTable.setNumberOfTuples(tInfo.getSizeOfTuple());
         outTable.setSorted(prCost.getSorted());  //if output is sorted
+        outTable.setOperator(true);
        
-       
-        
-       
-    
     
     }
     

@@ -110,7 +110,7 @@ public  class SetOp extends Operator{
         Map<String,TableInfo> table = catalog.getCatalog();
         
         setCost = new SetOperationCost(catalog.getSystemInfo(), tInfo1,tInfo2);
-        setCost.computeCost(s1,s2,h1,h2);
+        setCost.computeCost();
         outTable.setSorted(setCost.getSorted());  //if output is sorted
         annotation = setCost.getAnnotation();
     }
@@ -153,6 +153,7 @@ public  class SetOp extends Operator{
         outTable.setAttributes(tInfo1.getAttributes());
         outTable.setCardinality(tInfo1.getCardinality());
         outTable.setSizeOfTuple(tInfo1.getSizeOfTuple());
+        outTable.setOperator(true);
         outTable.setKey(tInfo1.getKey());
         n1 = tInfo1.getNumberOfTuples();
         n2 = tInfo2.getNumberOfTuples();       

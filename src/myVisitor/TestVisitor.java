@@ -206,30 +206,30 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
     * f9 -> ")"
     */
    public String visit(GroupingOp n, String argu) {
+      String relation1 = n.f8.accept(this, argu);
+      Operator tempResult= temp;
+      
       temp= new Group();
-     
-      
-      n.f5.accept(this, argu);
-      n.f6.accept(this, argu);
-      operations.add(temp);
-      
-      Operator tempResult = temp;
-      
-      String relation = n.f5.accept(this, argu);
-      if(relation=="op"){   
+      if(relation1=="op"){   
         /*the relation is another operation result
           constructed to the variable temp
           pass the content of temp as relation
         */
-          tempResult.setRelationOp2(temp);
+          temp.setRelationOp1(tempResult);
       }
       else{               
-        tempResult.setRelation2(relation);
+        temp.setRelation1(relation1);
       }
-      
+       
       n.f2.accept(this, "addAttr");
-      n.f3.accept(this, "addAttr");
-      temp = tempResult;
+      n.f3.accept(this, "addAttr"); 
+      
+      n.f5.accept(this, "group");
+      
+      n.f6.accept(this, argu);
+      operations.add(temp);
+     
+     
       return null;
    }
 
@@ -240,10 +240,7 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
     * f3 -> "]"
     */
    public String visit(HavingClause n, String argu) {
-      
       n.f2.accept(this, argu);
-      
-      
       return null;
    }
 
@@ -330,11 +327,24 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
       return attr;
    }
 
-   /**
+/**
     * f0 -> SimpleAggregations()
+    * f1 -> "("
+    * f2 -> AtomAttr()
+    * f3 -> ")"
     */
    public String visit(UDF n, String argu) {
-      return n.f0.accept(this, argu);
+       String aggregation = n.f0.accept(this, argu);
+       String attr = n.f2.accept(this, argu);
+       
+       if(argu!=null && argu.equals("group")){
+           temp.setAggregation(aggregation);
+           temp.setAggregationAttr(attr);
+       }
+       else{
+           return aggregation+"("+attr+")";
+       }
+       return "";
    }
 
    /**
@@ -399,7 +409,7 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
    }
 
    /**
-    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() | UDF() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public String visit(AtomPart n, String argu) {

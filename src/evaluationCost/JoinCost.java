@@ -176,13 +176,13 @@ public class JoinCost {
         double sortTime=0;
         if(!sorted1){
             mergeAnnotation.add("sort relation1");
-            sortTime= SortCost.externalSortCost(br, M, latency, penaltyTime,  tranferTime);
+            sortTime= SortCost.computeCost(br, M, latency, penaltyTime,  tranferTime);
         }
         else
             mergeAnnotation.add("Use sorted relation1");
         if(!sorted2){
             mergeAnnotation.add("sort relation2"); 
-            sortTime= SortCost.externalSortCost(bs, M, latency, penaltyTime,  tranferTime);
+            sortTime= SortCost.computeCost(bs, M, latency, penaltyTime,  tranferTime);
 
         }
         else

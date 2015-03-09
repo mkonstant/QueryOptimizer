@@ -418,8 +418,18 @@ public class QueryParser implements QueryParserConstants {
 
   final public UDF UDF() throws ParseException {
    SimpleAggregations n0;
+   NodeToken n1;
+   Token n2;
+   AtomAttr n3;
+   NodeToken n4;
+   Token n5;
     n0 = SimpleAggregations();
-     {if (true) return new UDF(n0);}
+    n2 = jj_consume_token(LPAREN);
+            n1 = JTBToolkit.makeNodeToken(n2);
+    n3 = AtomAttr();
+    n5 = jj_consume_token(RPAREN);
+            n4 = JTBToolkit.makeNodeToken(n5);
+     {if (true) return new UDF(n0,n1,n3,n4);}
     throw new Error("Missing return statement in function");
   }
 
@@ -579,8 +589,9 @@ public class QueryParser implements QueryParserConstants {
    IntegerLiteral n2;
    FloatLiteral n3;
    StringLiteral n4;
-   NodeOptional n5 = new NodeOptional();
-   ComplexAtomPart n6;
+   UDF n5;
+   NodeOptional n6 = new NodeOptional();
+   ComplexAtomPart n7;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case ALPHA_NUM_IDENT:
       n1 = AtomAttr();
@@ -598,6 +609,14 @@ public class QueryParser implements QueryParserConstants {
       n4 = StringLiteral();
            n0 = new NodeChoice(n4, 3);
       break;
+    case SUM:
+    case MAX:
+    case MIN:
+    case AVG:
+    case COUNT:
+      n5 = UDF();
+           n0 = new NodeChoice(n5, 4);
+      break;
     default:
       jj_la1[9] = jj_gen;
       jj_consume_token(-1);
@@ -606,14 +625,14 @@ public class QueryParser implements QueryParserConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case PLUS:
     case MINUS:
-      n6 = ComplexAtomPart();
-        n5.addNode(n6);
+      n7 = ComplexAtomPart();
+        n6.addNode(n7);
       break;
     default:
       jj_la1[10] = jj_gen;
       ;
     }
-     {if (true) return new AtomPart(n0,n5);}
+     {if (true) return new AtomPart(n0,n6);}
     throw new Error("Missing return statement in function");
   }
 
@@ -766,6 +785,11 @@ public class QueryParser implements QueryParserConstants {
     return false;
   }
 
+  private boolean jj_3R_13() {
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
   private boolean jj_3R_15() {
     if (jj_scan_token(PROJ)) return true;
     if (jj_scan_token(LSQPAREN)) return true;
@@ -805,13 +829,13 @@ public class QueryParser implements QueryParserConstants {
     return false;
   }
 
-  private boolean jj_3R_13() {
-    if (jj_3R_19()) return true;
+  private boolean jj_3R_12() {
+    if (jj_3R_18()) return true;
     return false;
   }
 
-  private boolean jj_3R_12() {
-    if (jj_3R_18()) return true;
+  private boolean jj_3R_19() {
+    if (jj_scan_token(ALPHA_NUM_IDENT)) return true;
     return false;
   }
 
@@ -838,11 +862,6 @@ public class QueryParser implements QueryParserConstants {
 
   private boolean jj_3R_8() {
     if (jj_3R_14()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_19() {
-    if (jj_scan_token(ALPHA_NUM_IDENT)) return true;
     return false;
   }
 
@@ -920,7 +939,7 @@ public class QueryParser implements QueryParserConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x107780,0x7780,0x800,0x7000,0x107780,0xf8000,0x0,0x0,0x2f000000,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x107780,0x7780,0x800,0x7000,0x107780,0xf8000,0x0,0x0,0x2f000000,0xf8000,0x0,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x200,0x0,0x180,0x180,0x0,0x1e00,0x3,0x3,0xc00,0x4000,};

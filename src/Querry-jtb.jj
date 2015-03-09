@@ -462,13 +462,21 @@ Attribute Attribute() :
 UDF UDF() :
 {
    SimpleAggregations n0;
+   NodeToken n1;
+   Token n2;
+   AtomAttr n3;
+   NodeToken n4;
+   Token n5;
 
    
 }
 {
    n0=SimpleAggregations()
+   n2="(" { n1 = JTBToolkit.makeNodeToken(n2); }
+   n3=AtomAttr()
+   n5=")" { n4 = JTBToolkit.makeNodeToken(n5); }
    
-   { return new UDF(n0); }
+   { return new UDF(n0,n1,n3,n4); }
 }
 
 SimpleAggregations SimpleAggregations() :
@@ -605,8 +613,9 @@ AtomPart AtomPart() :
    IntegerLiteral n2;
    FloatLiteral n3;
    StringLiteral n4;
-   NodeOptional n5 = new NodeOptional();
-   ComplexAtomPart n6;
+   UDF n5;
+   NodeOptional n6 = new NodeOptional();
+   ComplexAtomPart n7;
 
    
 }
@@ -624,15 +633,18 @@ AtomPart AtomPart() :
       |
          n4=StringLiteral()
          { n0 = new NodeChoice(n4, 3); }
+      |
+         n5=UDF()
+         { n0 = new NodeChoice(n5, 4); }
       )
       
    )
    (
-      n6=ComplexAtomPart()
-      { n5.addNode(n6); }
+      n7=ComplexAtomPart()
+      { n6.addNode(n7); }
    )?
    
-   { return new AtomPart(n0,n5); }
+   { return new AtomPart(n0,n6); }
 }
 
 ComplexAtomPart ComplexAtomPart() :

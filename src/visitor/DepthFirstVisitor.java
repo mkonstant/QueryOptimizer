@@ -219,9 +219,15 @@ public class DepthFirstVisitor implements Visitor {
 
    /**
     * f0 -> SimpleAggregations()
+    * f1 -> "("
+    * f2 -> AtomAttr()
+    * f3 -> ")"
     */
    public void visit(UDF n) {
       n.f0.accept(this);
+      n.f1.accept(this);
+      n.f2.accept(this);
+      n.f3.accept(this);
    }
 
    /**
@@ -265,7 +271,7 @@ public class DepthFirstVisitor implements Visitor {
    }
 
    /**
-    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() | UDF() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public void visit(AtomPart n) {

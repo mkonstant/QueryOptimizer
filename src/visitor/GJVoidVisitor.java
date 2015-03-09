@@ -138,6 +138,9 @@ public interface GJVoidVisitor<A> {
 
    /**
     * f0 -> SimpleAggregations()
+    * f1 -> "("
+    * f2 -> AtomAttr()
+    * f3 -> ")"
     */
    public void visit(UDF n, A argu);
 
@@ -170,7 +173,7 @@ public interface GJVoidVisitor<A> {
    public void visit(Atom n, A argu);
 
    /**
-    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() | UDF() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public void visit(AtomPart n, A argu);

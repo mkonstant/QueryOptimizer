@@ -87,7 +87,7 @@ public class ProjectionCost {
     //cost of dublicate elimiation with sort is equal to sorting one relation
     public double dublicateSort(){
             sortedAnnotation.add("Sort to eliminate dublicates");
-            return SortCost.externalSortCost(br, M, latency, penaltyTime,  tranferTime);
+            return SortCost.computeCost(br, M, latency, penaltyTime,  tranferTime);
     }
     
     public double dublicateHash(boolean partitioned){

@@ -145,6 +145,7 @@ public class QuerryOptimizer {
         int tempC,maxC="Condition".length();
         int tempA,maxA="Attributes".length();
         int tempAn,maxAn="Annotation".length();
+        int tempAggr, maxAggr="Aggregation".length();
         String splitLine="+----------+-------+";
         String headLine= "|Operation |  type |";
         int l;
@@ -160,6 +161,8 @@ public class QuerryOptimizer {
             tempC=temp.getConditionsPrintLenght();
             tempA=temp.getAttributesPrintLenght();
             tempAn=temp.getAnnotationLenght();
+            tempAggr = temp.getAggragationLenght();
+            
                     
             if(tempR1>maxR1)
                 maxR1=tempR1;
@@ -171,6 +174,8 @@ public class QuerryOptimizer {
                 maxA=tempA;
             if(tempAn>maxAn)
                 maxAn=tempAn;
+            if(tempAggr>maxAggr)
+                maxAggr=tempAggr;
 
 	}
         
@@ -202,6 +207,14 @@ public class QuerryOptimizer {
                 headLine+=" ";
         }
         headLine+="|";
+        
+        headLine+="Aggregation";
+        l = maxAggr - "Aggregation".length();        
+        for(int i=0;i<l;i++){
+                headLine+=" ";
+        }
+        headLine+="|";
+        
         headLine+="Annotation";
         l = maxAn - "Annotation".length();        
         for(int i=0;i<l;i++){
@@ -228,6 +241,12 @@ public class QuerryOptimizer {
                 splitLine+="-";
         }
         splitLine+="+";
+        for(int i=0;i<maxAggr;i++){
+                splitLine+="-";
+        }
+        splitLine+="+";
+        
+        
         for(int i=0;i<maxAn;i++){
                 splitLine+="-";
         }
@@ -241,7 +260,7 @@ public class QuerryOptimizer {
         for (int i = 0; i < op.size(); i++)
         {
             temp = op.get(i);
-            System.out.println(temp.toPrint(maxR1, maxR2, maxC, maxA,maxAn));
+            System.out.println(temp.toPrint(maxR1, maxR2, maxC, maxA,maxAn,maxAggr));
 	}
         System.out.println(splitLine);
    

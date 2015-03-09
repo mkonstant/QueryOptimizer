@@ -138,6 +138,9 @@ public interface GJNoArguVisitor<R> {
 
    /**
     * f0 -> SimpleAggregations()
+    * f1 -> "("
+    * f2 -> AtomAttr()
+    * f3 -> ")"
     */
    public R visit(UDF n);
 
@@ -170,7 +173,7 @@ public interface GJNoArguVisitor<R> {
    public R visit(Atom n);
 
    /**
-    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() | UDF() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public R visit(AtomPart n);

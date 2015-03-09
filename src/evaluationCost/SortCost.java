@@ -11,7 +11,17 @@ package evaluationCost;
  */
 public class SortCost {
     
-      public static double externalSortCost(int br,int M,double latency, double penaltyTime, double tranferTime){
+    
+    
+      public static double computeCost(int br,int M,double latency, double penaltyTime, double tranferTime){
+          
+          
+        if(br< M-1){ //quicksort
+            return br*tranferTime + latency + br*penaltyTime;
+        
+        }  
+          
+        //now external sort
         
         int mergePasses = (int) (Math.log10(br/M)/Math.log10(M-1)); 
         int blocksTranfered = br * (2*mergePasses+1);

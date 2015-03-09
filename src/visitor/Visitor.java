@@ -138,6 +138,9 @@ public interface Visitor {
 
    /**
     * f0 -> SimpleAggregations()
+    * f1 -> "("
+    * f2 -> AtomAttr()
+    * f3 -> ")"
     */
    public void visit(UDF n);
 
@@ -170,7 +173,7 @@ public interface Visitor {
    public void visit(Atom n);
 
    /**
-    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() | UDF() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public void visit(AtomPart n);

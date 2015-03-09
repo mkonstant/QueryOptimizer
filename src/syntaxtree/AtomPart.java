@@ -6,7 +6,7 @@ package syntaxtree;
 
 /**
  * Grammar production:
- * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
+ * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() | UDF() )
  * f1 -> ( ComplexAtomPart() )?
  */
 public class AtomPart implements Node {

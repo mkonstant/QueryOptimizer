@@ -24,7 +24,8 @@ public abstract class Operator {
     protected String annotation="";
     protected Catalog catalog;
     protected String complexCondtion=null;
-    
+    protected String aggregation="";
+    protected String aggregationAttr="";
     
     protected int b1,n1;  
     protected int b2,n2;
@@ -50,7 +51,13 @@ public abstract class Operator {
     public void AddCondition(String attr1, String attr2, String action){};
     public ArrayList<Condition> getConditions(){return null;};
     protected void prePrint(){};
-    public void computeCost(){};
+    public void computeCost(){};    
+    public void setAggregation(String agr){}
+    public void setAggregationAttr(String agr){}   
+    public String getAggregation(){return "";}
+    public String getAggregationAttr(){return "";}
+    
+    
     
     public void setCatalog(Catalog c){
         catalog = c;
@@ -88,6 +95,9 @@ public abstract class Operator {
         return annotation.length();
     }
     
+    public int getAggragationLenght(){
+        return aggregation.length()+aggregationAttr.length()+2;
+    }
     
     public void setOpName(String name){
         prePrint();
@@ -131,7 +141,7 @@ public abstract class Operator {
     
     
    
-    public String toPrint(int maxR1,int maxR2, int maxC, int maxA,int maxAn){        
+    public String toPrint(int maxR1,int maxR2, int maxC, int maxA,int maxAn , int maxAggr){        
         String temp= "|"+operatorName+"| "+operation;
         int l = 6 - operation.length();
         for(int i=0;i<l;i++){
@@ -171,6 +181,20 @@ public abstract class Operator {
                 temp+=" ";
         }
         temp+="|";
+        
+        //add aggragation
+        if(!aggregation.equals("")){
+            temp+=aggregation+"("+aggregationAttr+")";
+            l = maxAggr - aggregation.length() - aggregationAttr.length() -2;  
+        }
+        else
+            l = maxAggr;  
+        for(int i=0;i<l;i++){
+                temp+=" ";
+        }
+        temp+="|";
+        
+        
         
         //add annotation
         temp+=annotation;

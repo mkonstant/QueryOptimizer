@@ -184,7 +184,7 @@ void Attribute() : {}
 
 void UDF() : {}
 {
-		SimpleAggregations()	
+		SimpleAggregations() "(" AtomAttr() ")"	
 }
 
 void SimpleAggregations() : {}
@@ -216,6 +216,7 @@ void AtomPart() : {}
 		| IntegerLiteral()
 		| FloatLiteral() 
 		| StringLiteral() 
+		| UDF()
 	) (ComplexAtomPart())?
 }
 

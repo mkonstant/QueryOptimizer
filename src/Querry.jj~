@@ -179,12 +179,12 @@ void Relation() : {}
 
 void Attribute() : {}
 {
-		AlphaNumIdent()	
+		AtomAttr()
 }
 
 void UDF() : {}
 {
-		SimpleAggregations()	
+		SimpleAggregations() "(" AtomAttr() ")"	
 }
 
 void SimpleAggregations() : {}

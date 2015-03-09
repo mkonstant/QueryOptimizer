@@ -7,12 +7,28 @@ package syntaxtree;
 /**
  * Grammar production:
  * f0 -> SimpleAggregations()
+ * f1 -> "("
+ * f2 -> AtomAttr()
+ * f3 -> ")"
  */
 public class UDF implements Node {
    public SimpleAggregations f0;
+   public NodeToken f1;
+   public AtomAttr f2;
+   public NodeToken f3;
 
-   public UDF(SimpleAggregations n0) {
+   public UDF(SimpleAggregations n0, NodeToken n1, AtomAttr n2, NodeToken n3) {
       f0 = n0;
+      f1 = n1;
+      f2 = n2;
+      f3 = n3;
+   }
+
+   public UDF(SimpleAggregations n0, AtomAttr n1) {
+      f0 = n0;
+      f1 = new NodeToken("(");
+      f2 = n1;
+      f3 = new NodeToken(")");
    }
 
    public void accept(visitor.Visitor v) {

@@ -259,9 +259,17 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
 
    /**
     * f0 -> SimpleAggregations()
+    * f1 -> "("
+    * f2 -> AtomAttr()
+    * f3 -> ")"
     */
    public R visit(UDF n, A argu) {
-      return n.f0.accept(this, argu);
+      R _ret=null;
+      n.f0.accept(this, argu);
+      n.f1.accept(this, argu);
+      n.f2.accept(this, argu);
+      n.f3.accept(this, argu);
+      return _ret;
    }
 
    /**
@@ -311,7 +319,7 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
    }
 
    /**
-    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() )
+    * f0 -> ( AtomAttr() | IntegerLiteral() | FloatLiteral() | StringLiteral() | UDF() )
     * f1 -> ( ComplexAtomPart() )?
     */
    public R visit(AtomPart n, A argu) {

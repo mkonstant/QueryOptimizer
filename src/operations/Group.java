@@ -6,6 +6,7 @@
 package operations;
 
 import java.util.ArrayList;
+import syntaxtree.HavingClause;
 
 /**
  *
@@ -16,8 +17,9 @@ public  class Group extends Operator{
     ArrayList<String> attrs = null;
     ArrayList<Condition> conditions = null;
     
-    public boolean hasHavingClause=false;
-    //only one of the following 2 and only if hasHavingClause=true
+    private boolean hasHavingClause=false;
+    
+    //only one of the following 2 
     String relation1 = null;
     Operator relationOp1=null;
 
@@ -35,16 +37,33 @@ public  class Group extends Operator{
     
     @Override
     public void setRelation1(String rel){
-        hasHavingClause=true;
         relation1 = rel;
     }
     
     @Override
     public void setRelationOp1(Operator rel){
-        hasHavingClause=true;;
         relationOp1 = rel;
     }
     
+    @Override
+    public void setAggregation(String agr){
+        aggregation =agr;
+    }
+    
+    @Override
+    public void setAggregationAttr(String agr){
+        aggregationAttr =agr;
+    }
+    
+    @Override
+    public String getAggregation(){
+        return aggregation;
+    }
+
+    @Override
+    public String getAggregationAttr(){
+        return aggregationAttr;
+    }
     
     
     @Override
@@ -74,8 +93,10 @@ public  class Group extends Operator{
     
     @Override
     public void AddCondition(String attr1, String attr2, String action){
-        if(conditions==null)
+        if(conditions==null){
+            hasHavingClause = true;
             conditions = new ArrayList<Condition>();
+        }
         conditions.add(new Condition(attr1, attr2, action));
     }
     
@@ -83,6 +104,35 @@ public  class Group extends Operator{
     @Override
     public ArrayList<Condition> getConditions(){
         return conditions;
+    }
+    
+     @Override
+    protected void prePrint(){
+         //add conditions 
+        attributesPrint="";
+        for (int i = 0; i < attrs.size(); i++)
+        {
+            if(i>0)
+                attributesPrint+=",";
+            attributesPrint += attrs.get(i);
+	}
+        
+       //add conditions 
+        if(conditions!=null){
+            conditionsPrint="";
+            for (int i = 0; i < conditions.size(); i++)
+            {
+                if(i>0)
+                    conditionsPrint+=" "+complexCondtion+" ";
+                conditionsPrint += conditions.get(i).toPrint();
+            }
+        }
+        //add relation1
+     
+        if(relationOp1==null)
+            relationPrint1+=relation1;
+        else
+            relationPrint1+= relationOp1.getOpName();
     }
    
     
