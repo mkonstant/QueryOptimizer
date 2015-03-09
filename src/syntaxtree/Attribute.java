@@ -6,12 +6,12 @@ package syntaxtree;
 
 /**
  * Grammar production:
- * f0 -> AlphaNumIdent()
+ * f0 -> AtomAttr()
  */
 public class Attribute implements Node {
-   public AlphaNumIdent f0;
+   public AtomAttr f0;
 
-   public Attribute(AlphaNumIdent n0) {
+   public Attribute(AtomAttr n0) {
       f0 = n0;
    }
 

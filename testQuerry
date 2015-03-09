@@ -1,1 +1,1 @@
-sel[account_number>3 or branch_name=2 and branch_city=4 and customer_id=5](chekingaccounts)
+join[savingaccounts.account_number=account_number](savingaccounts)(proj[chekingaccounts.account_number](chekingaccounts))

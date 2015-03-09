@@ -449,12 +449,12 @@ Relation Relation() :
 
 Attribute Attribute() :
 {
-   AlphaNumIdent n0;
+   AtomAttr n0;
 
    
 }
 {
-   n0=AlphaNumIdent()
+   n0=AtomAttr()
    
    { return new Attribute(n0); }
 }

@@ -132,7 +132,7 @@ public interface GJVisitor<R,A> {
    public R visit(Relation n, A argu);
 
    /**
-    * f0 -> AlphaNumIdent()
+    * f0 -> AtomAttr()
     */
    public R visit(Attribute n, A argu);
 

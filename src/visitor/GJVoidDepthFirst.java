@@ -221,7 +221,7 @@ public class GJVoidDepthFirst<A> implements GJVoidVisitor<A> {
    }
 
    /**
-    * f0 -> AlphaNumIdent()
+    * f0 -> AtomAttr()
     */
    public void visit(Attribute n, A argu) {
       n.f0.accept(this, argu);

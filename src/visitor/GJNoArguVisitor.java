@@ -132,7 +132,7 @@ public interface GJNoArguVisitor<R> {
    public R visit(Relation n);
 
    /**
-    * f0 -> AlphaNumIdent()
+    * f0 -> AtomAttr()
     */
    public R visit(Attribute n);
 

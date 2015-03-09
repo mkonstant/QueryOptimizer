@@ -28,6 +28,7 @@ import myExceptions.ComplexConditionException;
 import myExceptions.JoinAttributeException;
 import myExceptions.JoinAttributeTypeException;
 import myExceptions.ProjectionAttributeException;
+import myExceptions.RelationAttributeException;
 import myExceptions.RelationException;
 import operations.Operator;
 
@@ -79,6 +80,10 @@ public class QuerryOptimizer {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(QuerryOptimizer.class.getName()).log(Level.SEVERE, null, ex);
         }catch(ComplexConditionException ex){
+            System.err.println(ex.getMessage());
+            System.exit(1);
+        }
+        catch(RelationAttributeException ex){
             System.err.println(ex.getMessage());
             System.exit(1);
         }

@@ -140,13 +140,13 @@ void JoinOp() : {}
 
 void GroupingOp() : {}
 {
-		"groupby" "["Attribute() (LOOKAHEAD(2) "," Attribute())* "]" UDF() (HavingClause() )?	
+		"groupby" "["Attribute() (LOOKAHEAD(2) "," Attribute())* "]" UDF() (HavingClause() )? "(" Relation() ")" 	
 	
 }
 
 void HavingClause() : {}
 {
-		"having" "[" Condition() "]" "(" Relation() ")" 
+		"having" "[" Condition() "]" 
 	
 }
 
@@ -197,7 +197,7 @@ void SimpleAggregations() : {}
 
 void Condition() : {}
 {
-		Atom() (ComplexCondition())?
+		Atom() (ComplexCondition())*
 }
 
 void ComplexCondition() : {}

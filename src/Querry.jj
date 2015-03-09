@@ -179,7 +179,7 @@ void Relation() : {}
 
 void Attribute() : {}
 {
-		AlphaNumIdent()	
+		AtomAttr()
 }
 
 void UDF() : {}

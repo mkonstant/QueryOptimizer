@@ -251,7 +251,7 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
    }
 
    /**
-    * f0 -> AlphaNumIdent()
+    * f0 -> AtomAttr()
     */
    public R visit(Attribute n, A argu) {
       return n.f0.accept(this, argu);

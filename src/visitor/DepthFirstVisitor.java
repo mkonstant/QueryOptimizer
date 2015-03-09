@@ -211,7 +211,7 @@ public class DepthFirstVisitor implements Visitor {
    }
 
    /**
-    * f0 -> AlphaNumIdent()
+    * f0 -> AtomAttr()
     */
    public void visit(Attribute n) {
       n.f0.accept(this);

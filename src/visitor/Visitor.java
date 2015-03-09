@@ -132,7 +132,7 @@ public interface Visitor {
    public void visit(Relation n);
 
    /**
-    * f0 -> AlphaNumIdent()
+    * f0 -> AtomAttr()
     */
    public void visit(Attribute n);
 

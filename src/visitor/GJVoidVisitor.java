@@ -132,7 +132,7 @@ public interface GJVoidVisitor<A> {
    public void visit(Relation n, A argu);
 
    /**
-    * f0 -> AlphaNumIdent()
+    * f0 -> AtomAttr()
     */
    public void visit(Attribute n, A argu);
 

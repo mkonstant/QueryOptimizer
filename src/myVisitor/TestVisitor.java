@@ -7,6 +7,7 @@ package myVisitor;
 
 import java.util.ArrayList;
 import myExceptions.ComplexConditionException;
+import myExceptions.RelationAttributeException;
 import operations.Group;
 import operations.Join;
 import operations.Operator;
@@ -54,6 +55,7 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
    } 
    
    String complexCondition;
+   Boolean joinRel2=false;
    
    int count=0;
    
@@ -184,8 +186,9 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
       }
       
       
-      
+      joinRel2 =true;
       n.f2.accept(this, argu);
+      joinRel2 =false;
       operations.add(temp);
       return null;
    }
@@ -205,8 +208,6 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
    public String visit(GroupingOp n, String argu) {
       temp= new Group();
      
-      n.f2.accept(this, "addAttr");
-      n.f3.accept(this, "addAttr");
       
       n.f5.accept(this, argu);
       n.f6.accept(this, argu);
@@ -225,6 +226,9 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
       else{               
         tempResult.setRelation2(relation);
       }
+      
+      n.f2.accept(this, "addAttr");
+      n.f3.accept(this, "addAttr");
       temp = tempResult;
       return null;
    }
@@ -316,7 +320,7 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
    }
 
    /**
-    * f0 -> AlphaNumIdent()
+    * f0 -> AtomAttr()
     */
    public String visit(Attribute n, String argu) {
       String attr =  n.f0.accept(this, argu);
@@ -372,7 +376,6 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
               throw new ComplexConditionException();
           }
       }
-      //n.f0.accept(this, argu);
       n.f1.accept(this, argu);
       return null;
    }
@@ -389,7 +392,7 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
       String attr1 = n.f0.accept(this, argu);
       String action= n.f1.choice.toString();
       
-      String attr2 = n.f2.accept(this, argu);
+      String attr2 = n.f2.accept(this, "attr2");
       temp.AddCondition(attr1, attr2, action);
       
       return null;
@@ -423,10 +426,35 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
    public String visit(AtomAttr n, String argu) {
       String head= n.f0.accept(this, argu);
       String tail = n.f1.accept(this, argu);
+      if(argu!=null && argu.equals("attr2")){
+          if(tail!=null){
+            if(temp.getRelation2()==null){
+                throw new RelationAttributeException( head+"."+tail,null);
+            }
+            else{
+                if(!temp.getRelation2().equals(head))
+                    throw new RelationAttributeException( head+"."+tail, temp.getRelation2());
+            }
+
+        }
+      }
+      else{
+        if(tail!=null){
+            if(temp.getRelation1()==null){
+                throw new RelationAttributeException( head+"."+tail,null);
+            }
+            else{
+                if(!temp.getRelation1().equals(head))
+                    throw new RelationAttributeException( head+"."+tail, temp.getRelation1());
+            }
+
+        }
+      }
+      
       if(tail==null)
           return head;
       else
-        return head+tail;
+        return tail;
    }
 
    /**
@@ -434,7 +462,7 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
     * f1 -> AlphaNumIdent()
     */
    public String visit(AtRel n, String argu) {
-      return "."+n.f1.accept(this, argu);
+      return n.f1.accept(this, argu);
    }
 
    /**

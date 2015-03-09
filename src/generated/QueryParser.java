@@ -410,8 +410,8 @@ public class QueryParser implements QueryParserConstants {
   }
 
   final public Attribute Attribute() throws ParseException {
-   AlphaNumIdent n0;
-    n0 = AlphaNumIdent();
+   AtomAttr n0;
+    n0 = AtomAttr();
      {if (true) return new Attribute(n0);}
     throw new Error("Missing return statement in function");
   }
@@ -753,14 +753,14 @@ public class QueryParser implements QueryParserConstants {
     finally { jj_save(3, xla); }
   }
 
-  private boolean jj_3R_19() {
+  private boolean jj_3R_20() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_20()) {
-    jj_scanpos = xsp;
     if (jj_3R_21()) {
     jj_scanpos = xsp;
-    if (jj_3R_22()) return true;
+    if (jj_3R_22()) {
+    jj_scanpos = xsp;
+    if (jj_3R_23()) return true;
     }
     }
     return false;
@@ -805,6 +805,11 @@ public class QueryParser implements QueryParserConstants {
     return false;
   }
 
+  private boolean jj_3R_13() {
+    if (jj_3R_19()) return true;
+    return false;
+  }
+
   private boolean jj_3R_12() {
     if (jj_3R_18()) return true;
     return false;
@@ -836,7 +841,7 @@ public class QueryParser implements QueryParserConstants {
     return false;
   }
 
-  private boolean jj_3R_13() {
+  private boolean jj_3R_19() {
     if (jj_scan_token(ALPHA_NUM_IDENT)) return true;
     return false;
   }
@@ -869,18 +874,18 @@ public class QueryParser implements QueryParserConstants {
     return false;
   }
 
-  private boolean jj_3R_22() {
+  private boolean jj_3R_23() {
     if (jj_scan_token(DIFF)) return true;
     return false;
   }
 
-  private boolean jj_3R_21() {
+  private boolean jj_3R_22() {
     if (jj_scan_token(UNION)) return true;
     return false;
   }
 
   private boolean jj_3R_18() {
-    if (jj_3R_19()) return true;
+    if (jj_3R_20()) return true;
     if (jj_scan_token(LPAREN)) return true;
     return false;
   }
@@ -891,7 +896,7 @@ public class QueryParser implements QueryParserConstants {
     return false;
   }
 
-  private boolean jj_3R_20() {
+  private boolean jj_3R_21() {
     if (jj_scan_token(INTER)) return true;
     return false;
   }
