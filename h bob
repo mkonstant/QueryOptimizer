@@ -1,0 +1,9 @@
+
+
+sel[chekingaccounts.account_number>3 and branch_name=2 and branch_city=4 and customer_id=5](chekingaccounts)
+
+
+join[savingaccounts.account_number=account_number and branch_city=branch_city](savingaccounts)(proj[chekingaccounts.account_number,branch_city](chekingaccounts))
+
+
+union(chekingaccounts)(proj[account_number,branch_name,branch_city,customer_id](savingaccounts))

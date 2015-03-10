@@ -1,1 +1,1 @@
-join[savingaccounts.account_number=account_number](savingaccounts)(proj[chekingaccounts.account_number](chekingaccounts))
+groupby[branch_city] max(account_number) having[max(account_number)="vdfb"] (proj[account_number,branch_city](chekingaccounts))
