@@ -73,16 +73,6 @@ public class IndexInfo {
         return true;
     }
     
-    public boolean equalsKey( Set<String> tocheck) {
-        if(tocheck.size()!=indexName.size())
-            return false;
-        for (String index : indexName) {
-            if(!tocheck.contains(index))
-                return false;
-        }
-        return true;
-    }
-    
     public boolean equalsKey( String tocheck) {
         if(indexName.size() !=1)
             return false;

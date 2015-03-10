@@ -26,7 +26,7 @@ public class TableInfo {
     Set <String> key = null;
     
     boolean sorted=false; //only for output table f operations
-    boolean operator=false; //only for output table f operations
+    
     
     public TableInfo(){
         attributes = new HashMap<String,Attributes>();
@@ -35,14 +35,6 @@ public class TableInfo {
 
     public void setSorted(boolean s){
         sorted=s;
-    }
-    
-    public void setOperator(boolean o){
-        operator=o;
-    } 
-    
-    public boolean getOperator(){
-        return operator;
     }
     
     public boolean getSorted(){
@@ -142,120 +134,5 @@ public class TableInfo {
     public void setForeignIndex(Map<String, ForeignIndexInfo> foreignIndex) {
         this.foreignIndex = foreignIndex;
     }
-    
-    public boolean hashIndexSameKey(TableInfo tInfo){
-        if(tInfo.hashIndexExist() && hashIndexExist() ){
-            IndexInfo temp = primaryIndex;
-            IndexInfo tempTocheck = tInfo.getPrimaryIndex();
-            Map<String, IndexInfo> tempsecondaryIndex = tInfo.getSecondaryIndex();
-            
-            if(!temp.getStructure().equals("B+tree")){  //check this.primary index with every index f tinfo
-                if(!tempTocheck.getStructure().equals("B+tree"))
-                {
-                    if(temp.equalsKey(tempTocheck.getIndexName()))
-                        return true;
-                }
-                if(tempsecondaryIndex!=null){
-                    for(String key1 : tempsecondaryIndex.keySet()){
-                        tempTocheck = tempsecondaryIndex.get(key1);
-                        if(!tempTocheck.getStructure().equals("B+tree")){
-                            if(temp.equalsKey(tempTocheck.getIndexName()))
-                                return true;
-                        }
-                    }
-                }
-            }
-            else{ //check all this.secondary with every index of tinfo
-                if(secondaryIndex!=null){
-                    for(String key1 : secondaryIndex.keySet()){
-                        temp = secondaryIndex.get(key1);
-                        if(!temp.getStructure().equals("B+tree")){  //check this.primary index with every index f tinfo
-                            tempTocheck = tInfo.getPrimaryIndex();
-                            if(!tempTocheck.getStructure().equals("B+tree"))
-                            {
-                                if(temp.equalsKey(tempTocheck.getIndexName()))
-                                    return true;
-                            }
-                            if(tempsecondaryIndex!=null){
-                                for(String key2 : tempsecondaryIndex.keySet()){
-                                    tempTocheck = tempsecondaryIndex.get(key2);
-                                    if(!tempTocheck.getStructure().equals("B+tree")){
-                                        if(temp.equalsKey(tempTocheck.getIndexName()))
-                                            return true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            
-        }
-        
-        return false;
-    }
-    
-    public boolean sortedSameKey(TableInfo tInfo){   
-        if(tInfo.isSorted() && this.isSorted()){
-            if(tInfo.getPrimaryIndex().equalsKey(primaryIndex.getIndexName()))
-                return true;
-        }
-        return false;
-    }
-    
-    public boolean hashIndexExist(){
-        IndexInfo temp;
-        if(primaryIndex!=null && !primaryIndex.getStructure().equals("B+tree"))
-            return true;
-        if(secondaryIndex!= null){
-            for(String key1 : secondaryIndex.keySet()){
-                temp = secondaryIndex.get(key1);
-                if(!temp.getStructure().equals("B+tree")){
-                    //System.out.println("csddvf df       "+key1);
-                    return true;
-                }
-           }
-        }
-        return false;
-    }
-    
-    public boolean isSorted(){
-        if(primaryIndex!=null  && primaryIndex.getStructure().equals("B+tree"))
-            return true;
-        return false;
-    }
-    
-    public boolean isSortedOnKey(ArrayList<String> tocheck){
-        if(isSorted()){
-            if(primaryIndex.equalsKey(tocheck))
-                return true;
-        
-        }
-        return false;
-    }
-    
-        public boolean isHashedOnKey(ArrayList<String> tocheck){
-        if(hashIndexExist()){
-            if(!primaryIndex.getStructure().equals("B+tree") && primaryIndex.equalsKey(tocheck))
-                    return true;
-            else{
-                if(secondaryIndex!= null){
-                    IndexInfo temp;
-                    for(String key1 : secondaryIndex.keySet()){
-                        temp = secondaryIndex.get(key1);
-                        if(!temp.getStructure().equals("B+tree") && temp.equalsKey(tocheck)){
-                            return true;
-                        }
-                   }
-                }
-            }
-        
-        }
-        return false;
-    }
-    
-    
-    
-    
     
 }
