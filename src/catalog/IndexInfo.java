@@ -73,7 +73,7 @@ public class IndexInfo {
         return true;
     }
     
-    public boolean equalsKey( Set<String> tocheck) {
+    public boolean equalsKey( ArrayList<String> tocheck ) {
         if(tocheck.size()!=indexName.size())
             return false;
         for (String index : indexName) {
