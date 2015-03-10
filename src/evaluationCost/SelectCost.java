@@ -26,19 +26,23 @@ public class SelectCost {
     int b = -1;
     int br = -1;
     Condition condition = null;
-    String message = null;
+    ArrayList<String> allMessages = new ArrayList<String>();
+    ArrayList<Double> allCosts = new ArrayList<Double>();
+    String message;
     SystemInfo sysInfo = null;
     int numOfBlocks = -1;
     IndexInfo index = null;
     boolean equalPrimary = false;
+    int numOfConditions = -1;
     
 
-    public SelectCost(Condition condition, TableInfo tabInfo, SystemInfo sysInfo, IndexInfo index,boolean equalPrimary){
+    public SelectCost(Condition condition, TableInfo tabInfo, SystemInfo sysInfo, IndexInfo index,boolean equalPrimary, int numOfConditions){
         this.condition = condition;
         this.tabInfo = tabInfo;
         this.sysInfo = sysInfo;
         this.index = index;
         this.equalPrimary = equalPrimary;
+        this.numOfConditions = numOfConditions;
     }
     
     
@@ -51,30 +55,161 @@ public class SelectCost {
     }
     
     public void calculateCost(){
-        if ( tabInfo.getPrimaryIndex() != null){
-            if (tabInfo.getPrimaryIndex().equalsKey(condition.getAttr1())){
-                if ( tabInfo.equalsKey(condition.getAttr1())){
-                    
-                }
-                else{
-
-                }
+        IndexInfo tempIndex = null;
+        int minCostNum;
+        
+        //ena condition
+        if ( numOfConditions == 1){
+            if ( condition.getAction().contentEquals("=")){
+                equalSelection(index);
             }
             else{
-                if ( tabInfo.equalsKey(condition.getAttr1())){
-                //linear with key
+                if ( index.getStructure().contains("B+tree")){
+                    inequalitySelection(index);
                 }
                 else{
-                    //linear with no key
+                    tempIndex = tabInfo.findBestIndexForInequality(condition.getAttr1());
+                    inequalitySelection(tempIndex);
                 }
             }
         }
         else{
-            if ( tabInfo.equalsKey(condition.getAttr1())){
-                //linear with key
+            if ( condition.getAction().contentEquals("=")){    
+                if ( index != null){//exei index
+                    if ( index.getSecondary() == null ){//exei primary index
+                       equalSelection(index);
+                       //message = "Use primary Index in attribute " + index.getIndexName().toString();
+                    }
+                    else{//exei secondary index
+                        equalSelection(index);
+                        //allMessages.add("Use secondary index in attribute " + index.getIndexName().toString());
+                        tempIndex = tabInfo.findBestIndex(condition.getAttr1());
+                        if ( tempIndex.getSecondary() == null ){//tsekare mipws exei kapoion primary index kalutero
+                            equalSelection(tempIndex);
+                            //allMessages.add("Use secondary index in attribute " + tempIndex.getIndexName().toString()); 
+                        }           
+                    }
+                }
+                else{
+                    
+                    tempIndex = tabInfo.findBestIndex(condition.getAttr1());
+                    equalSelection(tempIndex);
+                }
             }
             else{
-                //linear with no key
+                if ( index != null ){
+                    if ( index.getSecondary() == null && index.getStructure().contains("B+tree")){
+                        inequalitySelection(index);
+                    }
+                    else if ( index.getSecondary() != null && index.getStructure().contains("B+tree") ){
+                        inequalitySelection(index);
+                    }
+                    else{
+                        tempIndex = tabInfo.findBestIndexForInequality(condition.getAttr1());
+                        inequalitySelection(tempIndex);
+                    }
+                    
+                }
+                else{
+                    tempIndex = tabInfo.findBestIndexForInequality(condition.getAttr1());
+                    inequalitySelection(tempIndex);
+                }
+            }
+        }
+        minCostNum = getMinCost();
+        cost = allCosts.get(minCostNum);
+        message = allMessages.get(minCostNum);
+    }
+    
+    public void equalSelection(IndexInfo tempIndex){
+        double tempCost = -1;
+        
+        if ( tempIndex != null ){
+            if( tempIndex.getStructure().contains("B+tree")){//tree
+                if ( tempIndex.getSecondary() != null ){//primary tree index
+                    if ( equalPrimary == true ){//primary tree with key
+                        tempCost = treePrimaryEqualWithKey();
+                        allCosts.add(tempCost);
+                        allMessages.add("Use primary tree index in attribute(s) : " + tempIndex.toString());
+                    }
+                    else{//primary tree non key
+                        tempCost = treePrimaryEqualNonKey();
+                        allCosts.add(tempCost);
+                        allMessages.add("Use primary tree index(non key) in attribute(s) : " + tempIndex.toString());
+                    }
+                }
+                else{
+                    if ( equalPrimary == true ){//secondary tree with key
+                        tempCost = treeSecondaryEqualWithKey();
+                        allCosts.add(tempCost);
+                        allMessages.add("Use secondary tree index in attribute(s) : " + tempIndex.toString());
+                    }
+                    else{//secondary tree non key
+                        tempCost = treeSecondaryEqualNonKey();
+                        allCosts.add(tempCost);
+                        allMessages.add("Use primary tree index(non key) in attribute(s) : " + tempIndex.toString());
+                    }
+                }
+            }
+            else{//hashing
+                tempCost = hashingPrimary();
+                allCosts.add(tempCost);
+                allMessages.add("Use hashing index in attribute(s) : " + tempIndex.toString());
+            }
+        }
+        else{//linear search
+            if ( equalPrimary == true ){//linear with key
+                tempCost = linearSearchWithKey();
+                allCosts.add(tempCost);
+                allMessages.add("Use linear Search");
+            }
+            else{//linear without key
+                tempCost = linearSearch();
+                allCosts.add(tempCost);
+                allMessages.add("Use Linear Search (non key)");
+            }    
+        }
+    }
+    
+    public void inequalitySelection(IndexInfo tempIndex){
+        double tempCost = -1;
+        
+        if ( tempIndex != null ){
+            if ( tempIndex.getStructure().contains("B+tree") ){
+                if ( tempIndex.getSecondary()== null ){//primary tree index
+                    tempCost = treePrimaryCompare();
+                    allCosts.add(tempCost);
+                    allMessages.add("Use primary tree index in attribute(s) : " + tempIndex.toString());
+                }
+                else{//secondary tree index
+                    tempCost = treeSecondaryCompare();
+                    allCosts.add(tempCost);
+                    allMessages.add("Use secondary tree index in attribute(s) : " + tempIndex.toString());
+                }
+            }
+            else{//hashing not in comparison, so we use linear
+                if (equalPrimary == true){//linear search with key
+                    tempCost = linearSearchWithKey();
+                    allCosts.add(tempCost);
+                    allMessages.add("Use Linear Search");
+                }
+                else{//linear search with non key
+                    tempCost = linearSearch();
+                    allCosts.add(tempCost);
+                    allMessages.add("Use Linear Search(non Key)");
+                }
+            }
+        }
+        else{//no index, linear search
+            if (equalPrimary == true){//linear search with key
+                tempCost = linearSearchWithKey();
+                allCosts.add(tempCost);
+                allMessages.add("Use Linear Search");
+            }
+            else{//linear search with non key
+                tempCost = linearSearch();
+                allCosts.add(tempCost);
+                allMessages.add("Use Linear Search(non key)");
             }
         }
     }
@@ -107,13 +242,8 @@ public class SelectCost {
         return cost;
     }
     
-    public double hashingPrimaryEqualWithKey(){
+    public double hashingPrimary(){
     
-        return cost;
-    }
-    
-    public double hashingPrimaryEqualNonKey(){
-        
         return cost;
     }
     
@@ -172,5 +302,24 @@ public class SelectCost {
         this.message = message;
     }
     
+    public int getMinCost(){
+        double minCost = -1;
+        int position = -1;
+        
+        if ( allCosts.size() > 1 ){
+            minCost = allCosts.get(0);
+            position = 0;
+            for ( int i = 1 ; i < allCosts.size() ; i ++ ){
+                if ( minCost > allCosts.get(i)){
+                    minCost = allCosts.get(i);
+                    position = i;
+                }
+            }
+            return position;
+        }
+        else{
+            return 0;
+        }
+    }
     
 }

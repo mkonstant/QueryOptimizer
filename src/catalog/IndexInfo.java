@@ -18,11 +18,15 @@ public class IndexInfo {
     String structure = null;
     int numOfDistinctValues = -1;
     int costFactor = -1;
+    String secondary = null;
 
     
     public IndexInfo(){
     }
 
+    public void setSecondary(String secondary) {
+        this.secondary = secondary;
+    }
 
     public void setCostFactor(int costFactor) {
         this.costFactor = costFactor;
@@ -43,6 +47,9 @@ public class IndexInfo {
         this.numOfDistinctValues = numOfDistinctValues;
     }
 
+    public String getSecondary() {
+        return secondary;
+    }
    
     public Set<String> getIndexName() {
         return indexName;
@@ -108,4 +115,5 @@ public class IndexInfo {
             return null;
         return this;
     }
+    
 }

@@ -152,33 +152,89 @@ public class TableInfo {
         return true;
     }
     
+    
     public IndexInfo findBestIndex(ArrayList<String> attr){
         boolean FLAG = false;
         
         //primaryIndex
-        for ( int i = 0 ; i < attr.size() ; i ++ ){
-            if ( !primaryIndex.indexName.contains(attr.get(i))){
-                FLAG = true;
-                break;
-            }
-        }
-        if ( FLAG == false ){
-            return primaryIndex;
-        }
-    
-        
-        //secondaryIndex
-        for ( String secondary : secondaryIndex.keySet() ){
-            FLAG = false ;
-            IndexInfo index = secondaryIndex.get(secondary);
+        if ( attr.size() == primaryIndex.indexName.size()){
             for ( int i = 0 ; i < attr.size() ; i ++ ){
-                if ( !index.indexName.contains(attr.get(i))){
+                if ( !primaryIndex.indexName.contains(attr.get(i))){
                     FLAG = true;
                     break;
                 }
             }
             if ( FLAG == false ){
-                return index;
+                return primaryIndex;
+            }
+        }
+    
+        
+        //secondaryIndex
+        for ( String secondary : secondaryIndex.keySet() ){
+            
+            FLAG = false ;
+            IndexInfo index = secondaryIndex.get(secondary);
+            if ( attr.size() == index.indexName.size()){
+                for ( int i = 0 ; i < attr.size() ; i ++ ){
+                    if ( !index.indexName.contains(attr.get(i))){
+                        FLAG = true;
+                        break;
+                    }
+                }
+                if ( FLAG == false ){
+                    return index;
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+     public IndexInfo findBestIndex(String attr){
+        
+        //primaryIndex
+        if ( primaryIndex.indexName.size() == 1){
+            if ( !primaryIndex.indexName.contains(attr)){
+                 return primaryIndex;
+            }
+        }
+    
+        
+        //secondaryIndex
+        for ( String secondary : secondaryIndex.keySet() ){
+            IndexInfo index = secondaryIndex.get(secondary);
+            if ( index.indexName.size() == 1){
+                if ( !index.indexName.contains(attr)){
+                    return index;
+                }
+            }
+        }
+        
+        return null;
+    }
+     
+     public IndexInfo findBestIndexForInequality(String attr){
+        
+        //primaryIndex
+        if ( primaryIndex.indexName.size() == 1){
+            if (primaryIndex.structure.contains("B+tree")){
+                if ( !primaryIndex.indexName.contains(attr)){
+                     return primaryIndex;
+                }
+            }
+        }
+    
+        
+        //secondaryIndex
+        for ( String secondary : secondaryIndex.keySet() ){
+            IndexInfo index = secondaryIndex.get(secondary);
+            if ( index.indexName.size() == 1){
+                if ( index.structure.contains("B+Tree")){
+                    if ( !index.indexName.contains(attr)){
+                        return index;
+                    }
+                }
             }
         }
         
@@ -188,13 +244,18 @@ public class TableInfo {
     
     public boolean equalPrimaryKey( ArrayList<String> attr){
         
-        for( int i = 0 ; i < attr.size() ; i++ ){
-            if ( !key.contains(attr.get(i))){
-                return false;
+        if ( attr.size() == key.size() ){
+            for( int i = 0 ; i < attr.size() ; i++ ){
+                if ( !key.contains(attr.get(i))){
+                    return false;
+                }
             }
+            return true;
+        }
+        else{
+            return false;
         }
         
-        return true;
     }
     
     

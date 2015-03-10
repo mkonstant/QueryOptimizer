@@ -98,6 +98,10 @@ public class Selection extends Operator {
         allCosts = new ArrayList<Double>();
         messages = new ArrayList<String>();
         boolean equalPrimary = false;
+        ArrayList<Double> costs = null;
+        ArrayList<String> messages = null;
+        double cost = -1;
+        String message = null;
         
         
         this.checkVariables();
@@ -109,10 +113,14 @@ public class Selection extends Operator {
             index = tabInfo.findBestIndex(allAttr);
             equalPrimary = tabInfo.equalPrimaryKey(allAttr);
             
-            selCost = new SelectCost(conditions.get(0),tabInfo,catalog.getSystemInfo(),index,equalPrimary);
-            
+            selCost = new SelectCost(conditions.get(0),tabInfo,catalog.getSystemInfo(),index,equalPrimary,allAttr.size());
+            selCost.calculateCost();
+            cost = selCost.getCost();
+            message = selCost.getMessage();
         }
         else{
+            costs = new ArrayList<Double>();
+            messages = new ArrayList<String>();
             for ( int i = 0 ; i < conditions.size() ; i ++ ){
                 allAttr.add(conditions.get(i).getAttr1());
             }
@@ -120,8 +128,6 @@ public class Selection extends Operator {
             index = tabInfo.findBestIndex(allAttr);
             equalPrimary = tabInfo.equalPrimaryKey(allAttr);
             
-            
-            System.out.println("Primary key = " + equalPrimary);
             
             for ( int i = 0 ; i < conditions.size() ; i ++ ){
                 if(relation1!=null) {
@@ -131,10 +137,22 @@ public class Selection extends Operator {
                     tabInfo = relationOp1.getOutTable();
                 }
                 
-                selCost = new SelectCost(conditions.get(i),tabInfo,catalog.getSystemInfo(),index,equalPrimary);
+                selCost = new SelectCost(conditions.get(i),tabInfo,catalog.getSystemInfo(),index,equalPrimary,allAttr.size());
+                selCost.calculateCost();
+                costs.add(selCost.getCost());
+                messages.add(selCost.getMessage());
+            }
+            
+            if (complexCondtion.contains("and")){
+                
+            }
+            else{
+            
             }
                     
         }
+        
+        
         
     }
     

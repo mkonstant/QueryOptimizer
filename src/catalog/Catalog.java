@@ -162,6 +162,7 @@ public class Catalog {
                 indexInfo.setStructure(temp[2]);
                 indexInfo.setNumOfDistinctValues(Integer.parseInt(temp[3]));
                 indexInfo.setCostFactor(Integer.parseInt(temp[4]));
+                indexInfo.setSecondary(null);
                 
                 tabInfo.setPrimaryIndex(indexInfo);
             }
@@ -190,6 +191,7 @@ public class Catalog {
                     indexInfo.setStructure(temp2[1]);
                     indexInfo.setNumOfDistinctValues(Integer.parseInt(temp2[2]));
                     indexInfo.setCostFactor(Integer.parseInt(temp2[3]));
+                    indexInfo.setSecondary("secondary");
                     
                     secondaryIndex.put(temp2[0], indexInfo);
                 }
@@ -218,7 +220,7 @@ public class Catalog {
                     indexInfo.setStructure(temp[1]);
                     indexInfo.setNumOfDistinctValues(Integer.parseInt(temp[2]));
                     indexInfo.setCostFactor(Integer.parseInt(temp[3]));
-                    
+                    indexInfo.setSecondary("secondary");
                     secondaryIndex.put(temp[0], indexInfo);
                 }
             }
