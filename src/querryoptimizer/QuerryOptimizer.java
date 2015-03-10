@@ -54,13 +54,12 @@ public class QuerryOptimizer {
         dbFile = args[0];
         sysFile = args[1];
         
-        //printCatalog(dbFile,sysFile);
         
         catalog = new Catalog(dbFile,sysFile);
         catalog.processingDataBaseFile();
         catalog.processingSystemInfoFile();
         
-       
+        //printCatalog(dbFile,sysFile);
         Map<String,TableInfo> table = catalog.getCatalog();
         
          
@@ -300,25 +299,30 @@ public class QuerryOptimizer {
              System.out.println(primaryIndex.getStructure());
              System.out.println("Secondary Index : ");
              Map<String,IndexInfo> secondaryIndex = tabInfo.getSecondaryIndex();
-             for(String key1 : secondaryIndex.keySet()){
-                 System.out.println("key : " + key1);
-                 IndexInfo indexInfo = secondaryIndex.get(key1);
-                 System.out.println(indexInfo.getCostFactor());
-                 System.out.println(indexInfo.getIndexName().toString());
-                 System.out.println(indexInfo.getNumOfDistinctValues());
-                 System.out.println(indexInfo.getStructure());
+             if ( secondaryIndex != null){
+                for(String key1 : secondaryIndex.keySet()){
+                    System.out.println("key : " + key1);
+
+                    IndexInfo indexInfo = secondaryIndex.get(key1);
+                    System.out.println(indexInfo.getCostFactor());
+                    System.out.println(indexInfo.getIndexName().toString());
+                    System.out.println(indexInfo.getNumOfDistinctValues());
+                    System.out.println(indexInfo.getStructure());
+                }
              }
              System.out.println("Foreign Index : ");
              Map<String,ForeignIndexInfo> foreignIndex = tabInfo.getForeignIndex();
-             for(String key1 : foreignIndex.keySet()){
-                 System.out.println("key : " + key1);
-                 ForeignIndexInfo index = foreignIndex.get(key1);
-                 System.out.println(index.getCostFactor());
-                 System.out.println(index.getIndexName().toString());
-                 System.out.println(index.getNumOfDistinctValues());
-                 System.out.println(index.getOutAttr().toString());
-                 System.out.println(index.getOutTable());
-                 System.out.println(index.getStructure());
+             if (foreignIndex != null){
+                for(String key1 : foreignIndex.keySet()){
+                    System.out.println("key : " + key1);
+                    ForeignIndexInfo index = foreignIndex.get(key1);
+                    System.out.println(index.getCostFactor());
+                    System.out.println(index.getIndexName().toString());
+                    System.out.println(index.getNumOfDistinctValues());
+                    System.out.println(index.getOutAttr().toString());
+                    System.out.println(index.getOutTable());
+                    System.out.println(index.getStructure());
+                }
              }
             
              System.out.println("System Info");

@@ -350,6 +350,17 @@ public class Catalog {
             
             catalog.put(tableName, tabInfo);
             
+            secondaryIndex = null;
+            foreignIndex = null;
+            indexNameStr = null;
+            key = null;
+            indexName = null;
+            foreignName = null;
+            foreignOutAttr = null;
+            temp = null;
+            temp2 = null;
+            temp3 = null;
+            
         }
         
         
