@@ -29,21 +29,55 @@ public class SelectCost {
     String message = null;
     SystemInfo sysInfo = null;
     int numOfBlocks = -1;
+    IndexInfo index = null;
+    boolean equalPrimary = false;
     
 
-    public SelectCost(Condition condition, TableInfo tabInfo, SystemInfo sysInfo){
+    public SelectCost(Condition condition, TableInfo tabInfo, SystemInfo sysInfo, IndexInfo index,boolean equalPrimary){
         this.condition = condition;
         this.tabInfo = tabInfo;
         this.sysInfo = sysInfo;
+        this.index = index;
+        this.equalPrimary = equalPrimary;
     }
     
     
     public void calculateVariables(){
         tS = sysInfo.getLatency();
         tT = sysInfo.getTransferTime();
-        numOfBlocks = (tabInfo.getNumberOfTuples() * tabInfo.getCardinality())/sysInfo.getSizeOfBuffer();// paizei na kanpume overestimated
+        br = (tabInfo.getNumberOfTuples() * tabInfo.getCardinality())/sysInfo.getSizeOfBuffer();// paizei na kanpume overestimated
+        //find b
+        
     }
     
+    public void calculateCost(){
+        if ( tabInfo.getPrimaryIndex() != null){
+            if (tabInfo.getPrimaryIndex().equalsKey(condition.getAttr1())){
+                if ( tabInfo.equalsKey(condition.getAttr1())){
+                    
+                }
+                else{
+
+                }
+            }
+            else{
+                if ( tabInfo.equalsKey(condition.getAttr1())){
+                //linear with key
+                }
+                else{
+                    //linear with no key
+                }
+            }
+        }
+        else{
+            if ( tabInfo.equalsKey(condition.getAttr1())){
+                //linear with key
+            }
+            else{
+                //linear with no key
+            }
+        }
+    }
     
     public double linearSearch(){
         

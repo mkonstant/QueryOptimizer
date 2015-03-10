@@ -26,7 +26,8 @@ public class TableInfo {
     Set <String> key = null;
     
     boolean sorted=false; //only for output table f operations
-    boolean operator=false; //only for output table f operations
+    boolean operator=false;
+    
     
     public TableInfo(){
         attributes = new HashMap<String,Attributes>();
@@ -143,6 +144,144 @@ public class TableInfo {
         this.foreignIndex = foreignIndex;
     }
     
+    public boolean equalsKey( String tocheck) {
+        if(key.size() !=1)
+            return false;
+        if(!key.contains(tocheck))
+            return false;
+        return true;
+    }
+    
+    public IndexInfo findBestIndex(ArrayList<String> attr){
+        boolean FLAG = false;
+        
+        //primaryIndex
+        for ( int i = 0 ; i < attr.size() ; i ++ ){
+            if ( !primaryIndex.indexName.contains(attr.get(i))){
+                FLAG = true;
+                break;
+            }
+        }
+        if ( FLAG == false ){
+            return primaryIndex;
+        }
+    
+        
+        //secondaryIndex
+        for ( String secondary : secondaryIndex.keySet() ){
+            FLAG = false ;
+            IndexInfo index = secondaryIndex.get(secondary);
+            for ( int i = 0 ; i < attr.size() ; i ++ ){
+                if ( !index.indexName.contains(attr.get(i))){
+                    FLAG = true;
+                    break;
+                }
+            }
+            if ( FLAG == false ){
+                return index;
+            }
+        }
+        
+        return null;
+    }
+    
+    
+    public boolean equalPrimaryKey( ArrayList<String> attr){
+        
+        for( int i = 0 ; i < attr.size() ; i++ ){
+            if ( !key.contains(attr.get(i))){
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    public void setOperator(boolean o){
+        operator=o;
+    } 
+    
+    public boolean getOperator(){
+        return operator;
+    }
+    
+   public boolean hashIndexSameKey(TableInfo tInfo){
+        if(tInfo.hashIndexExist() && this.hashIndexExist() ){
+            IndexInfo temp = primaryIndex;
+            IndexInfo tempTocheck = tInfo.getPrimaryIndex();
+            Map<String, IndexInfo> tempsecondaryIndex = tInfo.getSecondaryIndex();
+            
+            if(!temp.getStructure().equals("B+tree")){  //check this.primary index with every index f tinfo
+                if(!tempTocheck.getStructure().equals("B+tree"))
+                {
+                    if(temp.equalsKey(tempTocheck.getIndexName()))
+                        return true;
+                }
+                if(tempsecondaryIndex!=null){
+                    for(String key1 : tempsecondaryIndex.keySet()){
+                        tempTocheck = tempsecondaryIndex.get(key1);
+                        if(!tempTocheck.getStructure().equals("B+tree")){
+                            if(temp.equalsKey(tempTocheck.getIndexName()))
+                                return true;
+                        }
+                    }
+                }
+            }
+            else{ //check all this.secondary with every index of tinfo
+                if(secondaryIndex!=null){
+                    for(String key1 : secondaryIndex.keySet()){
+                        temp = secondaryIndex.get(key1);
+                        if(!temp.getStructure().equals("B+tree")){  //check this.primary index with every index f tinfo
+                            tempTocheck = tInfo.getPrimaryIndex();
+                            if(!tempTocheck.getStructure().equals("B+tree"))
+                            {
+                                if(temp.equalsKey(tempTocheck.getIndexName()))
+                                    return true;
+                            }
+                            if(tempsecondaryIndex!=null){
+                                for(String key2 : tempsecondaryIndex.keySet()){
+                                    tempTocheck = tempsecondaryIndex.get(key2);
+                                    if(!tempTocheck.getStructure().equals("B+tree")){
+                                        if(temp.equalsKey(tempTocheck.getIndexName()))
+                                            return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    public boolean sortedSameKey(TableInfo tInfo){   
+        if(tInfo.isSorted() && this.isSorted()){
+            if(tInfo.getPrimaryIndex().equalsKey(primaryIndex.getIndexName()))
+                return true;
+        }
+        return false;
+    }
+    
+    public boolean hashIndexExist(){
+        IndexInfo temp;
+        if(!primaryIndex.getStructure().equals("B+tree"))
+            return true;
+        if(secondaryIndex!= null){
+            for(String key1 : secondaryIndex.keySet()){
+                temp = secondaryIndex.get(key1);
+                if(!temp.getStructure().equals("B+tree"))
+                    return true;
+           }
+        }
+        return false;
+    }
+    
+    public boolean isSorted(){
+        if(primaryIndex.getStructure().equals("B+tree"))
+            return true;
+        return false;
+    }
     public boolean hashIndexSameKey(TableInfo tInfo){
         if(tInfo.hashIndexExist() && hashIndexExist() ){
             IndexInfo temp = primaryIndex;

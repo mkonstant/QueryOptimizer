@@ -63,7 +63,7 @@ public class IndexInfo {
         return costFactor;
     }
      
-    public boolean equalsKey( ArrayList<String> tocheck) {
+    public boolean equalsKey( Set<String> tocheck) {
         if(tocheck.size()!=indexName.size())
             return false;
         for (String index : indexName) {
@@ -91,5 +91,21 @@ public class IndexInfo {
         return true;
     }
     
-     
+    public IndexInfo returnIndex( ArrayList<String> tocheck){
+        if(tocheck.size()!=indexName.size())
+            return null;
+        for (String index : indexName) {
+            if(!tocheck.contains(index))
+                return null;
+        }
+        return this;
+    }
+    
+    public IndexInfo returnIndex( String tocheck){
+        if(indexName.size() !=1)
+            return null;
+        if(!indexName.contains(tocheck))
+            return null;
+        return this;
+    }
 }
