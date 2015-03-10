@@ -75,6 +75,8 @@ public class Selection extends Operator {
         conditionsPrint="";
         for (int i = 0; i < conditions.size(); i++)
         {
+            if(i>0)
+                conditionsPrint+=" "+complexCondtion+" ";
             conditionsPrint += conditions.get(i).toPrint();
 	}
         
