@@ -134,7 +134,7 @@ public  class Projection extends Operator{
         }
         
         
-        prCost.computeCost(projOnkey);
+        prCost.computeCost(projOnkey,tInfo.isSortedOnKey(attrs),tInfo.isHashedOnKey(attrs));
         annotation = prCost.getAnnotation();
 
         

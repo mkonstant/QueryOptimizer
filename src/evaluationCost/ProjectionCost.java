@@ -58,15 +58,15 @@ public class ProjectionCost {
     }
     
     //no sort , no hash, provide dublicates
-    public void computeCost(boolean primary){
+    public void computeCost(boolean primary, boolean sorted, boolean hashed){
         if(primary){ //projection sto primary key, no duplicates
             cost = br*tranferTime + (br/bb)*latency;
             annotation.add("Just projection,No duplicates");
         }
         else{
             
-            double costSort = dublicateSort();
-            double costHash = dublicateHash(false);
+            double costSort = dublicateSort(sorted);
+            double costHash = dublicateHash(hashed);
         
             if(costHash> costSort){
                 annotation = sortedAnnotation;
@@ -85,21 +85,31 @@ public class ProjectionCost {
     
     
     //cost of dublicate elimiation with sort is equal to sorting one relation
-    public double dublicateSort(){
+    public double dublicateSort(boolean sorted){
+            if(sorted){
+                sortedAnnotation.add("Relation already sorted on projection attributes ");
+                return 0;
+            }
+            
             sortedAnnotation.add("Sort to eliminate dublicates");
             return SortCost.computeCost(br, M, latency, penaltyTime,  tranferTime);
     }
     
     public double dublicateHash(boolean partitioned){
-        hasedAnnotation.add("Hash to eliminate dublicates");
+        
+        
         int blocksTranfered=0;
         int blockWritten=0;
         //partitioning relations
         if(!partitioned){
+            hasedAnnotation.add("Relation already hashed on projection attributes");
             //reading for partitioning
             blocksTranfered = br;
             //writting after partitioning
             blockWritten = br;
+        }
+        else{
+            hasedAnnotation.add("Hash to eliminate dublicates");
         }
         
         //reading for dublicate elimination
