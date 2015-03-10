@@ -5,6 +5,7 @@
  */
 package operations;
 
+import catalog.IndexInfo;
 import catalog.TableInfo;
 import evaluationCost.SelectCost;
 import java.util.ArrayList;
@@ -89,23 +90,37 @@ public class Selection extends Operator {
     
     @Override
     public void computeCost(){
+        IndexInfo index = null;
         SelectCost selCost = null;
+        ArrayList <String> allAttr = new ArrayList<String>();
         allCosts = new ArrayList<Double>();
         messages = new ArrayList<String>();
+        boolean equalPrimary = false;
+        
         
         this.checkVariables();
+        
+        
         if ( this.complexCondtion == null ){
-            if(relation1!=null) {
-                tabInfo = table.get(relation1);
-            }
-            else{
-                tabInfo = relationOp1.getOutTable();
-            }
+            allAttr.add(conditions.get(0).getAttr1());
             
-            selCost = new SelectCost(conditions.get(0),tabInfo,catalog.getSystemInfo());
+            index = tabInfo.findBestIndex(allAttr);
+            equalPrimary = tabInfo.equalPrimaryKey(allAttr);
+            
+            selCost = new SelectCost(conditions.get(0),tabInfo,catalog.getSystemInfo(),index,equalPrimary);
             
         }
         else{
+            for ( int i = 0 ; i < conditions.size() ; i ++ ){
+                allAttr.add(conditions.get(i).getAttr1());
+            }
+            
+            index = tabInfo.findBestIndex(allAttr);
+            equalPrimary = tabInfo.equalPrimaryKey(allAttr);
+            
+            
+            System.out.println("Primary key = " + equalPrimary);
+            
             for ( int i = 0 ; i < conditions.size() ; i ++ ){
                 if(relation1!=null) {
                     tabInfo = table.get(relation1);
@@ -113,7 +128,8 @@ public class Selection extends Operator {
                 else{
                     tabInfo = relationOp1.getOutTable();
                 }
-                selCost = new SelectCost(conditions.get(i),tabInfo,catalog.getSystemInfo());
+                
+                selCost = new SelectCost(conditions.get(i),tabInfo,catalog.getSystemInfo(),index,equalPrimary);
             }
                     
         }
