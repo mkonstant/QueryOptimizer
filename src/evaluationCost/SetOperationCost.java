@@ -54,7 +54,7 @@ public class SetOperationCost {
     
     
    
-    public void computeCost(){
+    public double computeCost(){
         
         
         boolean sorted1=false;
@@ -190,6 +190,8 @@ public class SetOperationCost {
             annotation = hasedAnnotation;
             cost = costHash;
         }
+        
+        return cost;
         
     }
     

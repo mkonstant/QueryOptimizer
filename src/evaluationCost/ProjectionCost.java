@@ -58,7 +58,7 @@ public class ProjectionCost {
     }
     
     //no sort , no hash, provide dublicates
-    public void computeCost(boolean primary, boolean sorted, boolean hashed){
+    public double computeCost(boolean primary, boolean sorted, boolean hashed){
         if(primary){ //projection sto primary key, no duplicates
             cost = br*tranferTime + (br/bb)*latency;
             annotation.add("Just projection,No duplicates");
@@ -78,7 +78,7 @@ public class ProjectionCost {
                 cost = costHash;
             }
         }
-        
+        return cost;
 
         //return br*tranferTime + (br/bb)*latency;
     }

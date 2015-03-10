@@ -55,7 +55,7 @@ public class JoinCost {
     }
     
 
-    public void computeCost(boolean s1,boolean s2, boolean h1, boolean h2, boolean i1,boolean i2){
+    public double computeCost(boolean s1,boolean s2, boolean h1, boolean h2, boolean i1,boolean i2){
         double costMerge = mergeJoin(s1,s2);
         double costHash = hashJoin(h1,h2);
         double costBlockNested  = blockNestedJoin();
@@ -80,6 +80,8 @@ public class JoinCost {
             sorted=false;
         }*/
         //return br*tranferTime + (br/bb)*latency;
+       
+       return cost;
     }
     
     public boolean getSorted(){

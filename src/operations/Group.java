@@ -204,7 +204,7 @@ public  class Group extends Operator{
         
         GroupCost grCost = new GroupCost(catalog.getSystemInfo(), tInfo.getNumberOfTuples(), tInfo.getSizeOfTuple());
         
-        grCost.computeCost(tInfo.isSortedOnKey(attrs) , tInfo.isHashedOnKey(attrs));
+        cost = grCost.computeCost(tInfo.isSortedOnKey(attrs) , tInfo.isHashedOnKey(attrs));
         annotation = grCost.getAnnotation();
 
         

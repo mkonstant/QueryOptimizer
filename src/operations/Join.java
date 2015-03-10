@@ -139,7 +139,9 @@ public  class Join extends Operator{
         jCost = new JoinCost(catalog.getSystemInfo(), tInfo1.getNumberOfTuples(),tInfo1.getSizeOfTuple(),
                                         tInfo2.getNumberOfTuples(),tInfo2.getSizeOfTuple());
         findIndexed();
-        jCost.computeCost(s1,s2,h1,h2,i1,i2);
+        
+        //change s1,s2 etc
+        cost = jCost.computeCost(s1,s2,h1,h2,i1,i2);
         outTable.setSorted(jCost.getSorted());  //if output is sorted
         annotation = jCost.getAnnotation();
     }

@@ -32,7 +32,7 @@ public abstract class Operator {
     protected int bout, nout;
     
     protected TableInfo outTable;
-    
+    protected double cost;
 
     public void setOperation(String op){};
     public String getOperation(){return null;};
@@ -57,7 +57,9 @@ public abstract class Operator {
     public String getAggregation(){return "";}
     public String getAggregationAttr(){return "";}
     
-    
+    public double getCost(){
+        return cost;
+    }
     
     public void setCatalog(Catalog c){
         catalog = c;

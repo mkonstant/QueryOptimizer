@@ -58,7 +58,7 @@ public class GroupCost {
     
     
      //no sort , no hash, provide dublicates
-    public void computeCost(boolean sorted, boolean hashed){
+    public double computeCost(boolean sorted, boolean hashed){
 
             double costSort = useSort(sorted);
             double costHash = useHash(hashed);
@@ -83,6 +83,7 @@ public class GroupCost {
             
             }
             annotation.add("Perform aggragation on output");
+            return cost;
             
         }
         
