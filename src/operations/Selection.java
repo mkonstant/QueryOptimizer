@@ -5,11 +5,13 @@
  */
 package operations;
 
+import catalog.Attributes;
 import catalog.IndexInfo;
 import catalog.TableInfo;
 import evaluationCost.SelectCost;
 import java.util.ArrayList;
 import java.util.Map;
+import myExceptions.GroupAttributeException;
 import myExceptions.SelectAttributeException;
 
 /**
@@ -67,6 +69,19 @@ public class Selection extends Operator {
     @Override
     public ArrayList<Condition> getConditions(){
         return conditions;
+    }
+    
+    @Override
+    public void computeAttributes(){
+        neededAttributes1 = new ArrayList<String>();
+        for(int i=0; i>conditions.size(); i++){
+            neededAttributes1.add(conditions.get(i).getAttr1());
+        }
+        outputAttributes = new ArrayList<String>();
+        Map<String,Attributes> temp = tabInfo.getAttributes();
+        for(String key1 : temp.keySet()){
+            outputAttributes.add(key1);
+        }
     }
 
     @Override

@@ -94,6 +94,8 @@ public class QuerryOptimizer {
             }
         }
         try{
+            //System.out.println("Query Materialization:");
+            //printPLan();
             processPlan();
         }
         catch(RelationException ex){
@@ -115,7 +117,11 @@ public class QuerryOptimizer {
             System.err.println(ex.getMessage());
             System.exit(1);
         }
+        System.out.println("\n\n\nQuery Materialization Annotated:");
         printPLan();
+       // ComputeBestPlan cb = new ComputeBestPlan(operations, catalog);
+       // cb.ApplyTranformations();
+        
         
     }
     
@@ -129,9 +135,6 @@ public class QuerryOptimizer {
             temp = operations.get(i);
             temp.setCatalog(catalog);
             temp.computeCost();
-            
-           
-
 	}
     
     }

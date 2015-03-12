@@ -72,6 +72,13 @@ public  class Projection extends Operator{
     
     
     @Override
+    public void computeAttributes(){
+        neededAttributes1  = attrs;
+        outputAttributes = attrs;
+    }
+    
+    
+    @Override
     protected void prePrint(){
          //add conditions 
         attributesPrint="";
@@ -85,9 +92,9 @@ public  class Projection extends Operator{
         //add relation1
      
         if(relationOp1==null)
-            relationPrint1+=relation1;
+            relationPrint1=relation1;
         else
-            relationPrint1+= relationOp1.getOpName();
+            relationPrint1= relationOp1.getOpName();
     }
    
     

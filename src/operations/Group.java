@@ -28,6 +28,7 @@ public  class Group extends Operator{
     ArrayList<Condition> conditions = null;
     
     private boolean hasHavingClause=false;
+    private TableInfo tInfo=null;
     
     //only one of the following 2 
     String relation1 = null;
@@ -116,6 +117,34 @@ public  class Group extends Operator{
         return conditions;
     }
     
+    @Override
+    public void computeAttributes(){
+        Map<String,Attributes> temp = tInfo.getAttributes();
+        neededAttributes1 = new ArrayList<String>();
+        for(int i=0;i<attrs.size();i++){
+            neededAttributes1.add(attrs.get(i));
+        }
+        if(!aggregationAttr.equals(""))
+            neededAttributes1.add(aggregationAttr);
+        if(conditions!=null){
+            String tempattr;
+            for(int i=0; i>conditions.size(); i++){   //needed???
+                tempattr = conditions.get(i).getAttr1();
+                if(!neededAttributes1.contains(tempattr))
+                    neededAttributes1.add(tempattr);
+            }
+        }
+        
+        outputAttributes = new ArrayList<String>();
+        for(String key1 : temp.keySet()){
+            outputAttributes.add(key1);
+        }        
+    }
+    
+    
+    
+    
+    
      @Override
     protected void prePrint(){
          //add conditions 
@@ -138,11 +167,10 @@ public  class Group extends Operator{
             }
         }
         //add relation1
-     
         if(relationOp1==null)
-            relationPrint1+=relation1;
+            relationPrint1=relation1;
         else
-            relationPrint1+= relationOp1.getOpName();
+            relationPrint1= relationOp1.getOpName();
     }
    
     
@@ -150,7 +178,7 @@ public  class Group extends Operator{
     public void computeCost(){
         outTable = new TableInfo();
         Map<String,TableInfo> table = catalog.getCatalog();
-        TableInfo tInfo=null;
+        tInfo=null;
         
         
         if(relation1!=null)//i have to deal with a database relation

@@ -26,6 +26,9 @@ public abstract class Operator {
     protected String complexCondtion=null;
     protected String aggregation="";
     protected String aggregationAttr="";
+    protected ArrayList<String> neededAttributes1=null;
+    protected ArrayList<String> neededAttributes2=null;
+    protected ArrayList<String> outputAttributes=null;
     
     protected int b1,n1;  
     protected int b2,n2;
@@ -56,6 +59,9 @@ public abstract class Operator {
     public void setAggregationAttr(String agr){}   
     public String getAggregation(){return "";}
     public String getAggregationAttr(){return "";}
+    public void computeAttributes(){}
+    
+    
     
     public double getCost(){
         return cost;
@@ -139,6 +145,18 @@ public abstract class Operator {
       
     public int getNout(){
         return nout;
+    }
+    
+    public ArrayList<String> getNeededAttributes1(){
+        return neededAttributes1;
+    }
+    
+    public ArrayList<String> getNeededAttributes2(){
+        return neededAttributes2;
+    }
+    
+    public ArrayList<String> getOutputAttributes(){
+        return outputAttributes;
     }
     
     

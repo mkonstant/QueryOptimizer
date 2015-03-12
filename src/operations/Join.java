@@ -100,6 +100,28 @@ public  class Join extends Operator{
     }
     
     
+    @Override
+    public void computeAttributes(){
+        neededAttributes1 = new ArrayList<String>();
+        for(int i=0; i>conditions.size(); i++){
+            neededAttributes1.add(conditions.get(i).getAttr1());
+            neededAttributes2.add(conditions.get(i).getAttr2());
+        }
+        
+        outputAttributes = new ArrayList<String>();
+        Map<String,Attributes> temp1 = tInfo1.getAttributes();
+        Map<String,Attributes> temp2 = tInfo2.getAttributes();
+        for(String key1 : temp1.keySet()){
+            outputAttributes.add(key1);
+        }
+        for(String key2 : temp2.keySet()){
+            if(!neededAttributes2.contains(2))
+                outputAttributes.add(key2);
+        }
+    }
+
+    
+    
     
     @Override
     protected void prePrint(){
@@ -116,15 +138,15 @@ public  class Join extends Operator{
         //add relation1
      
         if(relationOp1==null)
-            relationPrint1+=relation1;
+            relationPrint1=relation1;
         else
-            relationPrint1+= relationOp1.getOpName();
+            relationPrint1= relationOp1.getOpName();
         
           //add relation2
         if(relationOp2==null)
-            relationPrint2+= relation2;
+            relationPrint2= relation2;
         else
-            relationPrint2+= relationOp2.getOpName();
+            relationPrint2= relationOp2.getOpName();
     
     }
     

@@ -82,7 +82,22 @@ public  class SetOp extends Operator{
         return relationOp2;
     }
     
-    
+    @Override
+    public void computeAttributes(){
+        Map<String,Attributes> temp = tInfo1.getAttributes();
+        neededAttributes1 = new ArrayList<String>();
+        for(String key1 : temp.keySet()){
+            neededAttributes1.add(key1);
+        }
+        
+        temp = tInfo2.getAttributes();
+        neededAttributes2 = new ArrayList<String>();
+        for(String key1 : temp.keySet()){
+            neededAttributes2.add(key1);
+        }
+        
+        outputAttributes = neededAttributes1; 
+    }
     
     @Override
     protected void prePrint(){
@@ -90,15 +105,15 @@ public  class SetOp extends Operator{
         //add relation1
      
         if(relationOp1==null)
-            relationPrint1+=relation1;
+            relationPrint1=relation1;
         else
-            relationPrint1+= relationOp1.getOpName();
+            relationPrint1= relationOp1.getOpName();
         
           //add relation2
         if(relationOp2==null)
-            relationPrint2+= relation2;
+            relationPrint2= relation2;
         else
-            relationPrint2+= relationOp2.getOpName();
+            relationPrint2= relationOp2.getOpName();
     
     }
     
