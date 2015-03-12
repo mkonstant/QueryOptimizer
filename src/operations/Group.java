@@ -117,6 +117,14 @@ public  class Group extends Operator{
         return conditions;
     }
     
+    
+    @Override
+    public void updateRelOp(Operator _old, Operator _new){
+        if(relationOp1!=null && relationOp1==_old)
+            relationOp1 = _new;
+    
+    }
+        
     @Override
     public void computeAttributes(){
         Map<String,Attributes> temp = tInfo.getAttributes();

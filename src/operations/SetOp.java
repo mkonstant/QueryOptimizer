@@ -83,6 +83,15 @@ public  class SetOp extends Operator{
     }
     
     @Override
+    public void updateRelOp(Operator _old, Operator _new){
+        if(relationOp1!=null && relationOp1==_old)
+            relationOp1 = _new;
+    
+        if(relationOp2!=null && relationOp2==_old)
+            relationOp2 = _new;
+    }
+    
+    @Override
     public void computeAttributes(){
         Map<String,Attributes> temp = tInfo1.getAttributes();
         neededAttributes1 = new ArrayList<String>();

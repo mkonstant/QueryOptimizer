@@ -28,6 +28,8 @@ public abstract class Operator {
     protected String aggregationAttr="";
     protected ArrayList<String> neededAttributes1=null;
     protected ArrayList<String> neededAttributes2=null;
+    protected ArrayList<String> relAttributes1=null;
+    protected ArrayList<String> relAttributes2=null;
     protected ArrayList<String> outputAttributes=null;
     
     protected int b1,n1;  
@@ -60,7 +62,8 @@ public abstract class Operator {
     public String getAggregation(){return "";}
     public String getAggregationAttr(){return "";}
     public void computeAttributes(){}
-    
+    public void setAttributes(ArrayList<String> attrs){}
+    public void updateRelOp(Operator _old, Operator _new){}
     
     
     public double getCost(){
@@ -153,6 +156,14 @@ public abstract class Operator {
     
     public ArrayList<String> getNeededAttributes2(){
         return neededAttributes2;
+    }
+    
+    public ArrayList<String> getRelAttributes1(){
+        return relAttributes1;
+    }
+    
+    public ArrayList<String> getRelAttributes2(){
+        return relAttributes2;
     }
     
     public ArrayList<String> getOutputAttributes(){

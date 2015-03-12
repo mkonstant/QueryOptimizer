@@ -70,11 +70,22 @@ public  class Projection extends Operator{
         return relationOp1;
     }
     
+    @Override
+    public void setAttributes(ArrayList<String> attrs){
+        this.attrs = attrs;
+    }
     
     @Override
     public void computeAttributes(){
         neededAttributes1  = attrs;
         outputAttributes = attrs;
+    }
+    
+    @Override
+    public void updateRelOp(Operator _old, Operator _new){
+        if(relationOp1!=null && relationOp1==_old)
+            relationOp1 = _new;
+    
     }
     
     

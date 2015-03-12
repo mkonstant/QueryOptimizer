@@ -96,7 +96,13 @@ public class QuerryOptimizer {
         try{
             //System.out.println("Query Materialization:");
             //printPLan();
-            processPlan();
+            
+            double cost = processPlan();
+            System.out.println("\n\n\nQuery Materialization Annotated:");
+            printPLan();
+            System.out.println(cost);
+            ComputeBestPlan cb = new ComputeBestPlan(operations, catalog, cost);
+            cb.ApplyTranformations();
         }
         catch(RelationException ex){
             System.err.println(ex.getMessage());
@@ -117,26 +123,25 @@ public class QuerryOptimizer {
             System.err.println(ex.getMessage());
             System.exit(1);
         }
-        System.out.println("\n\n\nQuery Materialization Annotated:");
-        printPLan();
-       // ComputeBestPlan cb = new ComputeBestPlan(operations, catalog);
-       // cb.ApplyTranformations();
+        
         
         
     }
     
     
-    public static void processPlan(){
+    public static double processPlan(){
        // ArrayList<Operator> op  =operations;
         Operator temp;
+        double cost=0;
         for (int i = 0; i < operations.size(); i++)
         {
             
             temp = operations.get(i);
             temp.setCatalog(catalog);
             temp.computeCost();
+            cost+= temp.getCost();
 	}
-    
+        return cost;
     }
     
         

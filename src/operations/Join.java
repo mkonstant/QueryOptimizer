@@ -101,22 +101,32 @@ public  class Join extends Operator{
     
     
     @Override
+    public void updateRelOp(Operator _old, Operator _new){
+        if(relationOp1!=null && relationOp1==_old)
+            relationOp1 = _new;
+    
+        if(relationOp2!=null && relationOp2==_old)
+            relationOp2 = _new;
+    }
+    
+    @Override
     public void computeAttributes(){
         neededAttributes1 = new ArrayList<String>();
-        for(int i=0; i>conditions.size(); i++){
+        neededAttributes2 = new ArrayList<String>();
+        for(int i=0; i<conditions.size(); i++){
             neededAttributes1.add(conditions.get(i).getAttr1());
-            neededAttributes2.add(conditions.get(i).getAttr2());
+            neededAttributes2.add(conditions.get(i).getAttr2()); 
         }
+        relAttributes1 = new ArrayList<String>();
+        relAttributes2 = new ArrayList<String>();
         
-        outputAttributes = new ArrayList<String>();
         Map<String,Attributes> temp1 = tInfo1.getAttributes();
         Map<String,Attributes> temp2 = tInfo2.getAttributes();
         for(String key1 : temp1.keySet()){
-            outputAttributes.add(key1);
+            relAttributes1.add(key1);
         }
         for(String key2 : temp2.keySet()){
-            if(!neededAttributes2.contains(2))
-                outputAttributes.add(key2);
+            relAttributes2.add(key2);
         }
     }
 
@@ -193,13 +203,16 @@ public  class Join extends Operator{
                     h1=true;
             }
             Map<String,IndexInfo> secondaryIndex = tInfo1.getSecondaryIndex();
-            for(String key1 : secondaryIndex.keySet()){
-                IndexInfo indexInfo = secondaryIndex.get(key1);
-                if(indexInfo.equalsKey(att1)){
-                    i1=true;
-                    if(!indexInfo.getStructure().equals("B+tree")){
-                        h1=true;
-                        break;
+            if(secondaryIndex!=null)
+            {
+                for(String key1 : secondaryIndex.keySet()){
+                    IndexInfo indexInfo = secondaryIndex.get(key1);
+                    if(indexInfo.equalsKey(att1)){
+                        i1=true;
+                        if(!indexInfo.getStructure().equals("B+tree")){
+                            h1=true;
+                            break;
+                        }
                     }
                 }
             }
@@ -252,7 +265,7 @@ public  class Join extends Operator{
        
         
         //no join on disjunctions of conditons
-        if(complexCondtion.equals("or"))
+        if(complexCondtion!=null && complexCondtion.equals("or"))
             throw new ComplexConditionException(null);
         
         //get the right tableInfo from relation or operation output
