@@ -25,6 +25,9 @@ public class SelectCost {
     int costFactor = -1;
     int b = -1;
     int br = -1;
+    int h = -1;
+    int n = -1;
+    int overflowBuckets = -1;
     Condition condition = null;
     ArrayList<String> allMessages = new ArrayList<String>();
     ArrayList<Double> allCosts = new ArrayList<Double>();
@@ -35,6 +38,7 @@ public class SelectCost {
     boolean equalPrimary = false;
     int numOfConditions = -1;
     
+    
 
     public SelectCost(Condition condition, TableInfo tabInfo, SystemInfo sysInfo, IndexInfo index,boolean equalPrimary, int numOfConditions){
         this.condition = condition;
@@ -43,20 +47,33 @@ public class SelectCost {
         this.index = index;
         this.equalPrimary = equalPrimary;
         this.numOfConditions = numOfConditions;
+        System.out.println("select cost");
     }
     
     
-    public void calculateVariables(){
+    public void calculateVariables(IndexInfo index){
         tS = sysInfo.getLatency();
         tT = sysInfo.getTransferTime();
         br = (tabInfo.getNumberOfTuples() * tabInfo.getCardinality())/sysInfo.getSizeOfBuffer();// paizei na kanpume overestimated
-        //find b
+        
+
+        if ( index != null ){
+            b = ((tabInfo.getNumberOfTuples()/index.getNumOfDistinctValues()) * tabInfo.getSizeOfTuple() ) / sysInfo.getSizeOfBuffer();
+            if ( index.getStructure().contains("B+tree") ){
+                h = index.getCostFactor();
+                n = tabInfo.getNumberOfTuples()/index.getNumOfDistinctValues();
+            }
+            else{
+                overflowBuckets = index.getCostFactor();
+            }
+        }
         
     }
     
     public void calculateCost(){
         IndexInfo tempIndex = null;
         int minCostNum;
+        
         
         //ena condition
         if ( numOfConditions == 1){
@@ -73,8 +90,9 @@ public class SelectCost {
                 }
             }
         }
-        else{
-            if ( condition.getAction().contentEquals("=")){    
+        else{//polla Condition
+            if ( condition.getAction().contentEquals("=")){
+                System.out.println("Conditionnnn");
                 if ( index != null){//exei index
                     if ( index.getSecondary() == null ){//exei primary index
                        equalSelection(index);
@@ -84,20 +102,28 @@ public class SelectCost {
                         equalSelection(index);
                         //allMessages.add("Use secondary index in attribute " + index.getIndexName().toString());
                         tempIndex = tabInfo.findBestIndex(condition.getAttr1());
-                        if ( tempIndex.getSecondary() == null ){//tsekare mipws exei kapoion primary index kalutero
-                            equalSelection(tempIndex);
-                            //allMessages.add("Use secondary index in attribute " + tempIndex.getIndexName().toString()); 
-                        }           
+                        if (tempIndex != null ){
+                            if ( tempIndex.getSecondary() == null ){//tsekare mipws exei kapoion primary index kalutero
+                                equalSelection(tempIndex);
+                                //allMessages.add("Use secondary index in attribute " + tempIndex.getIndexName().toString()); 
+                            }           
+                        }
                     }
                 }
                 else{
                     
                     tempIndex = tabInfo.findBestIndex(condition.getAttr1());
+                    System.out.println("Attr = " + condition.getAttr1());
+                    if ( tempIndex != null){
+                        System.out.println("temp Index = " + tempIndex.getStructure());
+                        }
+                        else{System.out.println("null");}
                     equalSelection(tempIndex);
                 }
             }
             else{
                 if ( index != null ){
+                    System.out.println("xxexexee = " + index.getStructure());
                     if ( index.getSecondary() == null && index.getStructure().contains("B+tree")){
                         inequalitySelection(index);
                     }
@@ -105,12 +131,14 @@ public class SelectCost {
                         inequalitySelection(index);
                     }
                     else{
+                        System.out.println("inequalityyyyyyyyyyyyyyyyyyyy");
                         tempIndex = tabInfo.findBestIndexForInequality(condition.getAttr1());
                         inequalitySelection(tempIndex);
                     }
                     
                 }
                 else{
+                    
                     tempIndex = tabInfo.findBestIndexForInequality(condition.getAttr1());
                     inequalitySelection(tempIndex);
                 }
@@ -124,40 +152,65 @@ public class SelectCost {
     public void equalSelection(IndexInfo tempIndex){
         double tempCost = -1;
         
+        
         if ( tempIndex != null ){
+            calculateVariables(tempIndex);
             if( tempIndex.getStructure().contains("B+tree")){//tree
-                if ( tempIndex.getSecondary() != null ){//primary tree index
+                if ( tempIndex.getSecondary() == null ){//primary tree index
+                    System.out.println("Treee");
                     if ( equalPrimary == true ){//primary tree with key
                         tempCost = treePrimaryEqualWithKey();
                         allCosts.add(tempCost);
-                        allMessages.add("Use primary tree index in attribute(s) : " + tempIndex.toString());
+                        allMessages.add("Use primary tree index in attribute(s) : " + tempIndex.getIndexName().toString());
                     }
                     else{//primary tree non key
                         tempCost = treePrimaryEqualNonKey();
                         allCosts.add(tempCost);
-                        allMessages.add("Use primary tree index(non key) in attribute(s) : " + tempIndex.toString());
+                        allMessages.add("Use primary tree index(non key) in attribute(s) : " + tempIndex.getIndexName().toString());
                     }
                 }
                 else{
                     if ( equalPrimary == true ){//secondary tree with key
                         tempCost = treeSecondaryEqualWithKey();
                         allCosts.add(tempCost);
-                        allMessages.add("Use secondary tree index in attribute(s) : " + tempIndex.toString());
+                        allMessages.add("Use secondary tree index in attribute(s) : " + tempIndex.getIndexName().toString());
                     }
                     else{//secondary tree non key
                         tempCost = treeSecondaryEqualNonKey();
                         allCosts.add(tempCost);
-                        allMessages.add("Use primary tree index(non key) in attribute(s) : " + tempIndex.toString());
+                        allMessages.add("Use primary tree index(non key) in attribute(s) : " + tempIndex.getIndexName().toString());
                     }
                 }
             }
-            else{//hashing
-                tempCost = hashingPrimary();
-                allCosts.add(tempCost);
-                allMessages.add("Use hashing index in attribute(s) : " + tempIndex.toString());
+            else{
+                if ( tempIndex.getSecondary() == null ){//primary tree index
+                    if ( equalPrimary == true ){//primary tree with key
+                        tempCost = hashingPrimaryEqualWithKey();
+                        allCosts.add(tempCost);
+                        allMessages.add("Use primary hashing index in attribute(s) : " + tempIndex.getIndexName().toString());
+                    }
+                    else{//primary tree non key
+                        tempCost = hashingPrimaryEqualNonKey();
+                        allCosts.add(tempCost);
+                        allMessages.add("Use primary hashing index(non key) in attribute(s) : " + tempIndex.getIndexName().toString());
+                    }
+                }
+                else{
+                    if ( equalPrimary == true ){//secondary tree with key
+                        tempCost = hashingSecondaryEqualWithKey();
+                        allCosts.add(tempCost);
+                        allMessages.add("Use secondary hashing index in attribute(s) : " + tempIndex.getIndexName().toString());
+                    }
+                    else{//secondary tree non key
+                        tempCost = hashingSecondaryEqualNonKey();
+                        allCosts.add(tempCost);
+                        allMessages.add("Use secondary hashing index(non key) in attribute(s) : " + tempIndex.getIndexName().toString());
+                    }
+                }
             }
         }
         else{//linear search
+            calculateVariables(null);
             if ( equalPrimary == true ){//linear with key
                 tempCost = linearSearchWithKey();
                 allCosts.add(tempCost);
@@ -174,17 +227,19 @@ public class SelectCost {
     public void inequalitySelection(IndexInfo tempIndex){
         double tempCost = -1;
         
+        System.out.println("inequality");
         if ( tempIndex != null ){
+            calculateVariables(tempIndex);
             if ( tempIndex.getStructure().contains("B+tree") ){
                 if ( tempIndex.getSecondary()== null ){//primary tree index
                     tempCost = treePrimaryCompare();
                     allCosts.add(tempCost);
-                    allMessages.add("Use primary tree index in attribute(s) : " + tempIndex.toString());
+                    allMessages.add("Use primary tree index in attribute(s) : " + tempIndex.getIndexName().toString());
                 }
                 else{//secondary tree index
                     tempCost = treeSecondaryCompare();
                     allCosts.add(tempCost);
-                    allMessages.add("Use secondary tree index in attribute(s) : " + tempIndex.toString());
+                    allMessages.add("Use secondary tree index in attribute(s) : " + tempIndex.getIndexName().toString());
                 }
             }
             else{//hashing not in comparison, so we use linear
@@ -201,13 +256,17 @@ public class SelectCost {
             }
         }
         else{//no index, linear search
+            calculateVariables(null);
+            System.out.println("i am here");
             if (equalPrimary == true){//linear search with key
                 tempCost = linearSearchWithKey();
                 allCosts.add(tempCost);
                 allMessages.add("Use Linear Search");
             }
             else{//linear search with non key
+                System.out.println("non key");
                 tempCost = linearSearch();
+                System.out.println(tempCost);
                 allCosts.add(tempCost);
                 allMessages.add("Use Linear Search(non key)");
             }
@@ -230,57 +289,71 @@ public class SelectCost {
     
     public double treePrimaryEqualWithKey(){
         
-        //cost = ( h + 1 ) * ( tS + tT );
+        cost = ( h + 1 ) * ( tS + tT );
+        System.out.println("ts = " + tS + " tT = " + tT + " h = " + h);
         
         return cost;
     }
     
     public double treePrimaryEqualNonKey(){
     
-        //cost = h * ( tT + tS ) + b *tT;
+        cost = h * ( tT + tS ) + b *tT + tS;
         
         return cost;
     }
     
-    public double hashingPrimary(){
+    public double hashingPrimaryEqualWithKey(){
     
+        cost = ( tS + tT ) * ( overflowBuckets + 1 );
+        
+        return cost;
+    }
+    
+    public double hashingPrimaryEqualNonKey(){
+    
+        cost =  overflowBuckets * ( tT + tS ) + b * tT + tS;
+                
         return cost;
     }
     
     public double treeSecondaryEqualWithKey(){
         
-        //cost = ( h + 1 ) * ( tS + tT );
+        cost = ( h + 1 ) * ( tS + tT );
         
         return cost;
     }
     
     public double treeSecondaryEqualNonKey(){
     
-        //cost = ( h + n ) * ( tS + tT );
+        cost = ( h + n ) * ( tS + tT );
         
         return cost;
     }
     
     public double hashingSecondaryEqualWithKey(){
     
+        cost = ( tS + tT ) * ( overflowBuckets + 1 );
+        
         return cost;
     }
     
     public double hashingSecondaryEqualNonKey(){
     
+        cost = ( tS + tT ) * ( overflowBuckets + 1 + b );
+        
         return cost;
     }
     
     public double treePrimaryCompare(){
     
-        //cost = h * ( tS + tT) + b * tT;
+        cost = h * ( tS + tT) + b * tT;
         
         return cost;
     }
     
     public double treeSecondaryCompare(){
     
-        //cost = ( h + n ) * ( tT + tS );
+        cost = ( h + n ) * ( tT + tS );
         
         return cost;
     }

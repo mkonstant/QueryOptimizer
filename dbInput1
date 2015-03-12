@@ -3,8 +3,8 @@ dbname:grocerydb
 table:savingaccounts
 attr:account_number int 2 1000 100,branch_name varchar(50) aaa www 50,branch_city varchar(50) aaa www 50,customer_id int 2 1000 100
 primaryKey:customer_id
-primaryIndex:customer_id B+tree 200 3
-secondaryIndex:
+primaryIndex:account_number hashing 200 3
+secondaryIndex:account_number B+tree 200 3
 foreignIndex:
 cardinality:4
 sizeOfTuple:104

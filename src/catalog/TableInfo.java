@@ -157,33 +157,37 @@ public class TableInfo {
         boolean FLAG = false;
         
         //primaryIndex
-        if ( attr.size() == primaryIndex.indexName.size()){
-            for ( int i = 0 ; i < attr.size() ; i ++ ){
-                if ( !primaryIndex.indexName.contains(attr.get(i))){
-                    FLAG = true;
-                    break;
-                }
-            }
-            if ( FLAG == false ){
-                return primaryIndex;
-            }
-        }
-    
-        
-        //secondaryIndex
-        for ( String secondary : secondaryIndex.keySet() ){
-            
-            FLAG = false ;
-            IndexInfo index = secondaryIndex.get(secondary);
-            if ( attr.size() == index.indexName.size()){
+        if ( primaryIndex != null ){
+            if ( attr.size() == primaryIndex.indexName.size()){
                 for ( int i = 0 ; i < attr.size() ; i ++ ){
-                    if ( !index.indexName.contains(attr.get(i))){
+                    if ( !primaryIndex.indexName.contains(attr.get(i))){
                         FLAG = true;
                         break;
                     }
                 }
                 if ( FLAG == false ){
-                    return index;
+                    return primaryIndex;
+                }
+            }
+        }
+    
+        
+        //secondaryIndex
+        if ( secondaryIndex != null ){
+            for ( String secondary : secondaryIndex.keySet() ){
+
+                FLAG = false ;
+                IndexInfo index = secondaryIndex.get(secondary);
+                if ( attr.size() == index.indexName.size()){
+                    for ( int i = 0 ; i < attr.size() ; i ++ ){
+                        if ( !index.indexName.contains(attr.get(i))){
+                            FLAG = true;
+                            break;
+                        }
+                    }
+                    if ( FLAG == false ){
+                        return index;
+                    }
                 }
             }
         }
@@ -194,19 +198,23 @@ public class TableInfo {
      public IndexInfo findBestIndex(String attr){
         
         //primaryIndex
-        if ( primaryIndex.indexName.size() == 1){
-            if ( !primaryIndex.indexName.contains(attr)){
-                 return primaryIndex;
+        if ( primaryIndex != null ){
+            if ( primaryIndex.indexName.size() == 1){
+                if ( primaryIndex.indexName.equals(attr)){
+                     return primaryIndex;
+                }
             }
         }
     
         
         //secondaryIndex
-        for ( String secondary : secondaryIndex.keySet() ){
-            IndexInfo index = secondaryIndex.get(secondary);
-            if ( index.indexName.size() == 1){
-                if ( !index.indexName.contains(attr)){
-                    return index;
+        if ( secondaryIndex != null ){
+            for ( String secondary : secondaryIndex.keySet() ){
+                IndexInfo index = secondaryIndex.get(secondary);
+                if ( index.indexName.size() == 1){
+                    if ( index.indexName.contains(attr)){
+                        return index;
+                    }
                 }
             }
         }
@@ -217,22 +225,25 @@ public class TableInfo {
      public IndexInfo findBestIndexForInequality(String attr){
         
         //primaryIndex
-        if ( primaryIndex.indexName.size() == 1){
-            if (primaryIndex.structure.contains("B+tree")){
-                if ( !primaryIndex.indexName.contains(attr)){
-                     return primaryIndex;
+        if( primaryIndex != null ){
+            if ( primaryIndex.indexName.size() == 1){
+                if (primaryIndex.structure.contains("B+tree")){
+                    if ( primaryIndex.indexName.contains(attr)){
+                         return primaryIndex;
+                    }
                 }
             }
         }
-    
-        
+
         //secondaryIndex
-        for ( String secondary : secondaryIndex.keySet() ){
-            IndexInfo index = secondaryIndex.get(secondary);
-            if ( index.indexName.size() == 1){
-                if ( index.structure.contains("B+Tree")){
-                    if ( !index.indexName.contains(attr)){
-                        return index;
+        if ( secondaryIndex != null ){
+            for ( String secondary : secondaryIndex.keySet() ){
+                IndexInfo index = secondaryIndex.get(secondary);
+                if ( index.indexName.size() == 1){                   
+                    if ( index.structure.contains("B+tree")){
+                        if ( index.indexName.contains(attr)){
+                            return index;
+                        }
                     }
                 }
             }

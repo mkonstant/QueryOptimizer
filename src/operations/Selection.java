@@ -24,8 +24,6 @@ public class Selection extends Operator {
     String relation1 = null;
     Operator relationOp1 = null;
     TableInfo tabInfo = null; 
-    ArrayList<Double> allCosts = null;
-    ArrayList<String> messages = null;
     Map<String,TableInfo> table = null;
     
     ArrayList<Condition> conditions = null;
@@ -110,17 +108,11 @@ public class Selection extends Operator {
         IndexInfo index = null;
         SelectCost selCost = null;
         ArrayList <String> allAttr = new ArrayList<String>();
-        allCosts = new ArrayList<Double>();
-        messages = new ArrayList<String>();
         boolean equalPrimary = false;
         ArrayList<Double> costs = null;
         ArrayList<String> messages = null;
-        double cost = -1;
-        String message = null;
-        
         
         this.checkVariables();
-        
         
         if ( this.complexCondtion == null ){
             allAttr.add(conditions.get(0).getAttr1());
@@ -128,10 +120,11 @@ public class Selection extends Operator {
             index = tabInfo.findBestIndex(allAttr);
             equalPrimary = tabInfo.equalPrimaryKey(allAttr);
             
+            
             selCost = new SelectCost(conditions.get(0),tabInfo,catalog.getSystemInfo(),index,equalPrimary,allAttr.size());
             selCost.calculateCost();
-            cost = selCost.getCost();
-            message = selCost.getMessage();
+            this.cost = selCost.getCost();
+            this.annotation = selCost.getMessage();
         }
         else{
             costs = new ArrayList<Double>();
@@ -142,6 +135,10 @@ public class Selection extends Operator {
             
             index = tabInfo.findBestIndex(allAttr);
             equalPrimary = tabInfo.equalPrimaryKey(allAttr);
+            if (index!=null){
+                System.out.println("indexxxxxxxxxxxxxxxxxx + " + index.getStructure() );
+            }
+            else{System.out.println("null");}
             
             
             for ( int i = 0 ; i < conditions.size() ; i ++ ){
@@ -159,13 +156,41 @@ public class Selection extends Operator {
             }
             
             if (complexCondtion.contains("and")){
-                
+                int minNumCost = this.getMinCost(costs);
+                this.cost = costs.get(minNumCost);
+                this.annotation = messages.get(minNumCost);
             }
             else{
-            
+                String str = null;
+                boolean FLAG = false;
+                
+                for( int i = 0 ; i < costs.size() ; i ++ ){
+                    this.cost = this.cost + costs.get(i);
+                    if ( FLAG == false ){
+                        FLAG = true;
+                        str = messages.get(i);
+                    }
+                    else{
+                        str = str + "->" + messages.get(i);
+                    }
+                }
+                
+                this.annotation = str;
             }
                     
         }
+        
+        System.out.println("ALL");
+        if (costs!=null){
+            
+        for( int i = 0; i < costs.size() ; i ++ ){
+          
+            System.out.println(costs.get(i) + "\t" + messages.get(i));
+        }
+        
+        }
+        
+        System.out.println("cost = " + this.cost + " message = " + this.annotation);
         
         
         
@@ -212,6 +237,26 @@ public class Selection extends Operator {
                     }
                 }
             }
+        }
+    }
+    
+    public int getMinCost( ArrayList<Double> costs){
+        double minCost = -1;
+        int position = -1;
+        
+        if ( costs.size() > 1 ){
+            minCost = costs.get(0);
+            position = 0;
+            for ( int i = 1 ; i < costs.size() ; i ++ ){
+                if ( minCost > costs.get(i)){
+                    minCost = costs.get(i);
+                    position = i;
+                }
+            }
+            return position;
+        }
+        else{
+            return 0;
         }
     }
     
