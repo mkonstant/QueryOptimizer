@@ -105,23 +105,25 @@ public class Selection extends Operator {
     
     @Override
     public void computeCost(){
-        IndexInfo index = null;
         SelectCost selCost = null;
         ArrayList <String> allAttr = new ArrayList<String>();
         boolean equalPrimary = false;
         ArrayList<Double> costs = null;
         ArrayList<String> messages = null;
+        ArrayList<IndexInfo> indexes = null;
         
         this.checkVariables();
         
         if ( this.complexCondtion == null ){
             allAttr.add(conditions.get(0).getAttr1());
             
-            index = tabInfo.findBestIndex(allAttr);
+            //index = tabInfo.findBestIndex(allAttr);
+            indexes = tabInfo.findAllIndexes(allAttr.get(0));
+            
             equalPrimary = tabInfo.equalPrimaryKey(allAttr);
             
             
-            selCost = new SelectCost(conditions.get(0),tabInfo,catalog.getSystemInfo(),index,equalPrimary,allAttr.size());
+            selCost = new SelectCost(conditions.get(0),tabInfo,catalog.getSystemInfo(),indexes,equalPrimary,allAttr.size());
             selCost.calculateCost();
             this.cost = selCost.getCost();
             this.annotation = selCost.getMessage();
@@ -133,12 +135,6 @@ public class Selection extends Operator {
                 allAttr.add(conditions.get(i).getAttr1());
             }
             
-            index = tabInfo.findBestIndex(allAttr);
-            equalPrimary = tabInfo.equalPrimaryKey(allAttr);
-            if (index!=null){
-                System.out.println("indexxxxxxxxxxxxxxxxxx + " + index.getStructure() );
-            }
-            else{System.out.println("null");}
             
             
             for ( int i = 0 ; i < conditions.size() ; i ++ ){
@@ -149,7 +145,10 @@ public class Selection extends Operator {
                     tabInfo = relationOp1.getOutTable();
                 }
                 
-                selCost = new SelectCost(conditions.get(i),tabInfo,catalog.getSystemInfo(),index,equalPrimary,allAttr.size());
+                indexes = tabInfo.findAllIndexes(allAttr.get(i));
+            
+                
+                selCost = new SelectCost(conditions.get(i),tabInfo,catalog.getSystemInfo(),indexes,equalPrimary,allAttr.size());
                 selCost.calculateCost();
                 costs.add(selCost.getCost());
                 messages.add(selCost.getMessage());
@@ -180,19 +179,7 @@ public class Selection extends Operator {
                     
         }
         
-        System.out.println("ALL");
-        if (costs!=null){
-            
-        for( int i = 0; i < costs.size() ; i ++ ){
-          
-            System.out.println(costs.get(i) + "\t" + messages.get(i));
-        }
-        
-        }
-        
-        System.out.println("cost = " + this.cost + " message = " + this.annotation);
-        
-        
+        System.out.println("cost = " + this.cost + " message = " + this.annotation);   
         
     }
     
