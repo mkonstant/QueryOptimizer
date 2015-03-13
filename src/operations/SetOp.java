@@ -37,6 +37,31 @@ public  class SetOp extends Operator{
         operation = op;
     }
     
+    
+    public SetOp(SetOp old) { 
+        operation = old.getOperation();
+        this.relation1 = old.getRelation1();
+        this.relationOp1 = old.getRelationOp1();
+        this.relation2 = old.getRelation2();
+        this.relationOp2 = old.getRelationOp2();
+        
+        this.tInfo1 = old.getOutTableInfo1();
+        this.tInfo2 = old.getOutTableInfo2();
+        
+        
+    }
+    
+        public SetOp() { 
+        
+        
+    }
+   
+    public Operator fullCopy(){
+        System.out.println(operation);
+        return new SetOp(this);
+    } 
+    
+    
     @Override
     public String getOperation(){
         return operation;

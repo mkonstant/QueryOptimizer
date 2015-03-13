@@ -37,14 +37,32 @@ public  class Join extends Operator{
     
    ArrayList<Condition> conditions = null;
    JoinCost jCost;
-   TableInfo tInfo1,tInfo2;
+   
    
    boolean s1=false,s2=false,h1=false,h2=false,i1=false,i2=false;
     public Join() {
         operation = "join";
     }
    
+     public Join(Join old) { 
+        operation = "join";
+        this.relation1 = old.getRelation1();
+        this.relationOp1 = old.getRelationOp1();
+        this.relation2 = old.getRelation2();
+        this.relationOp2 = old.getRelationOp2();
+        
+        this.tInfo1 = old.getOutTableInfo1();
+        this.tInfo2 = old.getOutTableInfo2();
+        
+        this.conditions = old.getConditionCopy(old.getConditions());
+        
+    }
+     
    
+    public Operator fullCopy(){
+        System.out.println("join");
+        return new Join(this);
+    } 
     
     @Override
     public void setRelation1(String rel){

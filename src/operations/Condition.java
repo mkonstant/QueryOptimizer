@@ -18,7 +18,12 @@ public class Condition {
         this.attr1=attr1;
         this.attr2=attr2;
         this.action=action;
-        
+    }
+    
+    public Condition(Condition c) {
+        this.attr1=c.getAttr1();
+        this.attr2=c.getAttr2();
+        this.action=c.getAction();
     }
     
     
@@ -49,6 +54,10 @@ public class Condition {
     
     public String toPrint(){
         return attr1+action+attr2;
+    }
+    
+    public Condition fullCopy(){
+        return new Condition(this);
     }
     
     

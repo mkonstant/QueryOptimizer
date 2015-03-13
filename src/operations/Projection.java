@@ -31,6 +31,22 @@ public  class Projection extends Operator{
         operation = "proj";
     }
     
+    public Projection(Projection old) { 
+        operation = "proj";
+        this.relation1 = old.getRelation1();
+        this.relationOp1 = old.getRelationOp1();
+        
+        this.tInfo1 = old.getOutTableInfo1();
+        
+        this.attrs = old.getAttrsCopy(old.getAttrs());
+        
+    }
+     
+   
+    public Operator fullCopy(){
+        System.out.println("projrction");
+        return new Projection(this);
+    } 
     
     
     @Override
@@ -113,7 +129,6 @@ public  class Projection extends Operator{
     public void computeCost(){
         outTable = new TableInfo();
         Map<String,TableInfo> table = catalog.getCatalog();
-        TableInfo tInfo=null;
         boolean projOnkey=true;
        
         ArrayList<String> prKey;
@@ -124,10 +139,10 @@ public  class Projection extends Operator{
         {
            if(table.containsKey(relation1))//error is not exists
            {
-               tInfo = table.get(relation1);
-               if(!tInfo.getPrimaryIndex().equalsKey(attrs))
+               tInfo1 = table.get(relation1);
+               if(!tInfo1.getPrimaryIndex().equalsKey(attrs))
                     projOnkey = false;       
-               prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo.getNumberOfTuples(),tInfo.getSizeOfTuple());
+               prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo1.getNumberOfTuples(),tInfo1.getSizeOfTuple());
                
            }
            else{
@@ -135,13 +150,13 @@ public  class Projection extends Operator{
            }
         }
         else{//i have to deal with an operation's output
-            tInfo = relationOp1.getOutTable();
-            prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo.getNumberOfTuples(),tInfo.getSizeOfTuple());
-            projOnkey = tInfo.getSorted();
+            tInfo1 = relationOp1.getOutTable();
+            prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo1.getNumberOfTuples(),tInfo1.getSizeOfTuple());
+            projOnkey = tInfo1.getSorted();
         }
         
         //check if projection attribute exist in relation
-        Map<String,Attributes> attributes = tInfo.getAttributes();
+        Map<String,Attributes> attributes = tInfo1.getAttributes();
         Map<String,Attributes> outAttributes = new HashMap<String,Attributes>();
         
         for(int i=0; i<attrs.size();i++){
@@ -152,7 +167,7 @@ public  class Projection extends Operator{
         }
         
         
-        cost = prCost.computeCost(projOnkey,tInfo.isSortedOnKey(attrs),tInfo.isHashedOnKey(attrs));
+        cost = prCost.computeCost(projOnkey,tInfo1.isSortedOnKey(attrs),tInfo1.isHashedOnKey(attrs));
         annotation = prCost.getAnnotation();
 
         
@@ -160,10 +175,10 @@ public  class Projection extends Operator{
         //compute new tupple size from the type of Atributes given 
         outTable.setSizeOfTuple();
              
-        outTable.setKey(tInfo.getKey());
+        outTable.setKey(tInfo1.getKey());
         //overestimation if duplicate elimination is performed
         outTable.setCardinality(attrs.size());
-        outTable.setNumberOfTuples(tInfo.getNumberOfTuples());
+        outTable.setNumberOfTuples(tInfo1.getNumberOfTuples());
         outTable.setSorted(prCost.getSorted());  //if output is sorted
         outTable.setOperator(true);
        

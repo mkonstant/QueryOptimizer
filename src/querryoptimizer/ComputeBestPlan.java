@@ -7,6 +7,7 @@ package querryoptimizer;
 
 import catalog.Catalog;
 import java.util.ArrayList;
+import operations.Condition;
 import operations.Join;
 import operations.Operator;
 import operations.Projection;
@@ -78,20 +79,21 @@ public class ComputeBestPlan {
         
         
         
-        while(tranfrormed){
+        for(int k=0;k<4;k++){
             while(tranfrormed){
                 i++;
                 System.out.println("\n\n\nPass "+i);
 
-                temp = (ArrayList<Operator>) BestPlan.clone();
+                temp = getPlanCopy(BestPlan);
 
                 System.out.println("Query Projection Elmination:");
                 t1 = eliminateMultipleProjections(temp);
                 cost =  processPlan(temp);
                 printPLan(temp,cost);
                 
-                temp = (ArrayList<Operator>) BestPlan.clone();
-
+                
+                temp = getPlanCopy(BestPlan);
+                
                 System.out.println("\n\n\nQuery Set Projection:");
                 t2 = pushProjections(temp);
                 cost =  processPlan(temp);
@@ -100,8 +102,9 @@ public class ComputeBestPlan {
                     tranfrormed= true;
                     break;
                 }
-                temp = (ArrayList<Operator>) BestPlan.clone();
-
+                
+                temp = getPlanCopy(BestPlan); 
+                
                 System.out.println("\n\n\nQuery JOin Projection:");
                 t3 = pushProjections2(temp);
                 cost =  processPlan(temp);
@@ -483,6 +486,15 @@ public class ComputeBestPlan {
         System.out.println("Total Cost:"+cost);
     }
     
+     
+    public ArrayList<Operator> getPlanCopy(ArrayList<Operator> old){
+        ArrayList<Operator> copy = new ArrayList<Operator>();
+        
+        for(int i=0;i<old.size();i++){
+            copy.add(old.get(i).fullCopy());
+        }
+        return copy;
+    }
     
     
 }

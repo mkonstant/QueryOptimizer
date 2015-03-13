@@ -38,6 +38,7 @@ public abstract class Operator {
     
     protected TableInfo outTable;
     protected double cost;
+    protected TableInfo tInfo1,tInfo2;
 
     public void setOperation(String op){};
     public String getOperation(){return null;};
@@ -64,7 +65,7 @@ public abstract class Operator {
     public void computeAttributes(){}
     public void setAttributes(ArrayList<String> attrs){}
     public void updateRelOp(Operator _old, Operator _new){}
-    
+    public Operator fullCopy(){return null;}
     
     public double getCost(){
         return cost;
@@ -84,6 +85,14 @@ public abstract class Operator {
     
     public TableInfo getOutTable(){
         return outTable;
+    }
+    
+    public TableInfo getOutTableInfo1(){
+        return tInfo1;
+    }
+    
+    public TableInfo getOutTableInfo2(){
+        return tInfo2;
     }
     
     public int getRelationPrint1Lenght(){
@@ -168,6 +177,25 @@ public abstract class Operator {
     
     public ArrayList<String> getOutputAttributes(){
         return outputAttributes;
+    }
+    
+    
+    public ArrayList<Condition> getConditionCopy(ArrayList<Condition> old){
+        ArrayList<Condition> copy = new ArrayList<Condition>();
+        
+        for(int i=0;i<old.size();i++){
+            copy.add(old.get(i).fullCopy());
+        }
+        return copy;
+    }
+    
+    public ArrayList<String> getAttrsCopy(ArrayList<String> old){
+        ArrayList<String> copy = new ArrayList<String>();
+        
+        for(int i=0;i<old.size();i++){
+            copy.add(new String(old.get(i)));
+        }
+        return copy;
     }
     
     
