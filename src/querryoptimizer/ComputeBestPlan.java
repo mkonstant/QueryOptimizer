@@ -7,6 +7,9 @@ package querryoptimizer;
 
 import catalog.Catalog;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import javax.naming.ldap.HasControls;
 import operations.Condition;
 import operations.Join;
 import operations.Operator;
@@ -24,6 +27,7 @@ public class ComputeBestPlan {
     
     private double Bestcost =0;
     private ArrayList<Operator> BestPlan;
+    private boolean updateBest=false;
     
     
     /*
@@ -60,16 +64,16 @@ public class ComputeBestPlan {
 
     }
     
-    private synchronized void setCost(double cost, ArrayList<Operator> operations){
+   /*private synchronized void setCost(double cost, ArrayList<Operator> operations){
         
         if(cost< Bestcost){
             BestPlan = operations;
             Bestcost = cost;
+            
         }
-    }
+    }*/
     
     public void ApplyTranformations(){
-        boolean tranfrormed = true;
         boolean t1=false,t2=false,t3=false;   
         double cost;
         int i =0;
@@ -77,49 +81,52 @@ public class ComputeBestPlan {
         //after each tranformation do this!
         ArrayList<Operator> temp ;
         
+        updateBest=true;
         
-        
-        for(int k=0;k<4;k++){
-            while(tranfrormed){
+        while(updateBest){
+            while(updateBest){
+                updateBest=false; 
                 i++;
                 System.out.println("\n\n\nPass "+i);
 
-                temp = getPlanCopy(BestPlan);
 
-                System.out.println("Query Projection Elmination:");
+                temp = getPlanCopy(BestPlan);
+                
                 t1 = eliminateMultipleProjections(temp);
-                cost =  processPlan(temp);
-                printPLan(temp,cost);
+                if(t1){
+                    cost = processPlan(temp);
+                    System.out.println("Query Projection Elmination:");
+                    printPLan(temp, cost);
+                    if(updateBest)
+                        break;
+                    temp = getPlanCopy(BestPlan);
+                }
                 
-                
-                temp = getPlanCopy(BestPlan);
-                
-                System.out.println("\n\n\nQuery Set Projection:");
                 t2 = pushProjections(temp);
-                cost =  processPlan(temp);
-                printPLan(temp,cost);
                 if(t2){
-                    tranfrormed= true;
-                    break;
+                    cost = processPlan(temp);
+                    System.out.println("\n\n\nQuery Set Projection:");
+                    printPLan(temp, cost);
+                    if(updateBest){
+                        break;
+                    }
+                    temp = getPlanCopy(BestPlan);
                 }
                 
-                temp = getPlanCopy(BestPlan); 
-                
-                System.out.println("\n\n\nQuery JOin Projection:");
                 t3 = pushProjections2(temp);
-                cost =  processPlan(temp);
-                printPLan(temp,cost);
                 if(t3){
-                    tranfrormed= true;
-                    break;
+                    cost = processPlan(temp);
+                    System.out.println("\n\n\nQuery JOin Projection:");
+                    printPLan(temp, cost);
+                    if(updateBest){
+                        break;
+                    }
+                    temp = getPlanCopy(BestPlan);
                 }
-
-                tranfrormed=t1 || t2 ||t3 ;
-            }
-            
+            } 
         }
         
-        
+        System.out.println("\n\n\nBest Plan:");
         printPLan(BestPlan,Bestcost);
         
     }
@@ -351,6 +358,7 @@ public class ComputeBestPlan {
         if(cost< Bestcost){
             BestPlan = plan;
             Bestcost = cost;
+            updateBest=true;
         }
         return cost;
         
@@ -376,6 +384,7 @@ public class ComputeBestPlan {
             
             temp = op.get(i);
             temp.setOpName("Operation"+i);
+            
             tempR1=temp.getRelationPrint1Lenght();
             tempR2=temp.getRelationPrint2Lenght();
             tempC=temp.getConditionsPrintLenght();
@@ -489,9 +498,10 @@ public class ComputeBestPlan {
      
     public ArrayList<Operator> getPlanCopy(ArrayList<Operator> old){
         ArrayList<Operator> copy = new ArrayList<Operator>();
-        
-        for(int i=0;i<old.size();i++){
-            copy.add(old.get(i).fullCopy());
+        Map<Operator,Operator> update = new HashMap<Operator,Operator>();
+
+        for(int i=0;i<old.size();i++){            
+            copy.add(old.get(i).fullCopy(update));
         }
         return copy;
     }

@@ -28,7 +28,6 @@ public  class Group extends Operator{
     ArrayList<Condition> conditions = null;
     
     private boolean hasHavingClause=false;
-    private TableInfo tInfo=null;
     
     //only one of the following 2 
     String relation1 = null;
@@ -37,6 +36,30 @@ public  class Group extends Operator{
     public Group() {
         operation = "group";
     }
+    
+    
+    public Group(Group old,Map<Operator,Operator> update) { 
+        operation = "group";
+        this.relation1 = old.getRelation1();
+        if(relation1==null){
+            this.relationOp1 = update.get(old.getRelationOp1()) ;
+        }
+
+        this.attrs = old.getAttrsCopy(old.getAttrs());
+        this.conditions = old.getConditionCopy(old.getConditions());
+        this.hasHavingClause = old.getHasHavingClause();
+        this.tInfo1 = old.getOutTableInfo1().fullCopy();
+        
+    }
+     
+   
+    @Override
+    public Operator fullCopy(Map<Operator,Operator> update){
+       // System.out.println("projrction");
+        Group temp =  new Group(this,update);
+        update.put(this,temp);
+        return temp;
+    } 
     
  
     
@@ -127,7 +150,7 @@ public  class Group extends Operator{
         
     @Override
     public void computeAttributes(){
-        Map<String,Attributes> temp = tInfo.getAttributes();
+        Map<String,Attributes> temp = tInfo1.getAttributes();
         neededAttributes1 = new ArrayList<String>();
         for(int i=0;i<attrs.size();i++){
             neededAttributes1.add(attrs.get(i));
@@ -186,25 +209,25 @@ public  class Group extends Operator{
     public void computeCost(){
         outTable = new TableInfo();
         Map<String,TableInfo> table = catalog.getCatalog();
-        tInfo=null;
+        tInfo1=null;
         
         
         if(relation1!=null)//i have to deal with a database relation
         {
            if(table.containsKey(relation1))//error is not exists
-               tInfo = table.get(relation1);
+               tInfo1 = table.get(relation1);
            else
                 throw new RelationException("Relation '"+relation1+"' does not exist.");
         }
         else{//i have to deal with an operation's output
-            tInfo = relationOp1.getOutTable();
+            tInfo1 = relationOp1.getOutTable();
         }
 
                        
         
         
         //check if groupBy,having and aggregate attributes all exist in relation
-        Map<String,Attributes> attributes = tInfo.getAttributes();
+        Map<String,Attributes> attributes = tInfo1.getAttributes();
         
         for(String key1 : attributes.keySet()){
             if(!attrs.contains(key1)){
@@ -238,21 +261,21 @@ public  class Group extends Operator{
         }
         
         
-        GroupCost grCost = new GroupCost(catalog.getSystemInfo(), tInfo.getNumberOfTuples(), tInfo.getSizeOfTuple());
+        GroupCost grCost = new GroupCost(catalog.getSystemInfo(), tInfo1.getNumberOfTuples(), tInfo1.getSizeOfTuple());
         
-        cost = grCost.computeCost(tInfo.isSortedOnKey(attrs) , tInfo.isHashedOnKey(attrs));
+        cost = grCost.computeCost(tInfo1.isSortedOnKey(attrs) , tInfo1.isHashedOnKey(attrs));
         annotation = grCost.getAnnotation();
 
         
-        outTable.setAttributes(tInfo.getAttributes());
+        outTable.setAttributes(tInfo1.getAttributes());
         //same output , same tupple size
-        outTable.setSizeOfTuple(tInfo.getSizeOfTuple());
+        outTable.setSizeOfTuple(tInfo1.getSizeOfTuple());
              
-        outTable.setKey(tInfo.getKey());
+        outTable.setKey(tInfo1.getKey());
         //same numbert of attributes on output
-        outTable.setCardinality(tInfo.getCardinality());
+        outTable.setCardinality(tInfo1.getCardinality());
         //what to do with it?????
-        outTable.setNumberOfTuples(tInfo.getNumberOfTuples());
+        outTable.setNumberOfTuples(tInfo1.getNumberOfTuples());
         outTable.setSorted(grCost.getSorted());  //if output is sorted
         outTable.setOperator(true);
        

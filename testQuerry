@@ -1,1 +1,11 @@
-sel [account_number > 1 or customer_id >1](savingaccounts)
+proj[account_number,branch_city](		
+	join
+		[savingaccounts.account_number=account_number]
+		(savingaccounts)
+		(proj[account_number]
+			(union
+				(proj[account_number,branch_name,branch_city](savingaccounts))
+				(proj[account_number,branch_name,branch_city](chekingaccounts))
+			)
+		)
+	)

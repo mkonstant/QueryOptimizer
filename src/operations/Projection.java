@@ -31,21 +31,26 @@ public  class Projection extends Operator{
         operation = "proj";
     }
     
-    public Projection(Projection old) { 
+    public Projection(Projection old,Map<Operator,Operator> update) { 
         operation = "proj";
         this.relation1 = old.getRelation1();
-        this.relationOp1 = old.getRelationOp1();
+        if(relation1==null){
+            this.relationOp1 = update.get(old.getRelationOp1()) ;
+        }
         
-        this.tInfo1 = old.getOutTableInfo1();
+        this.tInfo1 = old.getOutTableInfo1().fullCopy();
         
         this.attrs = old.getAttrsCopy(old.getAttrs());
         
     }
      
    
-    public Operator fullCopy(){
-        System.out.println("projrction");
-        return new Projection(this);
+    @Override
+    public Operator fullCopy(Map<Operator,Operator> update){
+       // System.out.println("projrction");
+        Projection temp =  new Projection(this,update);
+        update.put(this,temp);
+        return temp;
     } 
     
     

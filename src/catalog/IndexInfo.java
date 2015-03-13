@@ -7,6 +7,7 @@
 package catalog;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -22,6 +23,21 @@ public class IndexInfo {
 
     
     public IndexInfo(){
+    }
+    
+    public IndexInfo(IndexInfo old){
+        structure = new String(old.getStructure());
+        numOfDistinctValues = old.getNumOfDistinctValues();
+        costFactor = old.getCostFactor();
+        if(old.getSecondary() != null)
+            secondary = new String(old.getSecondary());
+        
+        Set<String> temp = old.getIndexName();
+        if(temp!=null){
+            indexName = new HashSet<String>();
+            for(String i : temp)
+                indexName.add(new String(i));
+        }
     }
 
     public void setSecondary(String secondary) {
@@ -115,5 +131,10 @@ public class IndexInfo {
             return null;
         return this;
     }
+    
+    public IndexInfo fullCopy(){
+        return new IndexInfo(this);
+    }
+    
     
 }

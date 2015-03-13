@@ -44,24 +44,30 @@ public  class Join extends Operator{
         operation = "join";
     }
    
-     public Join(Join old) { 
+     public Join(Join old,Map<Operator,Operator> update) { 
         operation = "join";
         this.relation1 = old.getRelation1();
-        this.relationOp1 = old.getRelationOp1();
+        if(relation1==null){
+            this.relationOp1 = update.get(old.getRelationOp1()) ;
+        }
         this.relation2 = old.getRelation2();
-        this.relationOp2 = old.getRelationOp2();
-        
-        this.tInfo1 = old.getOutTableInfo1();
-        this.tInfo2 = old.getOutTableInfo2();
+        if(relation2==null){
+            this.relationOp2 = update.get(old.getRelationOp2()) ;
+        }
+        this.tInfo1 = old.getOutTableInfo1().fullCopy();
+        this.tInfo2 = old.getOutTableInfo2().fullCopy();
         
         this.conditions = old.getConditionCopy(old.getConditions());
         
     }
      
    
-    public Operator fullCopy(){
-        System.out.println("join");
-        return new Join(this);
+    @Override
+    public Operator fullCopy(Map<Operator,Operator> update){
+        //System.out.println("join");
+        Join temp =  new Join(this,update);
+        update.put(this,temp);
+        return temp;
     } 
     
     @Override

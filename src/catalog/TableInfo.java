@@ -6,8 +6,10 @@
 
 package catalog;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,6 +34,48 @@ public class TableInfo {
     public TableInfo(){
         attributes = new HashMap<String,Attributes>();
         IndexInfo indexInfo = new IndexInfo();
+    }
+    
+    public TableInfo(TableInfo old){
+        cardinality = old.getCardinality();
+        numberOfTuples = old.getNumberOfTuples();
+        sizeOfTuple = old.getSizeOfTuple();
+        sorted = old.getSorted();
+        operator = old.getOperator();
+        
+        Map<String,Attributes> old_attributes = old.getAttributes();
+        IndexInfo old_primaryIndex = old.getPrimaryIndex();
+        Map<String,IndexInfo> old_secondaryIndex = old.getSecondaryIndex();
+        Map<String,ForeignIndexInfo> old_foreignIndex = old.getForeignIndex();
+        Set <String> old_key = old.getKey();
+        
+        if(old_primaryIndex!= null)
+            primaryIndex = old_primaryIndex.fullCopy();
+        
+        if(old_secondaryIndex !=null){
+            secondaryIndex = new HashMap<String, IndexInfo>();
+            for(String key1 : old_secondaryIndex.keySet()){
+                secondaryIndex.put(new String(key1), old_secondaryIndex.get(key1).fullCopy());
+                }
+        }
+        
+        if(old_attributes !=null){
+            attributes = new HashMap<String, Attributes>();
+            for(String key1 : old_attributes.keySet()){
+                attributes.put(new String(key1), old_attributes.get(key1).fullCopy());
+                }
+        }
+        
+        if(old_key!=null){
+            key = new HashSet<String>();
+            for(String i : old_key)
+                key.add(new String(i));
+        }
+        
+        
+        
+               
+        
     }
 
     public void setSorted(boolean s){
@@ -312,7 +356,9 @@ public class TableInfo {
     }
     
     
-    
+    public TableInfo fullCopy(){
+        return new TableInfo(this);
+    }
     
     
 }

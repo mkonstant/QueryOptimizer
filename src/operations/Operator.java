@@ -8,6 +8,8 @@ package operations;
 import catalog.Catalog;
 import catalog.TableInfo;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -65,7 +67,7 @@ public abstract class Operator {
     public void computeAttributes(){}
     public void setAttributes(ArrayList<String> attrs){}
     public void updateRelOp(Operator _old, Operator _new){}
-    public Operator fullCopy(){return null;}
+    public Operator fullCopy(Map<Operator,Operator> update){return null;}
     
     public double getCost(){
         return cost;

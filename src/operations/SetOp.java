@@ -9,6 +9,7 @@ import catalog.Attributes;
 import catalog.TableInfo;
 import evaluationCost.SetOperationCost;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import myExceptions.RelationException;
 
@@ -30,7 +31,6 @@ public  class SetOp extends Operator{
     boolean s1=true,s2=true,h1=false,h2=false;
     
     SetOperationCost setCost;
-    TableInfo tInfo1,tInfo2;
     
     @Override
     public void setOperation(String op){
@@ -38,15 +38,19 @@ public  class SetOp extends Operator{
     }
     
     
-    public SetOp(SetOp old) { 
+    public SetOp(SetOp old,Map<Operator,Operator> update) { 
         operation = old.getOperation();
         this.relation1 = old.getRelation1();
-        this.relationOp1 = old.getRelationOp1();
+        if(relation1==null){
+            this.relationOp1 = update.get(old.getRelationOp1()) ;
+        }
         this.relation2 = old.getRelation2();
-        this.relationOp2 = old.getRelationOp2();
+        if(relation2==null){
+            this.relationOp2 = update.get(old.getRelationOp2()) ;
+        }
         
-        this.tInfo1 = old.getOutTableInfo1();
-        this.tInfo2 = old.getOutTableInfo2();
+        this.tInfo1 = old.getOutTableInfo1().fullCopy();
+        this.tInfo2 = old.getOutTableInfo2().fullCopy();
         
         
     }
@@ -56,9 +60,12 @@ public  class SetOp extends Operator{
         
     }
    
-    public Operator fullCopy(){
-        System.out.println(operation);
-        return new SetOp(this);
+    @Override
+    public Operator fullCopy(Map<Operator,Operator> update){
+       // System.out.println(operation);
+        SetOp temp =  new SetOp(this,update);
+        update.put(this,temp);
+        return temp;
     } 
     
     

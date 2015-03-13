@@ -20,6 +20,12 @@ public class Attributes {
     public Attributes(){
     }
     
+    public Attributes(Attributes old){
+        type = new String(old.getType());
+        min = new String(old.getMin());
+        max = new String(old.getMax());
+        distinctValues = old.getDistinctValues();
+    }
     
     public void setType(String type) {
         this.type = type;
@@ -60,5 +66,8 @@ public class Attributes {
         return distinctValues;
     }
 
+    public Attributes fullCopy(){
+        return new Attributes(this);
+    }
 
 }

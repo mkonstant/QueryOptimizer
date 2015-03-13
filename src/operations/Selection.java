@@ -23,7 +23,6 @@ public class Selection extends Operator {
     //only one of the following 2 will be null
     String relation1 = null;
     Operator relationOp1 = null;
-    TableInfo tabInfo = null; 
     Map<String,TableInfo> table = null;
     
     ArrayList<Condition> conditions = null;
@@ -31,6 +30,31 @@ public class Selection extends Operator {
     public Selection() {
         operation = "sel";
     }
+    
+    public Selection(Selection old,Map<Operator,Operator> update) { 
+        operation = "sel";
+        this.relation1 = old.getRelation1();
+        if(relation1==null){
+            this.relationOp1 = update.get(old.getRelationOp1()) ;
+        }
+
+        this.conditions = old.getConditionCopy(old.getConditions());
+        this.tInfo1 = old.getOutTableInfo1().fullCopy();
+        
+        
+        //xreiazomai kati extra??????
+        
+    }
+     
+   
+    @Override
+    public Operator fullCopy(Map<Operator,Operator> update){
+       // System.out.println("projrction");
+        Selection temp =  new Selection(this,update);
+        update.put(this,temp);
+        return temp;
+    } 
+    
     
     
     
@@ -76,7 +100,7 @@ public class Selection extends Operator {
             neededAttributes1.add(conditions.get(i).getAttr1());
         }
         outputAttributes = new ArrayList<String>();
-        Map<String,Attributes> temp = tabInfo.getAttributes();
+        Map<String,Attributes> temp = tInfo1.getAttributes();
         for(String key1 : temp.keySet()){
             outputAttributes.add(key1);
         }
@@ -117,13 +141,13 @@ public class Selection extends Operator {
         if ( this.complexCondtion == null ){
             allAttr.add(conditions.get(0).getAttr1());
             
-            //index = tabInfo.findBestIndex(allAttr);
-            indexes = tabInfo.findAllIndexes(allAttr.get(0));
+            //index = tInfo1.findBestIndex(allAttr);
+            indexes = tInfo1.findAllIndexes(allAttr.get(0));
             
-            equalPrimary = tabInfo.equalPrimaryKey(allAttr);
+            equalPrimary = tInfo1.equalPrimaryKey(allAttr);
             
             
-            selCost = new SelectCost(conditions.get(0),tabInfo,catalog.getSystemInfo(),indexes,equalPrimary,allAttr.size());
+            selCost = new SelectCost(conditions.get(0),tInfo1,catalog.getSystemInfo(),indexes,equalPrimary,allAttr.size());
             selCost.calculateCost();
             this.cost = selCost.getCost();
             this.annotation = selCost.getMessage();
@@ -139,16 +163,16 @@ public class Selection extends Operator {
             
             for ( int i = 0 ; i < conditions.size() ; i ++ ){
                 if(relation1!=null) {
-                    tabInfo = table.get(relation1);
+                    tInfo1 = table.get(relation1);
                 }
                 else{
-                    tabInfo = relationOp1.getOutTable();
+                    tInfo1 = relationOp1.getOutTable();
                 }
                 
-                indexes = tabInfo.findAllIndexes(allAttr.get(i));
+                indexes = tInfo1.findAllIndexes(allAttr.get(i));
             
                 
-                selCost = new SelectCost(conditions.get(i),tabInfo,catalog.getSystemInfo(),indexes,equalPrimary,allAttr.size());
+                selCost = new SelectCost(conditions.get(i),tInfo1,catalog.getSystemInfo(),indexes,equalPrimary,allAttr.size());
                 selCost.calculateCost();
                 costs.add(selCost.getCost());
                 messages.add(selCost.getMessage());
@@ -185,27 +209,27 @@ public class Selection extends Operator {
     
     public void checkVariables( ){
         table = catalog.getCatalog();
-        tabInfo = null;
+        tInfo1 = null;
         String del = "//.";
         String []temp = null;
         
         
         if(relation1!=null) {
-            tabInfo = table.get(relation1);
+            tInfo1 = table.get(relation1);
         }
         else{
-            tabInfo = relationOp1.getOutTable();
+            tInfo1 = relationOp1.getOutTable();
         }
         
         if ( this.complexCondtion == null ){
             if ( conditions.get(0).getAttr1().contains(".")){
                 temp = conditions.get(0).getAttr1().split(del);
-                if ( !tabInfo.getAttributes().containsKey(temp[1])){
+                if ( !tInfo1.getAttributes().containsKey(temp[1])){
                     throw new SelectAttributeException(conditions.get(0).getAttr1());
                 }
             }
             else{
-                if ( !tabInfo.getAttributes().containsKey(conditions.get(0).getAttr1())){
+                if ( !tInfo1.getAttributes().containsKey(conditions.get(0).getAttr1())){
                     throw new SelectAttributeException(conditions.get(0).getAttr1());
                 }
             }
@@ -214,12 +238,12 @@ public class Selection extends Operator {
             for ( int i = 0 ; i < conditions.size() ; i ++ ){
                 if ( conditions.get(i).getAttr1().contains(".")){
                     temp = conditions.get(i).getAttr1().split(del);
-                    if ( !tabInfo.getAttributes().containsKey(temp[1])){
+                    if ( !tInfo1.getAttributes().containsKey(temp[1])){
                         throw new SelectAttributeException(conditions.get(i).getAttr1());
                     }
                 }
                 else{
-                    if ( !tabInfo.getAttributes().containsKey(conditions.get(i).getAttr1())){
+                    if ( !tInfo1.getAttributes().containsKey(conditions.get(i).getAttr1())){
                         throw new SelectAttributeException(conditions.get(i).getAttr1());
                     }
                 }
