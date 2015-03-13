@@ -244,13 +244,15 @@ public class ComputeBestPlan {
                         ArrayList<String> projAttrs2 = findProjAttrs(relAttrs2, projAttrs, joinNeededAttrs2);
                         
                         if(allProjectedAttrs(projAttrs1, projAttrs2, projAttrs)){
+                            Operator startProj = temp1;  //delete thus
                             if(projAttrs1!=null){
+                               // temp1 = new Projection(); //delete this
                                 temp1.setRelation1(temp.getRelation1());
                                 temp1.setRelationOp1(temp.getRelationOp1());
                                 temp1.setAttributes(projAttrs1);
                                         temp.setRelation1(null);
                                         temp.setRelationOp1(temp1);
-                                        ops.remove(temp1);
+                                       ops.remove(temp1);        //restore this
                                         ops.add(i-1, temp1);
                                 
                             }
@@ -261,12 +263,19 @@ public class ComputeBestPlan {
                                         temp2.setAttributes(projAttrs2);
                                         temp.setRelation2(null);
                                         temp.setRelationOp2(temp2);
-                                        ops.add(i, temp2);
+                                        ops.add(i-1, temp2);
                             }
+                            
+                            //delete this
+                            /*
+                            if(!extraNeededProjAttrs(projAttrs1, projAttrs2, projAttrs)){
+                                ops.remove(startProj);                 
+                            }*/
+                            
+                            
                             tranformed=true;
                             tranformflag=true;
                             break;
-                            
                         }
                     }                 
                 }    
@@ -325,6 +334,27 @@ public class ComputeBestPlan {
         }
         return temp;
     }
+    
+        
+    public boolean extraNeededProjAttrs(ArrayList<String> proj1, ArrayList<String> proj2, ArrayList<String> proj){
+        
+        
+        for(int i =0; i<proj1.size();i++){
+            String temp = proj1.get(i);
+            if(!proj.contains(temp)){
+                return true;
+            }
+        }
+        for(int i =0; i<proj2.size();i++){
+            String temp = proj2.get(i);
+            if(!proj.contains(temp)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
     
     
     public boolean allProjectedAttrs(ArrayList<String> proj1, ArrayList<String> proj2, ArrayList<String> proj){
