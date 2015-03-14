@@ -75,14 +75,18 @@ public class SelectCost {
         int minCostNum;
         
         if ( condition.getAction().contentEquals("=")){
-            for ( int i = 0 ; i < indexes.size() ; i ++ ){
-                equalSelection(indexes.get(i));
+            if ( indexes != null ){
+                for ( int i = 0 ; i < indexes.size() ; i ++ ){
+                    equalSelection(indexes.get(i));
+                }
             }
             equalSelection(null);
         }
         else{
-            for ( int i = 0 ; i < indexes.size() ; i ++ ){
-                inequalitySelection(indexes.get(i));
+            if ( indexes != null ){
+                for ( int i = 0 ; i < indexes.size() ; i ++ ){
+                    inequalitySelection(indexes.get(i));
+                }
             }
             inequalitySelection(null);
         }
