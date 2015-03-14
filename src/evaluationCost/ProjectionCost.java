@@ -6,7 +6,11 @@
 package evaluationCost;
 
 import catalog.SystemInfo;
+import catalog.TableInfo;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import syntaxtree.Attribute;
 
 /**
  *
@@ -26,15 +30,19 @@ public class ProjectionCost {
     private ArrayList<String> sortedAnnotation = new ArrayList<String>();
     private ArrayList<String> hasedAnnotation = new ArrayList<String>();
     private boolean sorted=false;
+    private TableInfo tinfo;
+    private Set<String> sortKey=null;
 
-    public ProjectionCost(SystemInfo si, int nr, int sizeOfTupple){
+    public ProjectionCost(SystemInfo si, TableInfo tinfo){
+        this.tinfo = tinfo;
         tranferTime = si.getTransferTime();
         penaltyTime = si.getTimeForWritingPages();
         latency = si.getLatency();
         M = si.getNumOfBuffers();
         bb= M/2;
-        br = (nr*sizeOfTupple) / si.getSizeOfBuffer();
-        this.nr=nr;
+        nr = tinfo.getNumberOfTuples();
+        br = (nr*tinfo.getSizeOfTuple()) / si.getSizeOfBuffer();
+        
     }
     
     
@@ -60,6 +68,12 @@ public class ProjectionCost {
     //no sort , no hash, provide dublicates
     public double computeCost(boolean primary, boolean sorted, boolean hashed){
         if(primary){ //projection sto primary key, no duplicates
+            if(tinfo.getPrimaryIndex().getStructure().equals("B+tree"))
+            {
+                this.sorted=true;
+                System.out.println("edw re malaka");
+                sortKey = tinfo.getPrimaryIndex().getIndexName();
+            }
             cost = br*tranferTime + (br/bb)*latency;
             annotation.add("Just projection,No duplicates");
         }
@@ -90,6 +104,8 @@ public class ProjectionCost {
                 sortedAnnotation.add("Relation already sorted on projection attributes ");
                 return 0;
             }
+            sortKey = new HashSet<String>();
+            
             
             sortedAnnotation.add("Sort to eliminate dublicates");
             return SortCost.computeCost(br, M, latency, penaltyTime,  tranferTime);

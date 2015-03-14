@@ -120,7 +120,9 @@ public abstract class Operator {
     }
     
     public int getAnnotationLenght(){
-        return annotation.length();
+        if(annotation!=null)
+            return annotation.length();
+        return 0;
     }
     
     public int getAggragationLenght(){
@@ -264,6 +266,8 @@ public abstract class Operator {
         
         
         //add annotation
+        if(annotation==null)
+            annotation="";
         temp+=annotation;
         l = maxAn - annotation.length();        
         for(int i=0;i<l;i++){

@@ -76,7 +76,7 @@ public class ComputeBestPlan {
     }*/
     
     public void ApplyTranformations(){
-        boolean t1=false,t2=false,t3=false,t4=false;   
+        boolean t1=false,t2=false,t3=false,t4=false,t5=false,t6=false,t7=false;   
         double cost;
         int i =0;
         /*MAKE THE POSSIBLE REAARANGEMENTS*/
@@ -136,8 +136,8 @@ public class ComputeBestPlan {
                     temp = getPlanCopy(BestPlan);
                 }
                 
-                t4 = rearangeSets(temp);
-                if(t4){
+                t5 = rearangeSets(temp);
+                if(t5){
                     cost = processPlan(temp);
                     System.out.println("Selection rearange:");
                     printPLan(temp, cost);
@@ -146,8 +146,8 @@ public class ComputeBestPlan {
                     temp = getPlanCopy(BestPlan);
                 }
                 
-                t4 = pushSelectionInSet1(temp);
-                if(t4){
+                t6 = pushSelectionInSet1(temp);
+                if(t6){
                     cost = processPlan(temp);
                     System.out.println("Selection rearange:");
                     printPLan(temp, cost);
@@ -156,8 +156,8 @@ public class ComputeBestPlan {
                     temp = getPlanCopy(BestPlan);
                 }
                 
-                t4 = pushSelectionInSet2(temp);
-                if(t4){
+                t7 = pushSelectionInSet2(temp);
+                if(t7){
                     cost = processPlan(temp);
                     System.out.println("Selection rearange:");
                     printPLan(temp, cost);
