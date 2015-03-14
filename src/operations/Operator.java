@@ -68,7 +68,13 @@ public abstract class Operator {
     public void setAttributes(ArrayList<String> attrs){}
     public void updateRelOp(Operator _old, Operator _new){}
     public Operator fullCopy(Map<Operator,Operator> update){return null;}
-    
+    public void setCondition(ArrayList<Condition> con){}
+    public void setTabInfo1(TableInfo t){
+        tInfo1 = t;
+    }
+    public void setTabInfo2(TableInfo t){
+        tInfo2 = t;
+    }
     public double getCost(){
         return cost;
     }
