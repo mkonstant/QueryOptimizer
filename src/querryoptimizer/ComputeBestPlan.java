@@ -6,6 +6,7 @@
 package querryoptimizer;
 
 import catalog.Catalog;
+import catalog.TableInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ import operations.Condition;
 import operations.Join;
 import operations.Operator;
 import operations.Projection;
+import operations.Selection;
 import operations.SetOp;
 import static querryoptimizer.QuerryOptimizer.operations;
 
@@ -74,7 +76,7 @@ public class ComputeBestPlan {
     }*/
     
     public void ApplyTranformations(){
-        boolean t1=false,t2=false,t3=false;   
+        boolean t1=false,t2=false,t3=false,t4=false;   
         double cost;
         int i =0;
         /*MAKE THE POSSIBLE REAARANGEMENTS*/
@@ -123,6 +125,46 @@ public class ComputeBestPlan {
                     }
                     temp = getPlanCopy(BestPlan);
                 }
+                
+                t4 = rearangeSelections(temp);
+                if(t4){
+                    cost = processPlan(temp);
+                    System.out.println("Selection rearange:");
+                    printPLan(temp, cost);
+                    if(updateBest)
+                        break;
+                    temp = getPlanCopy(BestPlan);
+                }
+                
+                t4 = rearangeSets(temp);
+                if(t4){
+                    cost = processPlan(temp);
+                    System.out.println("Selection rearange:");
+                    printPLan(temp, cost);
+                    if(updateBest)
+                        break;
+                    temp = getPlanCopy(BestPlan);
+                }
+                
+                t4 = pushSelectionInSet1(temp);
+                if(t4){
+                    cost = processPlan(temp);
+                    System.out.println("Selection rearange:");
+                    printPLan(temp, cost);
+                    if(updateBest)
+                        break;
+                    temp = getPlanCopy(BestPlan);
+                }
+                
+                t4 = pushSelectionInSet2(temp);
+                if(t4){
+                    cost = processPlan(temp);
+                    System.out.println("Selection rearange:");
+                    printPLan(temp, cost);
+                    if(updateBest)
+                        break;
+                    temp = getPlanCopy(BestPlan);
+                }
             } 
         }
         
@@ -162,6 +204,209 @@ public class ComputeBestPlan {
         return transformed;
     }
     
+    private boolean rearangeSelections(ArrayList<Operator> ops){
+        boolean transformed = false;
+        Operator temp1,temp2=null;
+            for(int i=ops.size()-1; i>-1; i--){
+                temp1 = ops.get(i); 
+                if(temp1 instanceof Selection  ){
+                    temp2 = temp1.getRelationOp1();
+                    if(temp2 instanceof Selection){
+                        Operator tempRelOp1Inside = temp2.getRelationOp1();
+                        String tempRel1 = temp2.getRelation1();
+                        TableInfo tempInfo = temp2.getOutTableInfo1();
+
+                        temp2.setRelation1(null);
+                        temp2.setRelationOp1(temp1);
+                        temp2.setTabInfo1(temp1.getOutTableInfo1());
+                                                                 
+                        temp1.setRelation1(tempRel1);
+                        temp1.setRelationOp1(tempRelOp1Inside);
+                        temp1.setTabInfo1(tempInfo);
+                        
+                        ops.remove(temp2);
+                        ops.add(i,temp2);
+                        
+                        transformed = true;
+                        break;
+                    }
+                }
+        }
+        return transformed;
+    }
+    
+        private boolean rearangeSets(ArrayList<Operator> ops){
+        boolean transformed = false;
+        Operator temp,temp1,temp2=null;
+            for(int i=ops.size()-1; i>-1; i--){
+                temp = ops.get(i); 
+                if(temp instanceof SetOp  ){
+                    if(!temp.getOperation().equals("diff")){
+                        temp1 = temp.getRelationOp1();
+                        temp2 = temp.getRelationOp2();
+                        if(temp1!=null && temp2==null && (temp1 instanceof SetOp)){
+                            if (temp1.getOperation().equals(temp.getOperation())){
+                                if(temp1.getRelation1()!=null){
+                                    String tempRel = temp.getRelation2();
+                                    TableInfo tempInfo = temp.getOutTableInfo2();
+                                
+                                    temp.setRelation2(temp1.getRelation1());
+                                    temp.setTabInfo2(temp1.getOutTableInfo1());
+                                    
+                                    temp1.setRelation1(tempRel);
+                                    temp1.setTabInfo1(tempInfo);
+                                    transformed = true;
+                                    break;
+                                }
+                                else if(temp1.getRelation2()!=null){
+                                    String tempRel = temp.getRelation2();
+                                    TableInfo tempInfo = temp.getOutTableInfo2();
+                                
+                                    temp.setRelation2(temp1.getRelation2());
+                                    temp.setTabInfo2(temp1.getOutTableInfo2());
+                                    
+                                    temp1.setRelation2(tempRel);
+                                    temp1.setTabInfo2(tempInfo);
+                                    transformed = true;
+                                    break;
+                                }
+                            }
+                        }
+                        else if(temp2!=null && temp1==null && (temp2 instanceof SetOp)){
+                            if (temp2.getOperation().equals(temp.getOperation())){
+                                if(temp2.getRelation1()!=null){
+                                    String tempRel = temp.getRelation1();
+                                    TableInfo tempInfo = temp.getOutTableInfo1();
+                                
+                                    temp.setRelation1(temp2.getRelation1());
+                                    temp.setTabInfo1(temp2.getOutTableInfo1());
+                                    
+                                    temp2.setRelation1(tempRel);
+                                    temp2.setTabInfo1(tempInfo);
+                                    transformed = true;
+                                    break;
+                                }
+                                else if(temp2.getRelation2()!=null){
+                                    String tempRel = temp.getRelation1();
+                                    TableInfo tempInfo = temp.getOutTableInfo1();
+                                
+                                    temp.setRelation1(temp1.getRelation2());
+                                    temp.setTabInfo1(temp1.getOutTableInfo2());
+                                    
+                                    temp2.setRelation2(tempRel);
+                                    temp2.setTabInfo2(tempInfo);
+                                    transformed = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+                    
+                
+        return transformed;
+    }
+            
+    private boolean pushSelectionInSet1(ArrayList<Operator> ops){
+        boolean tranformflag=true;
+        boolean tranformed = false;
+        Operator temp=null;     //the setoperation
+        Operator temp1,temp2;  //the projections
+        
+        
+        while(tranformflag){
+            tranformflag=false;
+            for(int i=ops.size()-1; i>-1; i--){
+                temp1 = ops.get(i);
+                if( temp1 instanceof Selection ){
+                    temp = temp1.getRelationOp1();
+                    if(temp!=null && (temp instanceof SetOp) && !temp.getOperation().equals("union")){   //to projection paizei panw se apotelesma set
+                        
+                        //selection 1
+                        temp1.setRelation1(temp.getRelation1());
+                        temp1.setRelationOp1(temp.getRelationOp1());
+                        temp1.setTabInfo1(temp.getOutTableInfo1());
+
+                        //new set
+                        temp.setRelation1(null);
+                        temp.setRelationOp1(temp1);
+                        
+                        //construct operation table
+                        ops.remove(temp1);
+                        ops.add(i-1, temp1);
+                        
+                        for(int k = ops.size()-1; k > i+1 ;k--)
+                        {
+                            ops.get(k).updateRelOp(temp1, temp);
+                        }
+                        
+                        
+                        tranformed=true;
+                        tranformflag=true;
+                        break;
+                    }                 
+                }    
+            }
+        }
+    
+        return tranformed;
+    }
+    
+    private boolean pushSelectionInSet2(ArrayList<Operator> ops){
+        boolean tranformflag=true;
+        boolean tranformed = false;
+        Operator temp=null;     //the setoperation
+        Operator temp1,temp2;  //the projections
+        
+        
+        while(tranformflag){
+            tranformflag=false;
+            for(int i=ops.size()-1; i>-1; i--){
+                temp1 = ops.get(i);
+                if( temp1 instanceof Selection ){
+                    temp = temp1.getRelationOp1();
+                    if(temp!=null && (temp instanceof SetOp)){   //to projection paizei panw se apotelesma set
+                        
+                        //selection 1
+                        temp1.setRelation1(temp.getRelation1());
+                        temp1.setRelationOp1(temp.getRelationOp1());
+                        temp1.setTabInfo1(temp.getOutTableInfo1());
+
+                        //selection 2
+                        temp2 = temp1.fullCopy(null);
+                        temp2.setRelation1(temp.getRelation2());
+                        temp2.setRelationOp1(temp.getRelationOp2());
+                        temp2.setTabInfo1(temp.getOutTableInfo2());
+                            
+                        //new set
+                        temp.setRelation1(null);
+                        temp.setRelationOp1(temp1);
+                        temp.setRelation2(null);
+                        temp.setRelationOp2(temp2);
+
+                        //construct operation table
+                        ops.remove(temp1);
+                        ops.add(i-1, temp1);
+                        ops.add(i-1, temp2);
+
+                        
+                        for(int k = ops.size()-1; k > i+1 ;k--)
+                        {
+                            ops.get(k).updateRelOp(temp1, temp);
+                        }
+                        
+                        
+                        tranformed=true;
+                        tranformflag=true;
+                        break;
+                    }                 
+                }    
+            }
+        }
+    
+        return tranformed;
+    }
         
     private boolean pushProjections(ArrayList<Operator> ops){
         boolean tranformflag=true;

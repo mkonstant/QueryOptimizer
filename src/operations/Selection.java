@@ -39,7 +39,8 @@ public class Selection extends Operator {
         if(relation1==null){
             this.relationOp1 = update.get(old.getRelationOp1()) ;
         }
-
+        if(old.getComplexCondtion()!=null)
+            this.complexCondtion = new String(old.getComplexCondtion());
         this.conditions = old.getConditionCopy(old.getConditions());
         this.tInfo1 = old.getOutTableInfo1().fullCopy();
         
@@ -53,7 +54,8 @@ public class Selection extends Operator {
     public Operator fullCopy(Map<Operator,Operator> update){
        // System.out.println("projrction");
         Selection temp =  new Selection(this,update);
-        update.put(this,temp);
+        if(update!=null)
+            update.put(this,temp);
         return temp;
     } 
     
@@ -123,9 +125,9 @@ public class Selection extends Operator {
         //add relation1
      
         if(relationOp1==null)
-            relationPrint1+= relation1;
+            relationPrint1= relation1;
         else
-            relationPrint1+= relationOp1.getOpName();
+            relationPrint1= relationOp1.getOpName();
     
     }
     
