@@ -5,8 +5,11 @@
  */
 package evaluationCost;
 
+import catalog.IndexInfo;
 import catalog.SystemInfo;
+import catalog.TableInfo;
 import java.util.ArrayList;
+import operations.Condition;
 
 /**
  *
@@ -23,43 +26,63 @@ public class JoinCost {
     private double penaltyTime;
     private double latency;
     private double cost;
+    private String message;
     private ArrayList<String> annotation ;
     private ArrayList<String> hashAnnotation = new ArrayList<String>();
     private ArrayList<String> mergeAnnotation = new ArrayList<String>();
     private ArrayList<String> blockNestedAnnotation = new ArrayList<String>();
     private ArrayList<String> indexedNestedAnnotation = new ArrayList<String>();
     private boolean sorted=true;
+    SystemInfo si = null;
+    Condition condition = null;
+    TableInfo tabInfo1 = null;
+    TableInfo tabInfo2 = null;
+    IndexInfo indexes1 = null;
+    IndexInfo indexes2 = null;
     
-    public JoinCost(SystemInfo si, int nr, int nrSize, int ns, int nsSize) {
+    public JoinCost(SystemInfo si, Condition condition ,TableInfo tabInfo1, TableInfo tabInfo2, IndexInfo indexes1, IndexInfo indexes2 ) {
+        this.si = si;
+        this.condition = condition;
+        this.tabInfo1 = tabInfo1;
+        this.tabInfo2 = tabInfo2;
+        this.indexes1 = indexes1;
+        this.indexes2 = indexes2;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+    
+    
+    public String getMessage(){
+        
+        return message;
+    }
+    
+    public void calculateVariables(){
         tranferTime = si.getTransferTime();
         penaltyTime = si.getTimeForWritingPages();
         latency = si.getLatency();
         M = si.getNumOfBuffers();
         bb= M-2;
-        br = (nr*nrSize) / si.getSizeOfBuffer();
-        this.nr=nr;
-        bs = (ns*nsSize) / si.getSizeOfBuffer();
-        this.ns=ns;
-    }
-    public String getAnnotation(){
-        String temp="";
+        this.nr=tabInfo1.getNumberOfTuples();
+        br = (nr*tabInfo1.getSizeOfTuple()) / si.getSizeOfBuffer();
+        this.ns=tabInfo2.getNumberOfTuples();
+        bs = (ns*tabInfo2.getSizeOfTuple()) / si.getSizeOfBuffer();
         
-        for(int i=0;i<annotation.size();i++)
-        {
-            if(i>0)
-                temp+=" -> ";
-            temp += annotation.get(i);
-            
-        }
-        return temp;
     }
     
 
     public double computeCost(boolean s1,boolean s2, boolean h1, boolean h2, boolean i1,boolean i2){
+        
+        calculateVariables();
+        
         double costMerge = mergeJoin(s1,s2);
         double costHash = hashJoin(h1,h2);
         double costBlockNested  = blockNestedJoin();
         //double costIndexedBlockNested = indexedBlockNestedJoin(i1, i2);
+        
+        
         
         cost= costMerge;
         annotation = mergeAnnotation;

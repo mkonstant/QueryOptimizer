@@ -10,7 +10,9 @@ import catalog.IndexInfo;
 import catalog.TableInfo;
 import evaluationCost.SelectCost;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import myExceptions.GroupAttributeException;
 import myExceptions.SelectAttributeException;
 
@@ -130,7 +132,7 @@ public class Selection extends Operator {
     @Override
     public void computeCost(){
         SelectCost selCost = null;
-        ArrayList <String> allAttr = new ArrayList<String>();
+        Set <String> allAttr = new HashSet<String>();
         boolean equalPrimary = false;
         ArrayList<Double> costs = null;
         ArrayList<String> messages = null;
@@ -142,7 +144,7 @@ public class Selection extends Operator {
             allAttr.add(conditions.get(0).getAttr1());
             
             //index = tInfo1.findBestIndex(allAttr);
-            indexes = tInfo1.findAllIndexes(allAttr.get(0));
+            indexes = tInfo1.findAllIndexes(allAttr);
             
             equalPrimary = tInfo1.equalPrimaryKey(allAttr);
             
@@ -160,12 +162,13 @@ public class Selection extends Operator {
             }
             
             
-            
+            equalPrimary = tInfo1.equalPrimaryKey(allAttr);
             for ( int i = 0 ; i < conditions.size() ; i ++ ){
                 if(!tInfo1.getOperator())                
-                    indexes = tInfo1.findAllIndexes(allAttr.get(i));
+                    indexes = tInfo1.findAllIndexes(allAttr);
                 else
                     indexes =null;
+                
                 
                 selCost = new SelectCost(conditions.get(i),tInfo1,catalog.getSystemInfo(),indexes,equalPrimary,allAttr.size());
                 selCost.calculateCost();

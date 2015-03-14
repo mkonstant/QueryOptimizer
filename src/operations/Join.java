@@ -12,11 +12,14 @@ import evaluationCost.JoinCost;
 import evaluationCost.SetOperationCost;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.Vector;
 import java.util.concurrent.CompletionException;
 import myExceptions.ComplexConditionException;
+import myExceptions.JoinActionException;
 import myExceptions.JoinAttributeException;
 import myExceptions.JoinAttributeTypeException;
 import myExceptions.RelationException;
@@ -187,10 +190,113 @@ public  class Join extends Operator{
     
     @Override
     public void computeCost(){
+        ArrayList<Double> allCosts = new ArrayList<Double>();
+        ArrayList<String> messages = new ArrayList<String>();
+        Set <String> allAttr1 = new HashSet<String>();
+        Set <String> allAttr2 = new HashSet<String>();
+        ArrayList <IndexInfo> indexes1 = null;
+        ArrayList <IndexInfo> indexes2 = null;
         outTable = new TableInfo();
         joinCompatible();
+        int minNumCost = -1;
         
-        Map<String,TableInfo> table = catalog.getCatalog();
+        if ( this.complexCondtion == null ){
+            allAttr1.add(conditions.get(0).getAttr1());
+            allAttr2.add(conditions.get(0).getAttr2());
+            
+            indexes1 = tInfo1.findAllIndexes(allAttr1);
+            indexes2 = tInfo2.findAllIndexes(allAttr2);
+            
+            if ( indexes1 != null && indexes2 != null){
+                for ( int j = 0 ; j < indexes1.size() ; j ++ ){
+                    for ( int k = 0 ; k < indexes2.size() ; k ++ ){
+                        jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,indexes1.get(j),indexes2.get(k));
+                        allCosts.add(jCost.getCost());
+                        messages.add(jCost.getMessage());
+                    }
+                }
+            }
+            else{
+                if ( indexes1 != null ){
+                    for ( int j = 0 ; j < indexes1.size() ; j ++ ){
+                        jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,indexes1.get(j),null);
+                        allCosts.add(jCost.getCost());
+                        messages.add(jCost.getMessage());
+                    }
+                }
+                else if ( indexes2 != null ){
+                    for ( int j = 0 ; j < indexes1.size() ; j ++ ){
+                        jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,indexes2.get(j));
+                        allCosts.add(jCost.getCost());
+                        messages.add(jCost.getMessage());
+                    }
+                }
+                else{
+                    jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,null);
+                    allCosts.add(jCost.getCost());
+                    messages.add(jCost.getMessage());
+                }
+            }
+            
+            minNumCost = this.getMinCost(allCosts);
+            this.cost = allCosts.get(minNumCost);
+            this.annotation = messages.get(minNumCost);
+            
+        }
+        else{
+            
+            for( int i = 0 ; i < conditions.size() ; i ++ ){
+                allAttr1.add(conditions.get(i).getAttr1());
+                allAttr2.add(conditions.get(i).getAttr2());
+            }
+            
+            indexes1 = tInfo1.findAllIndexes(allAttr1);
+            indexes2 = tInfo2.findAllIndexes(allAttr2);
+            
+            if ( indexes1 != null && indexes2 != null){
+                for ( int j = 0 ; j < indexes1.size() ; j ++ ){
+                    for ( int k = 0 ; k < indexes2.size() ; k ++ ){
+                        jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,indexes1.get(j),indexes2.get(k));
+                        allCosts.add(jCost.getCost());
+                        messages.add(jCost.getMessage());
+                    }
+                }
+            }
+            else{
+                if ( indexes1 != null ){
+                    for ( int j = 0 ; j < indexes1.size() ; j ++ ){
+                        jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,indexes1.get(j),null);
+                        allCosts.add(jCost.getCost());
+                        messages.add(jCost.getMessage());
+                    }
+                }
+                else if ( indexes2 != null ){
+                    for ( int j = 0 ; j < indexes1.size() ; j ++ ){
+                        jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,indexes2.get(j));
+                        allCosts.add(jCost.getCost());
+                        messages.add(jCost.getMessage());
+                    }
+                }
+                else{
+                    jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,null);
+                    allCosts.add(jCost.getCost());
+                    messages.add(jCost.getMessage());
+                }
+            }
+            
+            if ( this.complexCondtion.equals("and")){//and
+                minNumCost = this.getMinCost(allCosts);
+                this.cost = allCosts.get(minNumCost);
+                this.annotation = messages.get(minNumCost);
+            }
+            else{//or
+                //logika athroisma olwn kai ftiaxnoume to string
+            
+            }
+        
+        }
+        
+        /*Map<String,TableInfo> table = catalog.getCatalog();
         
         jCost = new JoinCost(catalog.getSystemInfo(), tInfo1.getNumberOfTuples(),tInfo1.getSizeOfTuple(),
                                         tInfo2.getNumberOfTuples(),tInfo2.getSizeOfTuple());
@@ -199,10 +305,10 @@ public  class Join extends Operator{
         //change s1,s2 etc
         cost = jCost.computeCost(s1,s2,h1,h2,i1,i2);
         outTable.setSorted(jCost.getSorted());  //if output is sorted
-        annotation = jCost.getAnnotation();
+        annotation = jCost.getAnnotation();*/
     }
     
-    public void findIndexed(){
+    /*public void findIndexed(){
         //suppose only one condition
         Condition c = conditions.get(0);
         String att1,att2;
@@ -277,7 +383,7 @@ public  class Join extends Operator{
         
         
         
-    }
+    }*/
     
 
     
@@ -329,6 +435,9 @@ public  class Join extends Operator{
             String type1;
             String type2;
             Condition c = conditions.get(i);
+            if (! c.action.equals("=")){
+                throw new JoinActionException();
+            }
             if(!attributes1.containsKey(c.getAttr1()))
                     throw new JoinAttributeException(c.getAttr1());
             else
@@ -371,4 +480,26 @@ public  class Join extends Operator{
             outTable.setNumberOfTuples(n2);
         
     }
+    
+    
+    public int getMinCost( ArrayList<Double> costs){
+        double minCost = -1;
+        int position = -1;
+        
+        if ( costs.size() > 1 ){
+            minCost = costs.get(0);
+            position = 0;
+            for ( int i = 1 ; i < costs.size() ; i ++ ){
+                if ( minCost > costs.get(i)){
+                    minCost = costs.get(i);
+                    position = i;
+                }
+            }
+            return position;
+        }
+        else{
+            return 0;
+        }
+    }
+    
 }

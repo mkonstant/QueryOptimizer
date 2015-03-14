@@ -196,23 +196,39 @@ public class TableInfo {
         return true;
     }
     
-    public ArrayList<IndexInfo> findAllIndexes( String attr ){
+    public ArrayList<IndexInfo> findAllIndexes( Set<String> attr ){
         ArrayList<IndexInfo> indexes = new ArrayList<IndexInfo>();
-        
+        boolean FLAG = false;
         
         //primaryIndex
         if ( primaryIndex != null ){
-            if ( primaryIndex.indexName.contains(attr)){
-                indexes.add(primaryIndex);
+            for  ( String indexName : primaryIndex.indexName ){
+                if (!attr.contains(indexName)){
+                    FLAG = false;
+                    break;
+                }
+                FLAG = true;
             }
         }
-    
+        
+        if ( FLAG == true ){
+            indexes.add(primaryIndex);
+        }
+        
         
         //secondaryIndex
         if ( secondaryIndex != null ){
             for ( String secondary : secondaryIndex.keySet() ){
                 IndexInfo index = secondaryIndex.get(secondary);
-                if ( index.indexName.contains(attr)){
+                FLAG = false;
+                for ( String indexName : index.getIndexName()){
+                    if (!attr.contains(indexName)){
+                        FLAG = false;
+                        break;
+                    }
+                    FLAG = true;
+                }
+                if ( FLAG == true ){
                     indexes.add(index);
                 }
             }
@@ -226,11 +242,11 @@ public class TableInfo {
         }
     }
     
-    public boolean equalPrimaryKey( ArrayList<String> attr){
+    public boolean equalPrimaryKey( Set<String> attr){
         
         if ( attr.size() == key.size() ){
-            for( int i = 0 ; i < attr.size() ; i++ ){
-                if ( !key.contains(attr.get(i))){
+            for( String attribute : attr ){
+                if ( !key.contains(attribute)){
                     return false;
                 }
             }
