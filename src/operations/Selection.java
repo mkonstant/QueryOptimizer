@@ -162,15 +162,10 @@ public class Selection extends Operator {
             
             
             for ( int i = 0 ; i < conditions.size() ; i ++ ){
-                if(relation1!=null) {
-                    tInfo1 = table.get(relation1);
-                }
-                else{
-                    tInfo1 = relationOp1.getOutTable();
-                }
-                
-                indexes = tInfo1.findAllIndexes(allAttr.get(i));
-            
+                if(!tInfo1.getOperator())                
+                    indexes = tInfo1.findAllIndexes(allAttr.get(i));
+                else
+                    indexes =null;
                 
                 selCost = new SelectCost(conditions.get(i),tInfo1,catalog.getSystemInfo(),indexes,equalPrimary,allAttr.size());
                 selCost.calculateCost();
@@ -202,7 +197,18 @@ public class Selection extends Operator {
             }
                     
         }
-        
+        outTable = new TableInfo();
+        outTable.setAttributes(tInfo1.getAttributes());
+        //same output , same tupple size
+        outTable.setSizeOfTuple(tInfo1.getSizeOfTuple());
+             
+        outTable.setKey(tInfo1.getKey());
+        //same numbert of attributes on output
+        outTable.setCardinality(tInfo1.getCardinality());
+        //what to do with it?????
+        outTable.setNumberOfTuples(tInfo1.getNumberOfTuples());
+        //outTable.setSorted(grCost.getSorted());  //if output is sorted
+        outTable.setOperator(true);
         System.out.println("cost = " + this.cost + " message = " + this.annotation);   
         
     }
