@@ -33,7 +33,8 @@ public class JoinCost {
     private ArrayList<String> mergeAnnotation = new ArrayList<String>();
     private ArrayList<String> blockNestedAnnotation = new ArrayList<String>();
     private ArrayList<String> indexedNestedAnnotation = new ArrayList<String>();
-    private boolean sorted=true;
+    private boolean sorted=false;
+    Set<String> sortKey=null;
     SystemInfo si = null;
     Condition condition = null;
     TableInfo tabInfo1 = null;
@@ -42,6 +43,8 @@ public class JoinCost {
     IndexInfo index2 = null;
     ArrayList<Double> allCosts = new ArrayList<Double>();
     ArrayList<String> allMessages = new ArrayList<String>();
+    ArrayList<Boolean> allSorted = new ArrayList<Boolean>();
+    ArrayList<Set<String>> allSortKey =new ArrayList<Set<String>>(); 
     
     
     public JoinCost(SystemInfo si, Condition condition ,TableInfo tabInfo1, TableInfo tabInfo2, IndexInfo index1, IndexInfo index2 ) {
@@ -61,6 +64,15 @@ public class JoinCost {
     public String getMessage(){
         
         return message;
+    }
+    
+    
+    public boolean getSorted(){
+        return sorted;
+    }
+    
+    public Set<String> getSortKey(){
+        return sortKey;
     }
     
     public void calculateVariables(){
@@ -94,19 +106,26 @@ public class JoinCost {
                     if (sameIndex(index1,index2)){
                         costMerge = mergeJoin(true,true);
                         allCosts.add(costMerge);
-                        
+                        allSorted.add(true);
+                        allSortKey.add(index1.getIndexName());
                     }
                     else{
                         costMerge = mergeJoin(true,false);
                         allCosts.add(costMerge);
+                        allSorted.add(true);
+                        allSortKey.add(index1.getIndexName());
                         
                         costMerge = mergeJoin(false,true);
                         allCosts.add(costMerge);
+                        allSorted.add(true);
+                        allSortKey.add(index2.getIndexName());
                                                
                     }
                     
                     costHash = hashJoin(false,false);
                     allCosts.add(costHash);
+                    allSorted.add(false);
+                    allSortKey.add(null);
                         
                 }
                 else{
@@ -114,20 +133,29 @@ public class JoinCost {
                                               
                         costHash = hashJoin(true,true);
                         allCosts.add(costHash);
+                        allSorted.add(false);
+                        allSortKey.add(null);
                        
                     }
                     else{
                         
                         costHash = hashJoin(true,false);
                         allCosts.add(costHash);
+                        allSorted.add(false);
+                        allSortKey.add(null);
+                        
                      
                         costHash = hashJoin(false,true);
                         allCosts.add(costHash);
+                        allSorted.add(false);
+                        allSortKey.add(null);
                         
                     }
                     
                     costMerge = mergeJoin(false,false);
                     allCosts.add(costMerge);
+                    allSorted.add(true);
+                    allSortKey.add(null);
 
                 }
             }
@@ -135,18 +163,26 @@ public class JoinCost {
                 if (index1.getStructure().equals("B+tree")){
                     costMerge = mergeJoin(true,false);
                     allCosts.add(costMerge);
+                    allSorted.add(true);
+                    allSortKey.add(index1.getIndexName());
                         
                     costHash = hashJoin(false,true);
                     allCosts.add(costHash);
+                    allSorted.add(false);
+                    allSortKey.add(null);
                         
                     
                 }
                 else{
                     costMerge = mergeJoin(false,true);
                     allCosts.add(costMerge);
+                    allSorted.add(true);
+                    allSortKey.add(index2.getIndexName());
                         
                     costHash = hashJoin(true,false);
                     allCosts.add(costHash);
+                    allSorted.add(false);
+                    allSortKey.add(null);
                        
                 }
                 
@@ -162,37 +198,52 @@ public class JoinCost {
                             //sorted2 = true;
                             costMerge = mergeJoin(true,true);
                             allCosts.add(costMerge);
+                            allSorted.add(true);
+                            allSortKey.add(index1.getIndexName());
                             
                         }
                         else{//both sorted different key
                             costMerge = mergeJoin(true,false);
                             allCosts.add(costMerge);
+                            allSorted.add(true);
+                            allSortKey.add(index1.getIndexName());
                             
                             costMerge = mergeJoin(false,true);
                             allCosts.add(costMerge);
+                            allSorted.add(true);
+                            allSortKey.add(sortedKey);
 
                         }
                         
                         costHash = hashJoin(false,false);
                         allCosts.add(costHash);
+                        allSorted.add(false);
+                        allSortKey.add(null);
                         
                     }
                     else{//only relation1 sorted
                         costMerge = mergeJoin(true,false);
                         allCosts.add(costMerge);
+                        allSorted.add(true);
+                        allSortKey.add(index1.getIndexName());
 
                         costHash = hashJoin(false,false);
                         allCosts.add(costHash);
-                    
+                        allSorted.add(false);
+                        allSortKey.add(null);
                     }
                     
                 }
                 else{
                     costMerge = mergeJoin(false,tabInfo2.getSorted());
                     allCosts.add(costMerge);
+                    allSorted.add(tabInfo2.getSorted());
+                    allSortKey.add(tabInfo2.getSortKet());
                     
                     costHash = hashJoin(true,false);
                     allCosts.add(costHash);
+                    allSorted.add(false);
+                    allSortKey.add(null);
                     
                 }
             
@@ -204,27 +255,38 @@ public class JoinCost {
                         if ( this.sameSortedKey(index2.getIndexName(), sortedKey)){
                             costMerge = mergeJoin(true,true);
                             allCosts.add(costMerge);
-
+                            allSorted.add(true);
+                            allSortKey.add(index2.getIndexName());
                         }
                         else{
                             costMerge = mergeJoin(false,true);
                             allCosts.add(costMerge);
+                            allSorted.add(true);
+                            allSortKey.add(index2.getIndexName());
                             
                             costMerge = mergeJoin(true,false);
                             allCosts.add(costMerge);
+                            allSorted.add(true);
+                            allSortKey.add(sortedKey);
 
                         }
                         
                         costHash = hashJoin(false,false);
                         allCosts.add(costHash);
+                        allSorted.add(false);
+                        allSortKey.add(null);
                         
                      }
                      else{
                         costMerge = mergeJoin(false,true);
                         allCosts.add(costMerge);
+                        allSorted.add(true);
+                        allSortKey.add(index2.getIndexName());
 
                         costHash = hashJoin(false,false);
                         allCosts.add(costHash);
+                        allSorted.add(false);
+                        allSortKey.add(null);
 
                      }
                           
@@ -232,9 +294,13 @@ public class JoinCost {
                 else{
                     costMerge = mergeJoin(tabInfo1.getSorted(),false);
                     allCosts.add(costMerge);
+                    allSorted.add(tabInfo1.getSorted());
+                    allSortKey.add(tabInfo1.getSortKet());
                     
                     costHash = hashJoin(false,true);
                     allCosts.add(costHash);
+                    allSorted.add(false);
+                    allSortKey.add(null);
                     
                 }
             }
@@ -244,44 +310,63 @@ public class JoinCost {
                         if ( this.sameSortedKey(tabInfo1.getSortKet(), tabInfo2.getSortKet())){
                             costMerge = mergeJoin(true,true);
                             allCosts.add(costMerge);
+                            allSorted.add(true);
+                            allSortKey.add(tabInfo1.getSortKet());
                         }
                         else{
                             costMerge = mergeJoin(true,false);
                             allCosts.add(costMerge);
+                            allSorted.add(true);
+                            allSortKey.add(tabInfo1.getSortKet());
                             
                             costMerge = mergeJoin(false,true);
                             allCosts.add(costMerge);
+                            allSorted.add(true);
+                            allSortKey.add(tabInfo2.getSortKet());
                         }
                     }
                     else{
                         costMerge = mergeJoin(true,false);
                         allCosts.add(costMerge);
+                        allSorted.add(true);
+                        allSortKey.add(tabInfo1.getSortKet());
                     }
                 }
                 else{
                     if ( tabInfo2.getSorted()){
                         costMerge = mergeJoin(false,true);
                         allCosts.add(costMerge);
+                        allSorted.add(true);
+                        allSortKey.add(tabInfo2.getSortKet());
                     }
                     else{
                         costMerge = mergeJoin(false,false);
                         allCosts.add(costMerge);
+                        //edwefefvjifbvuhfdbvuhbvfdfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+                        allSorted.add(false);
+                        allSortKey.add(null);
                     }
                 
                 }
                 
                 costHash = hashJoin(false,false);
                 allCosts.add(costHash);
+                allSorted.add(false);
+                allSortKey.add(null);
                 
             }
         }
-        
+        //sorted primary outer
         costBlockNested = blockNestedJoin();
-        allCosts.add(costBlockNested);;
+        allCosts.add(costBlockNested);
+        allSorted.add(false);
+        allSortKey.add(null);
         
         minNumCost = this.getMinCost();
         cost = allCosts.get(minNumCost);
         message = allMessages.get(minNumCost);
+        sorted= allSorted.get(minNumCost);
+        sortKey = allSortKey.get(minNumCost);
         
         System.out.println("join Cost = " + cost);
         System.out.println("message = " + message);
@@ -315,11 +400,7 @@ public class JoinCost {
        */
        
     }
-    
-    public boolean getSorted(){
-        return sorted;
-    }
-    
+
     public double blockNestedJoin(){
         int outerR;
         int innerR;

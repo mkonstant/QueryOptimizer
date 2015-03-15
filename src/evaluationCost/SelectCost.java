@@ -248,7 +248,7 @@ public class SelectCost {
                         tempCost = hashingSecondaryEqualWithKey();
                         allCosts.add(tempCost);
                         allMessages.add("Use secondary hashing index in attribute(s) : " + tempIndex.getIndexName().toString());
-                        allSorted.add(true);
+                        allSorted.add(false);
                         allSortKey.add(null);
                     }
                     else{//secondary tree non key

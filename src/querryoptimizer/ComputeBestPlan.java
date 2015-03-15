@@ -77,12 +77,9 @@ public class ComputeBestPlan {
         boolean t1=false,t2=false,t3=false,t4=false,t5=false,t6=false,t7=false,t8=false; 
         double cost;
         int i =0;
-        /*MAKE THE POSSIBLE REAARANGEMENTS*/
-        //after each tranformation do this!
         ArrayList<Operator> temp ;
         
         updateBest=true;
-        
         while(updateBest){
             while(updateBest){
                 updateBest=false; 
@@ -95,17 +92,17 @@ public class ComputeBestPlan {
                 t1 = eliminateMultipleProjections(temp);
                 if(t1){                    
                     cost = processPlan(temp);
-                    System.out.println("Query Projection Elmination:");
+                    System.out.println("\n\n\nQuery Projection Elmination:");
                     printPLan(temp, cost);
                     if(updateBest)
                         break;
                     temp = getPlanCopy(BestPlan);
                 }
                 
-                t2 = pushProjections(temp);
+                t2 = pushProjectionsInSet(temp);
                 if(t2){
                     cost = processPlan(temp);
-                    System.out.println("\n\n\nQuery Set Projection:");
+                    System.out.println("\n\n\nPush Projection in Set:");
                     printPLan(temp, cost);
                     if(updateBest){
                         break;
@@ -113,10 +110,10 @@ public class ComputeBestPlan {
                     temp = getPlanCopy(BestPlan);
                 }
                 
-                t3 = pushProjections2(temp);
+                t3 = pushProjectionsInJoin(temp);
                 if(t3){
                     cost = processPlan(temp);
-                    System.out.println("\n\n\nQuery JOin Projection:");
+                    System.out.println("\n\n\nPush Projection in Join:");
                     printPLan(temp, cost);
                     if(updateBest){
                         break;
@@ -127,7 +124,7 @@ public class ComputeBestPlan {
                 t4 = rearangeSelections(temp);
                 if(t4){
                     cost = processPlan(temp);
-                    System.out.println("Selection rearange:");
+                    System.out.println("\n\n\nSelection rearange:");
                     printPLan(temp, cost);
                     if(updateBest)
                         break;
@@ -137,7 +134,7 @@ public class ComputeBestPlan {
                 t5 = rearangeSets(temp);
                 if(t5){
                     cost = processPlan(temp);
-                    System.out.println("Selection rearange:");
+                    System.out.println("\n\n\nSet rearange:");
                     printPLan(temp, cost);
                     if(updateBest)
                         break;
@@ -147,7 +144,7 @@ public class ComputeBestPlan {
                 t6 = pushSelectionInSet1(temp);
                 if(t6){
                     cost = processPlan(temp);
-                    System.out.println("Selection rearange:");
+                    System.out.println("\n\n\nPush Selection in Set:");
                     printPLan(temp, cost);
                     if(updateBest)
                         break;
@@ -157,17 +154,17 @@ public class ComputeBestPlan {
                 t7 = pushSelectionInSet2(temp);
                 if(t7){
                     cost = processPlan(temp);
-                    System.out.println("Selection rearange:");
+                    System.out.println("\n\n\nPush Selection in Set::");
                     printPLan(temp, cost);
                     if(updateBest)
                         break;
                     temp = getPlanCopy(BestPlan);
                 }
                 
-                t8 = pushSelectionInJoin2(temp);
+                t8 = pushSelectionInJoin(temp);
                 if(t8){
                     cost = processPlan(temp);
-                    System.out.println("Selection rearange:");
+                    System.out.println("\n\n\nPush Projection in Join:");
                     printPLan(temp, cost);
                     if(updateBest)
                         break;
@@ -243,7 +240,7 @@ public class ComputeBestPlan {
         return transformed;
     }
     
-        private boolean rearangeSets(ArrayList<Operator> ops){
+    private boolean rearangeSets(ArrayList<Operator> ops){
         boolean transformed = false;
         Operator temp,temp1,temp2=null;
             for(int i=ops.size()-1; i>-1; i--){
@@ -311,8 +308,6 @@ public class ComputeBestPlan {
                     }
                 }
             }
-                    
-                
         return transformed;
     }
             
@@ -322,15 +317,13 @@ public class ComputeBestPlan {
         Operator temp=null;     //the setoperation
         Operator temp1,temp2;  //the projections
         
-        
-        while(tranformflag){
+        //while(tranformflag){
             tranformflag=false;
             for(int i=ops.size()-1; i>-1; i--){
                 temp1 = ops.get(i);
                 if( temp1 instanceof Selection ){
                     temp = temp1.getRelationOp1();
                     if(temp!=null && (temp instanceof SetOp) && !temp.getOperation().equals("union")){   //to projection paizei panw se apotelesma set
-                        
                         //selection 1
                         temp1.setRelation1(temp.getRelation1());
                         temp1.setRelationOp1(temp.getRelationOp1());
@@ -343,20 +336,17 @@ public class ComputeBestPlan {
                         //construct operation table
                         ops.remove(temp1);
                         ops.add(i-1, temp1);
-                        
                         for(int k = ops.size()-1; k > i+1 ;k--)
                         {
                             ops.get(k).updateRelOp(temp1, temp);
                         }
-                        
-                        
                         tranformed=true;
                         tranformflag=true;
                         break;
                     }                 
                 }    
             }
-        }
+       // }
     
         return tranformed;
     }
@@ -368,7 +358,7 @@ public class ComputeBestPlan {
         Operator temp1,temp2;  //the projections
         
         
-        while(tranformflag){
+       // while(tranformflag){
             tranformflag=false;
             for(int i=ops.size()-1; i>-1; i--){
                 temp1 = ops.get(i);
@@ -397,13 +387,11 @@ public class ComputeBestPlan {
                         ops.remove(temp1);
                         ops.add(i-1, temp1);
                         ops.add(i-1, temp2);
-
                         
                         for(int k = ops.size()-1; k > i+1 ;k--)
                         {
                             ops.get(k).updateRelOp(temp1, temp);
                         }
-                        
                         
                         tranformed=true;
                         tranformflag=true;
@@ -411,19 +399,18 @@ public class ComputeBestPlan {
                     }                 
                 }    
             }
-        }
-    
+       // }
         return tranformed;
     }
         
-    private boolean pushProjections(ArrayList<Operator> ops){
+    private boolean pushProjectionsInSet(ArrayList<Operator> ops){
         boolean tranformflag=true;
         boolean tranformed = false;
         Operator temp=null;     //the setoperation
         Operator temp1,temp2;  //the projections
         
         
-        while(tranformflag){
+       // while(tranformflag){
             tranformflag=false;
             for(int i=ops.size()-1; i>-1; i--){
                 temp1 = ops.get(i);
@@ -465,12 +452,12 @@ public class ComputeBestPlan {
                     }                 
                 }    
             }
-        }
+       // }
     
         return tranformed;
     }
     
-     private boolean pushProjections2(ArrayList<Operator> ops){
+     private boolean pushProjectionsInJoin(ArrayList<Operator> ops){
         boolean tranformflag=true;
         boolean tranformed = false;
         Operator temp=null;     //the setoperation
@@ -540,7 +527,7 @@ public class ComputeBestPlan {
     
      
      
-     private boolean pushSelectionInJoin2(ArrayList<Operator> ops){
+     private boolean pushSelectionInJoin(ArrayList<Operator> ops){
         boolean tranformflag=true;
         boolean tranformed = false;
         Operator temp=null;     //the join
@@ -569,13 +556,11 @@ public class ComputeBestPlan {
                         
                         ArrayList<String> selAttrs1 = findSelAttrs(relAttrs1, selAttrs);
                         ArrayList<String> selAttrs2 = findSelAttrs(relAttrs2, selAttrs);
-                        System.out.println("bojvsovs");
+                        
                         if(allSelectedAttrs(selAttrs1, selAttrs2, selAttrs)){
-                            System.out.println("bojvsovs");
                             Operator startProj = temp1;  //delete thus
                             if(selAttrs1!=null){
                                 //temp1 = new Projection(); //delete this
-                                System.out.println("lala1");
                                 
                                 temp1.setRelation1(temp.getRelation1());
                                 temp1.setRelationOp1(temp.getRelationOp1());
@@ -609,7 +594,6 @@ public class ComputeBestPlan {
                                     temp2=temp1;
                                 else    
                                     temp2 = temp1.fullCopy(null);//delete this
-                                System.out.println("lala1");
                                 
                                 temp2.setRelation1(temp.getRelation2());
                                 temp2.setRelationOp1(temp.getRelationOp2());
@@ -638,8 +622,6 @@ public class ComputeBestPlan {
                                 ops.add(i-1, temp2);
                                 
                             }
-                            
-                            
                             tranformed=true;
                             tranformflag=true;
                             break;

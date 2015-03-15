@@ -75,7 +75,7 @@ public class ProjectionCost {
             if(tinfo.getPrimaryIndex().getStructure().equals("B+tree"))
             {
                 this.sorted=true;
-                sortKey = tinfo.getPrimaryIndex().getIndexName();
+                sortKey = tinfo.getKey();
             }
             cost = br*tranferTime + (br/bb)*latency;
             annotation.add("Just projection,No duplicates");

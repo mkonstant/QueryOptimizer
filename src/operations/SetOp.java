@@ -10,7 +10,9 @@ import catalog.TableInfo;
 import evaluationCost.SetOperationCost;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import myExceptions.RelationException;
 
 /**
@@ -164,8 +166,19 @@ public  class SetOp extends Operator{
         
         setCost = new SetOperationCost(catalog.getSystemInfo(), tInfo1,tInfo2);
         cost = setCost.computeCost();
-        outTable.setSorted(setCost.getSorted());  //if output is sorted
-        outTable.setSortKey(null);
+        boolean sorted = setCost.getSorted();
+        if(sorted){
+            if(setCost.getSortKey() == null){
+                Set<String> sortKey= new HashSet<String>();
+                for(int i=0;i<outputAttributes.size();i++)
+                    sortKey.add(outputAttributes.get(i));
+                outTable.setSortKey(sortKey);
+            }
+            else{
+                outTable.setSortKey(setCost.getSortKey());
+            }
+        }
+        outTable.setSorted(sorted);
         annotation = setCost.getAnnotation();
     }
     
@@ -214,6 +227,7 @@ public  class SetOp extends Operator{
         
         //change it for each operation
         outTable.setNumberOfTuples(n1+n2);
+        outTable.setOperator(true);
         
         //in order to perform setoperation relations should have the same attributes   
         Map<String,Attributes> attributes1 = tInfo1.getAttributes();

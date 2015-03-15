@@ -192,6 +192,8 @@ public  class Join extends Operator{
     public void computeCost(){
         ArrayList<Double> allCosts = new ArrayList<Double>();
         ArrayList<String> messages = new ArrayList<String>();
+        ArrayList<Boolean> allSorted = new ArrayList<Boolean>();
+        ArrayList<Set<String>> allSortedKey = new ArrayList<Set<String>> ();
         Set <String> allAttr1 = new HashSet<String>();
         Set <String> allAttr2 = new HashSet<String>();
         ArrayList <IndexInfo> indexes1 = null;
@@ -214,6 +216,8 @@ public  class Join extends Operator{
                         jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
+                        allSorted.add(jCost.getSorted());
+                        allSortedKey.add(jCost.getSortKey());
                     }
                 }
             }
@@ -224,6 +228,8 @@ public  class Join extends Operator{
                         jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
+                        allSorted.add(jCost.getSorted());
+                        allSortedKey.add(jCost.getSortKey());
                     }
                 }
                 else if ( indexes2 != null ){
@@ -232,6 +238,9 @@ public  class Join extends Operator{
                         jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
+                        allSorted.add(jCost.getSorted());
+                        allSortedKey.add(jCost.getSortKey());
+                        
                     }
                 }
                 else{
@@ -239,12 +248,19 @@ public  class Join extends Operator{
                     jCost.computeCost();
                     allCosts.add(jCost.getCost());
                     messages.add(jCost.getMessage());
+                    allSorted.add(jCost.getSorted());
+                    allSortedKey.add(jCost.getSortKey());
                 }
             }
             
             minNumCost = this.getMinCost(allCosts);
             this.cost = allCosts.get(minNumCost);
             this.annotation = messages.get(minNumCost);
+            boolean sorted = allSorted.get(minNumCost);
+            if(sorted){
+                    outTable.setSortKey(allSortedKey.get(minNumCost));
+            }
+            outTable.setSorted(sorted);
             
             System.out.println(" cost = " + allCosts.get(minNumCost) );
             
@@ -266,6 +282,8 @@ public  class Join extends Operator{
                         jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
+                        allSorted.add(jCost.getSorted());
+                        allSortedKey.add(jCost.getSortKey());
                     }
                 }
             }
@@ -276,6 +294,8 @@ public  class Join extends Operator{
                         jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
+                        allSorted.add(jCost.getSorted());
+                        allSortedKey.add(jCost.getSortKey());
                     }
                 }
                 else if ( indexes2 != null ){
@@ -284,6 +304,8 @@ public  class Join extends Operator{
                         jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
+                        allSorted.add(jCost.getSorted());
+                        allSortedKey.add(jCost.getSortKey());
                     }
                 }
                 else{
@@ -291,12 +313,19 @@ public  class Join extends Operator{
                     jCost.computeCost();
                     allCosts.add(jCost.getCost());
                     messages.add(jCost.getMessage());
+                    allSorted.add(jCost.getSorted());
+                    allSortedKey.add(jCost.getSortKey());
                 }
             }
             
             minNumCost = this.getMinCost(allCosts);
             this.cost = allCosts.get(minNumCost);
             this.annotation = messages.get(minNumCost);
+            boolean sorted = allSorted.get(minNumCost);
+            if(sorted){
+                    outTable.setSortKey(allSortedKey.get(minNumCost));
+            }
+            outTable.setSorted(sorted);
         
         }
         else{//or condition
@@ -351,8 +380,10 @@ public  class Join extends Operator{
                 allCosts = new ArrayList<Double>();
                 messages = new ArrayList<String>();
             }
+            
         
         }
+            
         
         /*Map<String,TableInfo> table = catalog.getCatalog();
         
@@ -536,6 +567,7 @@ public  class Join extends Operator{
             outTable.setNumberOfTuples(n1);
         else
             outTable.setNumberOfTuples(n2);
+        outTable.setOperator(true);
         
     }
     

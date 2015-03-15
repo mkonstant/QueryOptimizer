@@ -357,7 +357,7 @@ public class TableInfo {
             if(primaryIndex.equalsKey(tocheck))
                 return true;
         }
-        else if(sorted){
+        else if(sorted && sortKey!=null){
             if(tocheck.size() > sortKey.size())
                 return false;
             for(int i=0;i<tocheck.size();i++){

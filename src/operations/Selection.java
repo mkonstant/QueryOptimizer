@@ -220,17 +220,7 @@ public class Selection extends Operator {
         outTable.setNumberOfTuples(tInfo1.getNumberOfTuples());
         boolean sorted = selCost.getSorted();
         if(sorted){
-            
-            if(selCost.getSortKey() == null){
-           /*     Set<String> sortKey= new HashSet<String>();
-                for(int i = 0;i<attrs.size();i++){
-                    sortKey.add(attrs.get(i));
-                }
-                outTable.setSortKey(sortKey);*/
-            }
-            else{
                 outTable.setSortKey(selCost.getSortKey());
-            }
         }
         outTable.setSorted(sorted);
         outTable.setOperator(true);

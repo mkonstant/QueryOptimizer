@@ -76,7 +76,8 @@ public class SetOperationCost {
         ArrayList<String> temp_annotation = new ArrayList<String>();
         ArrayList<String> temp_sortedAnnotation = new ArrayList<String>();
         ArrayList<String> temp_hasedAnnotation = new ArrayList<String>();
-        
+        Set<String> sortKey1 ;
+        Set<String> sortKey2 ;
         double cost=0;
         
         double costSort=0 ;
@@ -86,29 +87,59 @@ public class SetOperationCost {
             if(fromOperator1 && fromOperator2){
                 sorted1 = tInfo1.getSorted();
                 sorted2 = tInfo2.getSorted();
-                costSort = sortedSets(sorted1,sorted2);
-                costHash = hashedSets(false, false);
+                hashed1=false;
+                hashed2=false;
             }
             else if(fromOperator1){
                 sorted1 = tInfo1.getSorted();
-                sorted2 = tInfo2.isSorted(); //check the key??
+                sorted2 = tInfo2.isSorted(); 
                 hashed2 = tInfo2.hashIndexExist();
             }
             else{
                 sorted2 = tInfo2.getSorted();
-                sorted1 = tInfo1.isSorted(); //check the key??
+                sorted1 = tInfo1.isSorted(); 
                 hashed1 = tInfo1.hashIndexExist();
             }
             
+            sortKey1 = tInfo1.getSortKet();
+            sortKey2 = tInfo2.getSortKet();
+            
+            if(sorted1 && sorted2){
+                if(checkSameKey(sortKey1,sortKey2)){
+                    sortKey = sortKey1;
+                }
+                else{//different sorting....compute both
+                    double costSort1 = sortedSets(false,true);
+                    double costSort2 = sortedSets(true,false);
+                    if(costSort1< costSort2){
+                        sorted1=false;
+                        sorted2=true;
+                        sortKey=sortKey2;
+                    }
+                    else{
+                        sorted2=false;
+                        sorted1=true;
+                        sortKey=sortKey1;
+                    }
+                }
+
+            }else if(sorted1){
+                sortKey = sortKey1;
+            }
+            else if(sorted2){
+                sortKey = sortKey2;
+            }
+            else{
+                sortKey=null;
+            }
             costSort = sortedSets(sorted1,sorted2);
             costHash = hashedSets(hashed1,hashed2);
-            
         }
         else{
             if(tInfo1.sortedSameKey(tInfo2)){  //sort on same key
                 //System.out.println("Both sorted");
                 costSort = sortedSets(true,true);// both sorted on same key, minumun sortcost
-                
+                sortKey = tInfo1.getPrimaryIndex().getIndexName();
                 if(tInfo1.hashIndexSameKey(tInfo2)){  //hashed same index
                     //System.out.println("Both sorted-> both hashed");
                     costHash = hashedSets(true,true);  //both hased same key, minimum hash cost
@@ -135,23 +166,37 @@ public class SetOperationCost {
                // System.out.println("Both hashed");
                 sorted1 = tInfo1.isSorted();
                 sorted2 = tInfo2.isSorted();
+                sortKey1 = tInfo1.getSortKet();
+                sortKey2 = tInfo2.getSortKet();
+                
                 if(sorted1 && sorted2){
                     double costSort1 = sortedSets(true,false);
                     temp_sortedAnnotation = sortedAnnotation;
                     costSort = sortedSets(false,true);
+                    sortKey = sortKey2;
                     if(costSort1 < costSort){
+                        sortKey = sortKey1;
                         costSort = costSort1;
                         sortedAnnotation = temp_sortedAnnotation;
                     }
                 }
-                else
+                else{
                     costSort = sortedSets(sorted1,sorted2);
+                    if(sorted1)
+                        sortKey = sortKey1;
+                    else if(sorted2)
+                        sortKey = sortKey2;
+                    else
+                       sortKey = null;    
+                }
             }
             else{ //no commont sort/hash
                 sorted1 = tInfo1.isSorted();
                 sorted2 = tInfo2.isSorted();
                 hashed1 = tInfo1.hashIndexExist();
                 hashed2 = tInfo2.hashIndexExist();
+                sortKey1 = tInfo1.getSortKet();
+                sortKey2 = tInfo2.getSortKet();
                 /*
                                     System.out.println(sorted1);
                     System.out.println(sorted2);
@@ -162,13 +207,22 @@ public class SetOperationCost {
                     double costSort1 = sortedSets(true,false);
                     temp_sortedAnnotation = sortedAnnotation;
                     costSort = sortedSets(false,true);
+                    sortKey = sortKey2;
                     if(costSort1 < costSort){
+                        sortKey = sortKey1;
                         costSort = costSort1;
                         sortedAnnotation = temp_sortedAnnotation;
                     }
                 }
-                else
+                else{
                     costSort = sortedSets(sorted1,sorted2);
+                    if(sorted1)
+                        sortKey = sortKey1;
+                    else if(sorted2)
+                        sortKey = sortKey2;
+                    else
+                       sortKey = null;    
+                }
                 
                 if(hashed1 && hashed2){ //both hashed on another key ...keep the minimum
                     double costHash1 = hashedSets(false,true);
@@ -309,7 +363,16 @@ public class SetOperationCost {
         return (diskSeeks*latency + blockWritten*penaltyTime + blocksTranfered*tranferTime);       
    }
     
-    
+   private boolean checkSameKey(Set<String> s1, Set<String> s2){
+       if(s1.size()!=s2.size())
+           return false;
+       for(String i: s1){
+           if(!s2.contains(i))
+               return false;
+       }
+       return true;
+   } 
         
+    
         
 }

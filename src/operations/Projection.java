@@ -138,7 +138,7 @@ public  class Projection extends Operator{
         Map<String,TableInfo> table = catalog.getCatalog();
         boolean projOnkey=true;
        
-        ArrayList<String> prKey;
+        Set<String> prKey;
        
 
                
@@ -147,8 +147,15 @@ public  class Projection extends Operator{
            if(table.containsKey(relation1))//error is not exists
            {
                tInfo1 = table.get(relation1);
-               if(!tInfo1.getPrimaryIndex().equalsKey(attrs))
-                    projOnkey = false;     
+               prKey = tInfo1.getKey();
+               for(int i =0;i<attrs.size();i++){
+                   if(!prKey.contains(attrs.get(i))){
+                       projOnkey=false;
+                       break;
+                   }
+               }
+               if(attrs.size()!= prKey.size())
+                   projOnkey=false;
            }
            else{
                 throw new RelationException("Relation '"+relation1+"' does not exist.");
