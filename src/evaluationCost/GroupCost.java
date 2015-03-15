@@ -125,7 +125,7 @@ public class GroupCost {
             //reading for partitioning
             blocksTranfered = br;
             //writting after partitioning
-            blockWritten = br;
+           // blockWritten = br;
             int diskSeeks = 2*(br/bb);
             return (diskSeeks*latency + blockWritten*penaltyTime + blocksTranfered*tranferTime); 
         }

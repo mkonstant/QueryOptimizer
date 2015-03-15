@@ -65,14 +65,14 @@ public class SelectCost {
     public void calculateVariables(IndexInfo index){
         tS = sysInfo.getLatency();
         tT = sysInfo.getTransferTime();
-        br = (tabInfo.getNumberOfTuples() * tabInfo.getCardinality())/sysInfo.getSizeOfBuffer();// paizei na kanpume overestimated
+        br = (tabInfo.getNumberOfTuples() * tabInfo.getSizeOfTuple())/sysInfo.getSizeOfBuffer();// paizei na kanpume overestimated
         
 
         if ( index != null ){
             b = ((tabInfo.getNumberOfTuples()/index.getNumOfDistinctValues()) * tabInfo.getSizeOfTuple() ) / sysInfo.getSizeOfBuffer();
             if ( index.getStructure().contains("B+tree") ){
                 h = index.getCostFactor();
-                n = tabInfo.getNumberOfTuples()/index.getNumOfDistinctValues();
+                n = tabInfo.getNumberOfTuples()-index.getNumOfDistinctValues();
             }
             else{
                 overflowBuckets = index.getCostFactor();

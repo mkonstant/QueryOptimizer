@@ -135,7 +135,7 @@ public class ProjectionCost {
         int diskSeeks = 2*(br/bb) ;
         
         //writting back output   how much???? calculate distinct values ktl
-        blockWritten += br;
+       // blockWritten += br;
          
         return (diskSeeks*latency + blockWritten*penaltyTime + blocksTranfered*tranferTime); 
     }

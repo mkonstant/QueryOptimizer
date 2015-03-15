@@ -9,6 +9,7 @@ import catalog.IndexInfo;
 import catalog.SystemInfo;
 import catalog.TableInfo;
 import java.util.ArrayList;
+import java.util.Set;
 import operations.Condition;
 
 /**
@@ -82,6 +83,8 @@ public class JoinCost {
         double costHash = -1;
         double costBlockNested = -1;
         int minNumCost = -1;
+        boolean sorted1 = false;
+        boolean sorted2 = false;
         
         calculateVariables();
         
@@ -91,220 +94,197 @@ public class JoinCost {
                     if (sameIndex(index1,index2)){
                         costMerge = mergeJoin(true,true);
                         allCosts.add(costMerge);
-                        allMessages.add("");
                         
-                        costHash = hashJoin(false,false);
-                        allCosts.add(costHash);
-                        allMessages.add("");
-                        
-                        costBlockNested = blockNestedJoin();
-                        allCosts.add(costBlockNested);
-                        allMessages.add("");
                     }
                     else{
                         costMerge = mergeJoin(true,false);
                         allCosts.add(costMerge);
-                        allMessages.add("");
-                        
-                        costHash = hashJoin(false,false);
-                        allCosts.add(costHash);
-                        allMessages.add("");
-                        
-                        costBlockNested = blockNestedJoin();
-                        allCosts.add(costBlockNested);
-                        allMessages.add("");
                         
                         costMerge = mergeJoin(false,true);
                         allCosts.add(costMerge);
-                        allMessages.add("");
-                        
-                        costHash = hashJoin(false,false);
-                        allCosts.add(costHash);
-                        allMessages.add("");
-                        
-                        costBlockNested = blockNestedJoin();
-                        allCosts.add(costBlockNested);
-                        allMessages.add("");
-                        
+                                               
                     }
+                    
+                    costHash = hashJoin(false,false);
+                    allCosts.add(costHash);
+                        
                 }
                 else{
                     if (sameIndex(index1,index2)){
-                        costMerge = mergeJoin(false,false);
-                        allCosts.add(costMerge);
-                        allMessages.add("");
-                        
+                                              
                         costHash = hashJoin(true,true);
                         allCosts.add(costHash);
-                        allMessages.add("");
-                        
-                        costBlockNested  = blockNestedJoin();
-                        allCosts.add(costBlockNested);
-                        allMessages.add("");
+                       
                     }
                     else{
-                        costMerge = mergeJoin(false,false);
-                        allCosts.add(costMerge);
-                        allMessages.add("");
                         
                         costHash = hashJoin(true,false);
                         allCosts.add(costHash);
-                        allMessages.add("");
-                        
-                        costBlockNested  = blockNestedJoin();
-                        allCosts.add(costBlockNested);
-                        allMessages.add("");
-                        
-                        costMerge = mergeJoin(false,false);
-                        allCosts.add(costMerge);
-                        allMessages.add("");
-                        
+                     
                         costHash = hashJoin(false,true);
                         allCosts.add(costHash);
-                        allMessages.add("");
                         
-                        costBlockNested  = blockNestedJoin();
-                        allCosts.add(costBlockNested);
-                        allMessages.add("");
                     }
+                    
+                    costMerge = mergeJoin(false,false);
+                    allCosts.add(costMerge);
+
                 }
             }
             else{//different structure
                 if (index1.getStructure().equals("B+tree")){
                     costMerge = mergeJoin(true,false);
                     allCosts.add(costMerge);
-                    allMessages.add("");
                         
                     costHash = hashJoin(false,true);
                     allCosts.add(costHash);
-                    allMessages.add("");
                         
-                    costBlockNested  = blockNestedJoin();
-                    allCosts.add(costBlockNested);
-                    allMessages.add("");
+                    
                 }
                 else{
                     costMerge = mergeJoin(false,true);
                     allCosts.add(costMerge);
-                    allMessages.add("");
                         
                     costHash = hashJoin(true,false);
                     allCosts.add(costHash);
-                    allMessages.add("");
-                        
-                    costBlockNested  = blockNestedJoin();
-                    allCosts.add(costBlockNested);
-                    allMessages.add("");
+                       
                 }
+                
             }
         
         }
         else{
             if ( index1 != null ){
                 if ( index1.getStructure().equals("B+tree")){
-                    if ( index1.getSecondary() == null ){
+                    if ( tabInfo2.getSorted() ){
+                        Set <String> sortedKey = tabInfo2.getSortKet();
+                        if ( this.sameSortedKey(index1.getIndexName(), sortedKey)){//both sorted same key
+                            //sorted2 = true;
+                            costMerge = mergeJoin(true,true);
+                            allCosts.add(costMerge);
+                            
+                        }
+                        else{//both sorted different key
+                            costMerge = mergeJoin(true,false);
+                            allCosts.add(costMerge);
+                            
+                            costMerge = mergeJoin(false,true);
+                            allCosts.add(costMerge);
+
+                        }
+                        
+                        costHash = hashJoin(false,false);
+                        allCosts.add(costHash);
+                        
+                    }
+                    else{//only relation1 sorted
                         costMerge = mergeJoin(true,false);
                         allCosts.add(costMerge);
-                        allMessages.add("");
 
                         costHash = hashJoin(false,false);
                         allCosts.add(costHash);
-                        allMessages.add("");
-                        
-                        costBlockNested  = blockNestedJoin();
-                        allCosts.add(costBlockNested);
-                        allMessages.add("");
+                    
                     }
-                    else{
-                        costMerge = mergeJoin(false,false);//isws auto tha prepei na ginei(false,true)?????
-                        allCosts.add(costMerge);
-                        allMessages.add("");
-                        
-                        costHash = hashJoin(false,false);
-                        allCosts.add(costHash);
-                        allMessages.add("");
-                        
-                        costBlockNested  = blockNestedJoin();
-                        allCosts.add(costBlockNested);
-                        allMessages.add("");
-                    }
+                    
                 }
                 else{
-                    costMerge = mergeJoin(false,false);
+                    costMerge = mergeJoin(false,tabInfo2.getSorted());
                     allCosts.add(costMerge);
-                    allMessages.add("");
                     
                     costHash = hashJoin(true,false);
                     allCosts.add(costHash);
-                    allMessages.add("");
                     
-                    costBlockNested  = blockNestedJoin();
-                    allCosts.add(costBlockNested);
-                    allMessages.add("");
                 }
             
             }
             else if ( index2 != null ){
                 if ( index2.getStructure().equals("B+tree")){
-                    if ( index2.getSecondary() == null ){
+                     if ( tabInfo1.getSorted() ){
+                        Set <String> sortedKey = tabInfo1.getSortKet();
+                        if ( this.sameSortedKey(index2.getIndexName(), sortedKey)){
+                            costMerge = mergeJoin(true,true);
+                            allCosts.add(costMerge);
+
+                        }
+                        else{
+                            costMerge = mergeJoin(false,true);
+                            allCosts.add(costMerge);
+                            
+                            costMerge = mergeJoin(true,false);
+                            allCosts.add(costMerge);
+
+                        }
+                        
+                        costHash = hashJoin(false,false);
+                        allCosts.add(costHash);
+                        
+                     }
+                     else{
                         costMerge = mergeJoin(false,true);
                         allCosts.add(costMerge);
-                        allMessages.add("");
-                        
+
                         costHash = hashJoin(false,false);
                         allCosts.add(costHash);
-                        allMessages.add("");
-                        
-                        costBlockNested  = blockNestedJoin();
-                        allCosts.add(costBlockNested);
-                        allMessages.add("");
-                    }
-                    else{
-                        costMerge = mergeJoin(false,false);//isws auto tha prepei na ginei(false,true)?????
-                        allCosts.add(costMerge);
-                        allMessages.add("");
-                        
-                        costHash = hashJoin(false,false);
-                        allCosts.add(costHash);
-                        allMessages.add("");
-                        
-                        costBlockNested  = blockNestedJoin();
-                        allCosts.add(costBlockNested);
-                        allMessages.add("");
-                    }
+
+                     }
+                          
                 }
                 else{
-                    costMerge = mergeJoin(false,false);
+                    costMerge = mergeJoin(tabInfo1.getSorted(),false);
                     allCosts.add(costMerge);
-                    allMessages.add("");
                     
                     costHash = hashJoin(false,true);
                     allCosts.add(costHash);
-                    allMessages.add("");
                     
-                    costBlockNested  = blockNestedJoin();
-                    allCosts.add(costBlockNested);
-                    allMessages.add("");
                 }
             }
             else{
-                costMerge = mergeJoin(false,false);
-                allCosts.add(costMerge);
-                allMessages.add("");
+                if ( tabInfo1.getSorted()){
+                    if ( tabInfo2.getSorted()){
+                        if ( this.sameSortedKey(tabInfo1.getSortKet(), tabInfo2.getSortKet())){
+                            costMerge = mergeJoin(true,true);
+                            allCosts.add(costMerge);
+                        }
+                        else{
+                            costMerge = mergeJoin(true,false);
+                            allCosts.add(costMerge);
+                            
+                            costMerge = mergeJoin(false,true);
+                            allCosts.add(costMerge);
+                        }
+                    }
+                    else{
+                        costMerge = mergeJoin(true,false);
+                        allCosts.add(costMerge);
+                    }
+                }
+                else{
+                    if ( tabInfo2.getSorted()){
+                        costMerge = mergeJoin(false,true);
+                        allCosts.add(costMerge);
+                    }
+                    else{
+                        costMerge = mergeJoin(false,false);
+                        allCosts.add(costMerge);
+                    }
+                
+                }
                 
                 costHash = hashJoin(false,false);
                 allCosts.add(costHash);
-                allMessages.add("");
                 
-                costBlockNested  = blockNestedJoin();
-                allCosts.add(costBlockNested);
-                allMessages.add("");
             }
         }
+        
+        costBlockNested = blockNestedJoin();
+        allCosts.add(costBlockNested);;
         
         minNumCost = this.getMinCost();
         cost = allCosts.get(minNumCost);
         message = allMessages.get(minNumCost);
+        
+        System.out.println("join Cost = " + cost);
+        System.out.println("message = " + message);
         
         /*double costMerge = mergeJoin(s1,s2);
         double costHash = hashJoin(h1,h2);
@@ -372,7 +352,7 @@ public class JoinCost {
             //diskSeeks = 2*outerR;
         }
         
-        blockNestedAnnotation.add("block Nested loop join");
+        allMessages.add("block Nested loop join");
          
         return (diskSeeks*latency + blocksTranfered*tranferTime ); 
          
@@ -425,28 +405,31 @@ public class JoinCost {
     
     
     public double mergeJoin(boolean sorted1, boolean sorted2){ //relations have to be already sorted
-      
+        String message = "";
+        
         //performing sorting
         double sortTime=0;
         if(!sorted1){
-            mergeAnnotation.add("sort relation1");
+            message += ("sort relation1");
             sortTime= SortCost.computeCost(br, M, latency, penaltyTime,  tranferTime);
         }
         else
-            mergeAnnotation.add("Use sorted relation1");
+            message += ("Use sorted relation1");
         if(!sorted2){
-            mergeAnnotation.add("sort relation2"); 
+            message += (" -> sort relation2"); 
             sortTime= SortCost.computeCost(bs, M, latency, penaltyTime,  tranferTime);
 
         }
         else
-            mergeAnnotation.add("Use sorted relation2");
+            message += (" -> Use sorted relation2");
         
         //performing join
          int blocksTranfered = br+bs;
          int diskSeeks = (br/bb) + (bs/bb);
          
-         mergeAnnotation.add("merge join");
+         message += (" -> merge join");
+         
+         allMessages.add(message);
          
          return (diskSeeks*latency + blocksTranfered*tranferTime  + sortTime); 
          
@@ -455,47 +438,42 @@ public class JoinCost {
     public double hashJoin(boolean partitioned1, boolean partitioned2){ //sunolika 3(br+bs)+ nh to opoio parleipetai 
         int blocksTranfered=0;
         int blockWritten=0;
+        String message = "";
         
         //partitioning relations
         if(!partitioned1){
-            hashAnnotation.add("partition relation1");
+            message += ("partition relation1");
             //reading for partitioning
             blocksTranfered = br;
             //writting after partitioning
             blockWritten = br;
         }
         else
-            hashAnnotation.add("use hashIndex on relation1");
+            message += ("use hashIndex on relation1");
         if(!partitioned2){
-            hashAnnotation.add("partition relation2");
+            message += (" -> partition relation2");
             //reading for partitioning
             blocksTranfered += bs;
             //writting after partitioning
             blockWritten += bs;
         }
         else
-            hashAnnotation.add("use hashIndex on relation2");
+            message += (" -> use hashIndex on relation2");
        
         
         //reading for join
         blocksTranfered+= br+bs;
         //2nh factor is too small coresponding to br+bs,it can be ignored
         int diskSeeks = 2*((br/bb) + (bs/bb));
-        hashAnnotation.add("hash join");  
-         
+        message += (" -> hash join");
+        
+        allMessages.add(message);
+        
         return (diskSeeks*latency + blockWritten*penaltyTime + blocksTranfered*tranferTime); 
          
     }
     
-    
-    //tha xrhsimopoihthei??? 
-    public void recursiveHashJoin(){
-        int partitionPasses= (int) (Math.log10(br)/Math.log10(M-1) -1) ;
-        int blocksTranfered = 2*(br+bs)* partitionPasses + bs+br;
-        
-        int diskSeeks = 2*((br/bb) + (bs/bb))* partitionPasses;
-    
-    }
+
     
     public int getMinCost(){
         double minCost = -1;
@@ -531,6 +509,12 @@ public class JoinCost {
         
         return true;
         
+    }
+    
+    public boolean sameSortedKey(Set <String> set1, Set <String> set2){
+        
+        
+        return false;
     }
     
    

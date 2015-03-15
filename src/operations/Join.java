@@ -211,6 +211,7 @@ public  class Join extends Operator{
                 for ( int j = 0 ; j < indexes1.size() ; j ++ ){
                     for ( int k = 0 ; k < indexes2.size() ; k ++ ){
                         jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,indexes1.get(j),indexes2.get(k));
+                        jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
                     }
@@ -220,6 +221,7 @@ public  class Join extends Operator{
                 if ( indexes1 != null ){
                     for ( int j = 0 ; j < indexes1.size() ; j ++ ){
                         jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,indexes1.get(j),null);
+                        jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
                     }
@@ -227,12 +229,14 @@ public  class Join extends Operator{
                 else if ( indexes2 != null ){
                     for ( int j = 0 ; j < indexes2.size() ; j ++ ){
                         jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,indexes2.get(j));
+                        jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
                     }
                 }
                 else{
                     jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,null);
+                    jCost.computeCost();
                     allCosts.add(jCost.getCost());
                     messages.add(jCost.getMessage());
                 }
@@ -242,8 +246,10 @@ public  class Join extends Operator{
             this.cost = allCosts.get(minNumCost);
             this.annotation = messages.get(minNumCost);
             
+            System.out.println(" cost = " + allCosts.get(minNumCost) );
+            
         }
-        else{
+        else if ( this.complexCondtion.equals("and")){
             
             for( int i = 0 ; i < conditions.size() ; i ++ ){
                 allAttr1.add(conditions.get(i).getAttr1());
@@ -257,6 +263,7 @@ public  class Join extends Operator{
                 for ( int j = 0 ; j < indexes1.size() ; j ++ ){
                     for ( int k = 0 ; k < indexes2.size() ; k ++ ){
                         jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,indexes1.get(j),indexes2.get(k));
+                        jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
                     }
@@ -266,32 +273,83 @@ public  class Join extends Operator{
                 if ( indexes1 != null ){
                     for ( int j = 0 ; j < indexes1.size() ; j ++ ){
                         jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,indexes1.get(j),null);
+                        jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
                     }
                 }
                 else if ( indexes2 != null ){
-                    for ( int j = 0 ; j < indexes1.size() ; j ++ ){
+                    for ( int j = 0 ; j < indexes2.size() ; j ++ ){
                         jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,indexes2.get(j));
+                        jCost.computeCost();
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());
                     }
                 }
                 else{
                     jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,null);
+                    jCost.computeCost();
                     allCosts.add(jCost.getCost());
                     messages.add(jCost.getMessage());
                 }
             }
             
-            if ( this.complexCondtion.equals("and")){//and
+            minNumCost = this.getMinCost(allCosts);
+            this.cost = allCosts.get(minNumCost);
+            this.annotation = messages.get(minNumCost);
+        
+        }
+        else{//or condition
+            for ( int i = 0 ; i < conditions.size() ; i ++ ){
+                allAttr1.add(conditions.get(i).getAttr1());
+                allAttr2.add(conditions.get(i).getAttr2());
+
+                indexes1 = tInfo1.findAllIndexes(allAttr1);
+                indexes2 = tInfo2.findAllIndexes(allAttr2);
+
+                if ( indexes1 != null && indexes2 != null){
+                    for ( int j = 0 ; j < indexes1.size() ; j ++ ){
+                        for ( int k = 0 ; k < indexes2.size() ; k ++ ){
+                            jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,indexes1.get(j),indexes2.get(k));
+                            jCost.computeCost();
+                            allCosts.add(jCost.getCost());
+                            messages.add(jCost.getMessage());
+                        }
+                    }
+                }
+                else{
+                    if ( indexes1 != null ){
+                        for ( int j = 0 ; j < indexes1.size() ; j ++ ){
+                            jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,indexes1.get(j),null);
+                            jCost.computeCost();
+                            allCosts.add(jCost.getCost());
+                            messages.add(jCost.getMessage());
+                        }
+                    }
+                    else if ( indexes2 != null ){
+                        for ( int j = 0 ; j < indexes2.size() ; j ++ ){
+                            jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,indexes2.get(j));
+                            jCost.computeCost();
+                            allCosts.add(jCost.getCost());
+                            messages.add(jCost.getMessage());
+                        }
+                    }
+                    else{
+                        jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,null);
+                        jCost.computeCost();
+                        allCosts.add(jCost.getCost());
+                        messages.add(jCost.getMessage());
+                    }
+                }
+                
                 minNumCost = this.getMinCost(allCosts);
-                this.cost = allCosts.get(minNumCost);
-                this.annotation = messages.get(minNumCost);
-            }
-            else{//or
-                //logika athroisma olwn kai ftiaxnoume to string
-            
+                this.cost += allCosts.get(minNumCost);
+                this.annotation = this.annotation + "con " + i + ":" + messages.get(minNumCost) + "|";
+                allCosts = null;
+                messages = null;
+                
+                allCosts = new ArrayList<Double>();
+                messages = new ArrayList<String>();
             }
         
         }
@@ -395,8 +453,8 @@ public  class Join extends Operator{
        
         
         //no join on disjunctions of conditons
-        if(complexCondtion!=null && complexCondtion.equals("or"))
-            throw new ComplexConditionException(null);
+        //if(complexCondtion!=null && complexCondtion.equals("or"))
+          //  throw new ComplexConditionException(null);
         
         //get the right tableInfo from relation or operation output
         if(relation1!=null)//i have to deal with a database relation
