@@ -11,6 +11,7 @@ import catalog.IndexInfo;
 import catalog.SystemInfo;
 import catalog.TableInfo;
 import java.util.ArrayList;
+import java.util.Set;
 import operations.Condition;
 
 /**
@@ -31,6 +32,8 @@ public class SelectCost {
     Condition condition = null;
     ArrayList<String> allMessages = new ArrayList<String>();
     ArrayList<Double> allCosts = new ArrayList<Double>();
+    ArrayList<Boolean> allSorted = new ArrayList<Boolean>();
+    ArrayList<Set<String>> allSortKey =new ArrayList<Set<String>>(); 
     String message;
     SystemInfo sysInfo = null;
     int numOfBlocks = -1;
@@ -38,7 +41,8 @@ public class SelectCost {
     boolean equalPrimary = false;
     int numOfConditions = -1;
     ArrayList<IndexInfo> indexes = null;
-    
+    boolean sorted=false;
+    Set<String> sortKey=null;
     
 
     public SelectCost(Condition condition, TableInfo tabInfo, SystemInfo sysInfo, ArrayList<IndexInfo> indexes,boolean equalPrimary, int numOfConditions){
@@ -50,6 +54,13 @@ public class SelectCost {
         this.numOfConditions = numOfConditions;
     }
     
+        public boolean getSorted(){
+        return sorted;
+    }
+    
+    public Set<String> getSortKey(){
+        return sortKey;
+    }
     
     public void calculateVariables(IndexInfo index){
         tS = sysInfo.getLatency();
@@ -170,6 +181,8 @@ public class SelectCost {
         minCostNum = getMinCost();
         cost = allCosts.get(minCostNum);
         message = allMessages.get(minCostNum);
+        sorted=allSorted.get(minCostNum);
+        sortKey= allSortKey.get(minCostNum);
     }
     
     public void equalSelection(IndexInfo tempIndex){
@@ -185,11 +198,15 @@ public class SelectCost {
                         tempCost = treePrimaryEqualWithKey();
                         allCosts.add(tempCost);
                         allMessages.add("Use primary tree index in attribute(s) : " + tempIndex.getIndexName().toString());
+                        allSorted.add(true);
+                        allSortKey.add(tempIndex.getIndexName());
                     }
                     else{//primary tree non key
                         tempCost = treePrimaryEqualNonKey();
                         allCosts.add(tempCost);
                         allMessages.add("Use primary tree index(non key) in attribute(s) : " + tempIndex.getIndexName().toString());
+                        allSorted.add(true);
+                        allSortKey.add(tempIndex.getIndexName());
                     }
                 }
                 else{
@@ -197,11 +214,15 @@ public class SelectCost {
                         tempCost = treeSecondaryEqualWithKey();
                         allCosts.add(tempCost);
                         allMessages.add("Use secondary tree index in attribute(s) : " + tempIndex.getIndexName().toString());
+                        allSorted.add(true);
+                        allSortKey.add(tempIndex.getIndexName());
                     }
                     else{//secondary tree non key
                         tempCost = treeSecondaryEqualNonKey();
                         allCosts.add(tempCost);
                         allMessages.add("Use secondary tree index(non key) in attribute(s) : " + tempIndex.getIndexName().toString());
+                        allSorted.add(true);
+                        allSortKey.add(tempIndex.getIndexName());   
                     }
                 }
             }
@@ -211,11 +232,15 @@ public class SelectCost {
                         tempCost = hashingPrimaryEqualWithKey();
                         allCosts.add(tempCost);
                         allMessages.add("Use primary hashing index in attribute(s) : " + tempIndex.getIndexName().toString());
+                        allSorted.add(false);
+                        allSortKey.add(null);
                     }
                     else{//primary tree non key
                         tempCost = hashingPrimaryEqualNonKey();
                         allCosts.add(tempCost);
                         allMessages.add("Use primary hashing index(non key) in attribute(s) : " + tempIndex.getIndexName().toString());
+                        allSorted.add(false);
+                        allSortKey.add(null);
                     }
                 }
                 else{
@@ -223,11 +248,15 @@ public class SelectCost {
                         tempCost = hashingSecondaryEqualWithKey();
                         allCosts.add(tempCost);
                         allMessages.add("Use secondary hashing index in attribute(s) : " + tempIndex.getIndexName().toString());
+                        allSorted.add(true);
+                        allSortKey.add(null);
                     }
                     else{//secondary tree non key
                         tempCost = hashingSecondaryEqualNonKey();
                         allCosts.add(tempCost);
                         allMessages.add("Use secondary hashing index(non key) in attribute(s) : " + tempIndex.getIndexName().toString());
+                        allSorted.add(false);
+                        allSortKey.add(null);
                     }
                 }
             }
@@ -237,13 +266,19 @@ public class SelectCost {
             if ( equalPrimary == true ){//linear with key
                 tempCost = linearSearchWithKey();
                 allCosts.add(tempCost);
-                allMessages.add("Use linear Search");
+                allMessages.add("Use linear Search");   
+                allSorted.add(true);
+                allSortKey.add(tabInfo.getKey());
             }
             else{//linear without key
                 tempCost = linearSearch();
                 allCosts.add(tempCost);
-                allMessages.add("Use Linear Search (non key)");
+                allMessages.add("Use Linear Search (non key)"); 
+                allSorted.add(true);
+                allSortKey.add(tabInfo.getKey());
             }    
+            //linear scan->sorted tupples on key
+            
         }
     }
     
@@ -257,11 +292,15 @@ public class SelectCost {
                     tempCost = treePrimaryCompare();
                     allCosts.add(tempCost);
                     allMessages.add("Use primary tree index in attribute(s) : " + tempIndex.getIndexName().toString());
+                    allSorted.add(true);
+                    allSortKey.add(tempIndex.getIndexName());
                 }
                 else{//secondary tree index
                     tempCost = treeSecondaryCompare();
                     allCosts.add(tempCost);
                     allMessages.add("Use secondary tree index in attribute(s) : " + tempIndex.getIndexName().toString());
+                    allSorted.add(true);
+                    allSortKey.add(tempIndex.getIndexName());
                 }
             }
             /*else{//hashing not in comparison, so we use linear
@@ -283,11 +322,15 @@ public class SelectCost {
                 tempCost = linearSearchWithKey();
                 allCosts.add(tempCost);
                 allMessages.add("Use Linear Search");
+                allSorted.add(true);
+                allSortKey.add(tabInfo.getKey());
             }
             else{//linear search with non key
                 tempCost = linearSearch();
                 allCosts.add(tempCost);
                 allMessages.add("Use Linear Search(non key)");
+                allSorted.add(true);
+                allSortKey.add(tabInfo.getKey());
             }
         }
     }

@@ -93,7 +93,7 @@ public class ComputeBestPlan {
                 temp = getPlanCopy(BestPlan);
                 
                 t1 = eliminateMultipleProjections(temp);
-                if(t1){
+                if(t1){                    
                     cost = processPlan(temp);
                     System.out.println("Query Projection Elmination:");
                     printPLan(temp, cost);

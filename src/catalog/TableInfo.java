@@ -358,10 +358,9 @@ public class TableInfo {
                 return true;
         }
         else if(sorted){
-            if(tocheck.size() != sortKey.size())
+            if(tocheck.size() > sortKey.size())
                 return false;
             for(int i=0;i<tocheck.size();i++){
-                System.out.println("lalala");
                 if(!sortKey.contains(tocheck.get(i)))
                     return false;
             }
@@ -370,7 +369,10 @@ public class TableInfo {
         return false;
     }
     
-        public boolean isHashedOnKey(ArrayList<String> tocheck){
+    public boolean isHashedOnKey(ArrayList<String> tocheck){
+        if(operator){
+            return false;
+        }
         if(hashIndexExist()){
             if(!primaryIndex.getStructure().equals("B+tree") && primaryIndex.equalsKey(tocheck))
                     return true;

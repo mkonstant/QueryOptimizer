@@ -12,7 +12,9 @@ import evaluationCost.GroupCost;
 import evaluationCost.ProjectionCost;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import myExceptions.GroupAttributeException;
 import myExceptions.ProjectionAttributeException;
 import myExceptions.RelationException;
@@ -46,10 +48,13 @@ public  class Group extends Operator{
         }
 
         this.attrs = old.getAttrsCopy(old.getAttrs());
-        this.conditions = old.getConditionCopy(old.getConditions());
         this.hasHavingClause = old.getHasHavingClause();
-        this.tInfo1 = old.getOutTableInfo1().fullCopy();
+        if(hasHavingClause)
         
+        this.conditions = old.getConditionCopy(old.getConditions());
+        this.tInfo1 = old.getOutTableInfo1().fullCopy();
+        this.aggregation = new String(old.getAggregation());
+        this.aggregationAttr= new String(old.getAggregationAttr());
     }
      
    
@@ -261,7 +266,7 @@ public  class Group extends Operator{
         }
         
         
-        GroupCost grCost = new GroupCost(catalog.getSystemInfo(), tInfo1.getNumberOfTuples(), tInfo1.getSizeOfTuple());
+        GroupCost grCost = new GroupCost(catalog.getSystemInfo(), tInfo1);
         
         cost = grCost.computeCost(tInfo1.isSortedOnKey(attrs) , tInfo1.isHashedOnKey(attrs));
         annotation = grCost.getAnnotation();
@@ -276,7 +281,18 @@ public  class Group extends Operator{
         outTable.setCardinality(tInfo1.getCardinality());
         //what to do with it?????
         outTable.setNumberOfTuples(tInfo1.getNumberOfTuples());
-        outTable.setSorted(grCost.getSorted());  //if output is sorted
+        boolean sorted = grCost.getSorted();
+        if(sorted){
+            if(grCost.getSortKey() == null){
+                Set<String> sortKey= new HashSet<String>();
+                for(int i = 0;i<attrs.size();i++){
+                    sortKey.add(attrs.get(i));
+                }
+                outTable.setSortKey(sortKey);
+            }
+            else
+                outTable.setSortKey(grCost.getSortKey());
+        }
         outTable.setOperator(true);
        
     

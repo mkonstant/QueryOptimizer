@@ -50,6 +50,10 @@ public class ProjectionCost {
         return sorted;
     }
     
+    public Set<String> getSortKey(){
+        return sortKey;
+    }
+    
     
     
     public String getAnnotation(){
@@ -71,7 +75,6 @@ public class ProjectionCost {
             if(tinfo.getPrimaryIndex().getStructure().equals("B+tree"))
             {
                 this.sorted=true;
-                System.out.println("edw re malaka");
                 sortKey = tinfo.getPrimaryIndex().getIndexName();
             }
             cost = br*tranferTime + (br/bb)*latency;
@@ -85,7 +88,7 @@ public class ProjectionCost {
             if(costHash> costSort){
                 annotation = sortedAnnotation;
                 cost = costSort;
-                sorted=true;
+                this.sorted=true;
             }
             else{
                 annotation = hasedAnnotation;
@@ -102,11 +105,9 @@ public class ProjectionCost {
     public double dublicateSort(boolean sorted){
             if(sorted){
                 sortedAnnotation.add("Relation already sorted on projection attributes ");
+                sortKey = tinfo.getSortKet();
                 return 0;
             }
-            sortKey = new HashSet<String>();
-            
-            
             sortedAnnotation.add("Sort to eliminate dublicates");
             return SortCost.computeCost(br, M, latency, penaltyTime,  tranferTime);
     }
@@ -118,14 +119,14 @@ public class ProjectionCost {
         int blockWritten=0;
         //partitioning relations
         if(!partitioned){
-            hasedAnnotation.add("Relation already hashed on projection attributes");
+            hasedAnnotation.add("Hash to eliminate dublicates");
             //reading for partitioning
             blocksTranfered = br;
             //writting after partitioning
             blockWritten = br;
         }
         else{
-            hasedAnnotation.add("Hash to eliminate dublicates");
+            hasedAnnotation.add("Relation already hashed on projection attributes");
         }
         
         //reading for dublicate elimination

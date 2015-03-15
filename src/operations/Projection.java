@@ -11,7 +11,9 @@ import catalog.TableInfo;
 import evaluationCost.ProjectionCost;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import myExceptions.ProjectionAttributeException;
 import myExceptions.RelationException;
 
@@ -146,9 +148,7 @@ public  class Projection extends Operator{
            {
                tInfo1 = table.get(relation1);
                if(!tInfo1.getPrimaryIndex().equalsKey(attrs))
-                    projOnkey = false;       
-               prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo1);
-               
+                    projOnkey = false;     
            }
            else{
                 throw new RelationException("Relation '"+relation1+"' does not exist.");
@@ -156,9 +156,9 @@ public  class Projection extends Operator{
         }
         else{//i have to deal with an operation's output
             tInfo1 = relationOp1.getOutTable();
-            prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo1);
             projOnkey = false;
         }
+         prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo1);
         
         //check if projection attribute exist in relation
         Map<String,Attributes> attributes = tInfo1.getAttributes();
@@ -186,8 +186,15 @@ public  class Projection extends Operator{
         outTable.setNumberOfTuples(tInfo1.getNumberOfTuples());
         boolean sorted = prCost.getSorted();
         if(sorted){
-            System.out.println("edw re malaka");
-            outTable.setSortKey(tInfo1.getSortKet());
+            if(prCost.getSortKey() == null){
+                Set<String> sortKey= new HashSet<String>();
+                for(int i = 0;i<attrs.size();i++){
+                    sortKey.add(attrs.get(i));
+                }
+                outTable.setSortKey(sortKey);
+            }
+            else
+                outTable.setSortKey(prCost.getSortKey());
         }
         outTable.setSorted(sorted);  //if output is sorted
         outTable.setOperator(true);

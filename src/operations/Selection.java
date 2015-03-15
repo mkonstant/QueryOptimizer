@@ -218,7 +218,21 @@ public class Selection extends Operator {
         outTable.setCardinality(tInfo1.getCardinality());
         //what to do with it?????
         outTable.setNumberOfTuples(tInfo1.getNumberOfTuples());
-        //outTable.setSorted(grCost.getSorted());  //if output is sorted
+        boolean sorted = selCost.getSorted();
+        if(sorted){
+            
+            if(selCost.getSortKey() == null){
+           /*     Set<String> sortKey= new HashSet<String>();
+                for(int i = 0;i<attrs.size();i++){
+                    sortKey.add(attrs.get(i));
+                }
+                outTable.setSortKey(sortKey);*/
+            }
+            else{
+                outTable.setSortKey(selCost.getSortKey());
+            }
+        }
+        outTable.setSorted(sorted);
         outTable.setOperator(true);
         System.out.println("cost = " + this.cost + " message = " + this.annotation);   
         

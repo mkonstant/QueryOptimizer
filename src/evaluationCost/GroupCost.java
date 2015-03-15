@@ -6,7 +6,9 @@
 package evaluationCost;
 
 import catalog.SystemInfo;
+import catalog.TableInfo;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  *
@@ -25,20 +27,27 @@ public class GroupCost {
     private ArrayList<String> sortedAnnotation = new ArrayList<String>();
     private ArrayList<String> hasedAnnotation = new ArrayList<String>();
     private boolean sorted=false;
+    private Set<String> sortKey=null;
+    private TableInfo tinfo;
 
-    public GroupCost(SystemInfo si, int nr, int sizeOfTupple){
+    public GroupCost(SystemInfo si, TableInfo tinfo){
         tranferTime = si.getTransferTime();
         penaltyTime = si.getTimeForWritingPages();
         latency = si.getLatency();
         M = si.getNumOfBuffers();
         bb= M/2;
-        br = (nr*sizeOfTupple) / si.getSizeOfBuffer();
-        this.nr=nr;
+        this.nr = tinfo.getNumberOfTuples();
+        br = (nr*tinfo.getSizeOfTuple()) / si.getSizeOfBuffer();
+        this.tinfo=tinfo;
     }
     
     
     public boolean getSorted(){
         return sorted;
+    }
+    
+    public Set<String> getSortKey(){
+        return sortKey;
     }
     
     
@@ -94,6 +103,7 @@ public class GroupCost {
         if(sorted)
         {
             sortedAnnotation.add("Use sorted relation on groupby attributes");
+            sortKey = tinfo.getSortKet();
             return 0;
         }
         else{
