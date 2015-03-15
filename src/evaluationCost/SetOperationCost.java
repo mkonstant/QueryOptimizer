@@ -8,6 +8,7 @@ package evaluationCost;
 import catalog.SystemInfo;
 import catalog.TableInfo;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  *
@@ -29,6 +30,7 @@ public class SetOperationCost {
     private ArrayList<String> sortedAnnotation ;
     private ArrayList<String> hasedAnnotation ;
     private boolean sorted=false;
+    private Set<String> sortKey=null;
     private TableInfo tInfo1;
     private TableInfo tInfo2;
     
@@ -50,6 +52,10 @@ public class SetOperationCost {
         
         
         
+    }
+    
+    public Set<String> getSortKey(){
+        return sortKey;
     }
     
     
