@@ -10,14 +10,12 @@ import catalog.TableInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import javax.naming.ldap.HasControls;
 import operations.Condition;
 import operations.Join;
 import operations.Operator;
 import operations.Projection;
 import operations.Selection;
 import operations.SetOp;
-import static querryoptimizer.QuerryOptimizer.operations;
 
 /**
  *
@@ -76,7 +74,7 @@ public class ComputeBestPlan {
     }*/
     
     public void ApplyTranformations(){
-        boolean t1=false,t2=false,t3=false,t4=false,t5=false,t6=false,t7=false;   
+        boolean t1=false,t2=false,t3=false,t4=false,t5=false,t6=false,t7=false,t8=false; 
         double cost;
         int i =0;
         /*MAKE THE POSSIBLE REAARANGEMENTS*/
@@ -158,6 +156,16 @@ public class ComputeBestPlan {
                 
                 t7 = pushSelectionInSet2(temp);
                 if(t7){
+                    cost = processPlan(temp);
+                    System.out.println("Selection rearange:");
+                    printPLan(temp, cost);
+                    if(updateBest)
+                        break;
+                    temp = getPlanCopy(BestPlan);
+                }
+                
+                t8 = pushSelectionInJoin2(temp);
+                if(t8){
                     cost = processPlan(temp);
                     System.out.println("Selection rearange:");
                     printPLan(temp, cost);
@@ -530,6 +538,119 @@ public class ComputeBestPlan {
         return tranformed;
     }
     
+     
+     
+     private boolean pushSelectionInJoin2(ArrayList<Operator> ops){
+        boolean tranformflag=true;
+        boolean tranformed = false;
+        Operator temp=null;     //the join
+        Operator temp1,temp2;  //the selections
+        
+        //while(tranformflag){
+            tranformflag=false;
+            for(int i=ops.size()-1; i>-1; i--){
+                temp1 = ops.get(i);
+                if( temp1 instanceof Selection ){
+                    temp = temp1.getRelationOp1();
+                    if(temp!=null && (temp instanceof Join)){   //to projection paizei panw se apotelesma join
+
+                        ArrayList<Condition> con = temp1.getConditions();
+                        //Map<String,Condition> selAttrs = new HashMap<String,Condition>();
+                        ArrayList<String> selAttrs = new ArrayList<String>();
+                        for(int k=0;k<con.size();k++)
+                            selAttrs.add(con.get(k).getAttr1());
+                        
+                        temp.computeAttributes(); 
+                      //  ArrayList<String> joinNeededAttrs1 = temp.getNeededAttributes1();
+                      //  ArrayList<String> joinNeededAttrs2 = temp.getNeededAttributes2();
+                       
+                        ArrayList<String> relAttrs1 = temp.getRelAttributes1();
+                        ArrayList<String> relAttrs2 = temp.getRelAttributes2();
+                        
+                        ArrayList<String> selAttrs1 = findSelAttrs(relAttrs1, selAttrs);
+                        ArrayList<String> selAttrs2 = findSelAttrs(relAttrs2, selAttrs);
+                        System.out.println("bojvsovs");
+                        if(allSelectedAttrs(selAttrs1, selAttrs2, selAttrs)){
+                            System.out.println("bojvsovs");
+                            Operator startProj = temp1;  //delete thus
+                            if(selAttrs1!=null){
+                                //temp1 = new Projection(); //delete this
+                                System.out.println("lala1");
+                                
+                                temp1.setRelation1(temp.getRelation1());
+                                temp1.setRelationOp1(temp.getRelationOp1());
+                                temp1.setAttributes(selAttrs1);
+                                        
+                                ArrayList<Condition> newCon = new ArrayList<Condition>();                                
+                                for(int l=0; l < selAttrs1.size();l++){
+                                    String selatr = selAttrs1.get(l);
+                                    System.out.println(selatr);
+                                    
+                                    for(int k=0;k<con.size();k++){
+                                        Condition selc = con.get(k);
+                                        if(selatr.equals(selc.getAttr1())){
+                                            newCon.add(selc);
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                temp1.setCondition(newCon);
+                                
+                                temp.setRelation1(null);
+                                temp.setRelationOp1(temp1);
+                                
+                                ops.remove(temp1);        //restore this
+                                ops.add(i-1, temp1);
+                                
+                            }
+                            if(selAttrs2!=null){
+                                if(selAttrs1==null)
+                                    temp2=temp1;
+                                else    
+                                    temp2 = temp1.fullCopy(null);//delete this
+                                System.out.println("lala1");
+                                
+                                temp2.setRelation1(temp.getRelation2());
+                                temp2.setRelationOp1(temp.getRelationOp2());
+                                temp2.setAttributes(selAttrs2);
+                                        
+                                ArrayList<Condition> newCon = new ArrayList<Condition>();                                
+                                for(int l=0; l < selAttrs2.size();l++){
+                                    String selatr = selAttrs2.get(l);
+                                    System.out.println(selatr);
+                                    
+                                    for(int k=0;k<con.size();k++){
+                                        Condition selc = con.get(k);
+                                        if(selatr.equals(selc.getAttr1())){
+                                            newCon.add(selc);
+                                            break;
+                                        }
+                                    }
+                                }
+                                temp2.setCondition(newCon);
+                                
+                                temp.setRelation2(null);
+                                temp.setRelationOp2(temp2);
+                                
+                                if(selAttrs1==null)
+                                    ops.remove(temp2);        //restore this
+                                ops.add(i-1, temp2);
+                                
+                            }
+                            
+                            
+                            tranformed=true;
+                            tranformflag=true;
+                            break;
+                        }
+                    }                 
+                }    
+            }
+        //}
+    
+        return tranformed;
+    }
     
     
     
@@ -580,6 +701,19 @@ public class ComputeBestPlan {
         return temp;
     }
     
+    public ArrayList<String> findSelAttrs(ArrayList<String> rel, ArrayList<String> sel){
+        ArrayList<String> temp=null;
+        //compute intresection of proj and rel
+        for(int i =0; i<sel.size();i++){
+            if(rel.contains(sel.get(i))){
+                if(temp==null)
+                    temp=new ArrayList<String>();
+                temp.add(sel.get(i));
+            }
+        }
+        return temp;
+    }
+    
         
     public boolean extraNeededProjAttrs(ArrayList<String> proj1, ArrayList<String> proj2, ArrayList<String> proj){
         
@@ -610,6 +744,22 @@ public class ComputeBestPlan {
                 if(!proj2.contains(temp))
                     return false;
             }
+        }
+        return true;
+    }
+    
+        public boolean allSelectedAttrs(ArrayList<String> sel1, ArrayList<String> sel2, ArrayList<String> sel){
+        
+        for(int i =0; i<sel.size();i++){
+            String temp = sel.get(i);
+            if(sel1 !=null){
+                if(!sel1.contains(temp)){
+                    if(sel2!=null && !sel2.contains(temp))
+                        return false;
+                }
+            }
+            else if(sel2!=null && !sel2.contains(temp))
+                return false;
         }
         return true;
     }

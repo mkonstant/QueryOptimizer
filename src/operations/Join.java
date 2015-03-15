@@ -225,7 +225,7 @@ public  class Join extends Operator{
                     }
                 }
                 else if ( indexes2 != null ){
-                    for ( int j = 0 ; j < indexes1.size() ; j ++ ){
+                    for ( int j = 0 ; j < indexes2.size() ; j ++ ){
                         jCost = new JoinCost(catalog.getSystemInfo(), conditions.get(0), tInfo1,tInfo2,null,indexes2.get(j));
                         allCosts.add(jCost.getCost());
                         messages.add(jCost.getMessage());

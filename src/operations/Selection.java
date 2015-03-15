@@ -59,7 +59,10 @@ public class Selection extends Operator {
         return temp;
     } 
     
-    
+    @Override
+    public void setCondition(ArrayList<Condition> con){
+        conditions=con;
+    }
     
     
     @Override
@@ -115,12 +118,14 @@ public class Selection extends Operator {
         
          //add conditions 
         conditionsPrint="";
-        for (int i = 0; i < conditions.size(); i++)
-        {
-            if(i>0)
-                conditionsPrint+=" "+complexCondtion+" ";
-            conditionsPrint += conditions.get(i).toPrint();
-	}
+        if(conditions != null){
+            for (int i = 0; i < conditions.size(); i++)
+            {
+                if(i>0)
+                    conditionsPrint+=" "+complexCondtion+" ";
+                conditionsPrint += conditions.get(i).toPrint();
+            }
+        }
         
         //add relation1
      
@@ -147,6 +152,7 @@ public class Selection extends Operator {
             
             //index = tInfo1.findBestIndex(allAttr);
             indexes = tInfo1.findAllIndexes(allAttr);
+            
             
             equalPrimary = tInfo1.equalPrimaryKey(allAttr);
             

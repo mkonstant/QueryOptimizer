@@ -250,7 +250,8 @@ public class TableInfo {
     }
     
     public boolean equalPrimaryKey( Set<String> attr){
-        
+        if(key==null)
+            return false;
         if ( attr.size() == key.size() ){
             for( String attribute : attr ){
                 if ( !key.contains(attribute)){
