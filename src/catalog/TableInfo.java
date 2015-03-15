@@ -29,12 +29,15 @@ public class TableInfo {
     
     boolean sorted=false; //only for output table f operations
     boolean operator=false;
+    Set<String> sortKey=null;
     
     
     public TableInfo(){
         attributes = new HashMap<String,Attributes>();
         IndexInfo indexInfo = new IndexInfo();
     }
+    
+    
     
     public TableInfo(TableInfo old){
         cardinality = old.getCardinality();
@@ -70,14 +73,13 @@ public class TableInfo {
             key = new HashSet<String>();
             for(String i : old_key)
                 key.add(new String(i));
-        }
-        
-        
-        
-               
-        
+        }       
     }
 
+    public void setSortKey(Set<String> sk){
+        sortKey = sk;
+    }
+    
     public void setSorted(boolean s){
         sorted=s;
     }
@@ -85,6 +87,11 @@ public class TableInfo {
     public void setOperator(boolean o){
         operator=o;
     } 
+    
+    public Set<String> getSortKet(){
+        return sortKey;
+    }
+    
     
     public boolean getOperator(){
         return operator;
@@ -243,7 +250,8 @@ public class TableInfo {
     }
     
     public boolean equalPrimaryKey( Set<String> attr){
-        
+        if(key==null)
+            return false;
         if ( attr.size() == key.size() ){
             for( String attribute : attr ){
                 if ( !key.contains(attribute)){
@@ -337,8 +345,10 @@ public class TableInfo {
     }
     
     public boolean isSorted(){
-        if(primaryIndex!=null  && primaryIndex.getStructure().equals("B+tree"))
+        if(primaryIndex!=null  && primaryIndex.getStructure().equals("B+tree")){
+            sortKey = primaryIndex.getIndexName();
             return true;
+        }
         return false;
     }
     
@@ -346,7 +356,16 @@ public class TableInfo {
         if(isSorted()){
             if(primaryIndex.equalsKey(tocheck))
                 return true;
-        
+        }
+        else if(sorted){
+            if(tocheck.size() != sortKey.size())
+                return false;
+            for(int i=0;i<tocheck.size();i++){
+                System.out.println("lalala");
+                if(!sortKey.contains(tocheck.get(i)))
+                    return false;
+            }
+            return true;
         }
         return false;
     }

@@ -55,10 +55,7 @@ public  class SetOp extends Operator{
         
     }
     
-        public SetOp() { 
-        
-        
-    }
+    public SetOp() {     }
    
     @Override
     public Operator fullCopy(Map<Operator,Operator> update){
@@ -168,6 +165,7 @@ public  class SetOp extends Operator{
         setCost = new SetOperationCost(catalog.getSystemInfo(), tInfo1,tInfo2);
         cost = setCost.computeCost();
         outTable.setSorted(setCost.getSorted());  //if output is sorted
+        outTable.setSortKey(null);
         annotation = setCost.getAnnotation();
     }
     

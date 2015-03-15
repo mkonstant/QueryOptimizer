@@ -147,7 +147,7 @@ public  class Projection extends Operator{
                tInfo1 = table.get(relation1);
                if(!tInfo1.getPrimaryIndex().equalsKey(attrs))
                     projOnkey = false;       
-               prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo1.getNumberOfTuples(),tInfo1.getSizeOfTuple());
+               prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo1);
                
            }
            else{
@@ -156,8 +156,8 @@ public  class Projection extends Operator{
         }
         else{//i have to deal with an operation's output
             tInfo1 = relationOp1.getOutTable();
-            prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo1.getNumberOfTuples(),tInfo1.getSizeOfTuple());
-            projOnkey = tInfo1.getSorted();
+            prCost = new ProjectionCost(catalog.getSystemInfo(),tInfo1);
+            projOnkey = false;
         }
         
         //check if projection attribute exist in relation
@@ -184,7 +184,12 @@ public  class Projection extends Operator{
         //overestimation if duplicate elimination is performed
         outTable.setCardinality(attrs.size());
         outTable.setNumberOfTuples(tInfo1.getNumberOfTuples());
-        outTable.setSorted(prCost.getSorted());  //if output is sorted
+        boolean sorted = prCost.getSorted();
+        if(sorted){
+            System.out.println("edw re malaka");
+            outTable.setSortKey(tInfo1.getSortKet());
+        }
+        outTable.setSorted(sorted);  //if output is sorted
         outTable.setOperator(true);
        
     
