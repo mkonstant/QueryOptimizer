@@ -37,16 +37,19 @@ public class JoinCost {
     Condition condition = null;
     TableInfo tabInfo1 = null;
     TableInfo tabInfo2 = null;
-    IndexInfo indexes1 = null;
-    IndexInfo indexes2 = null;
+    IndexInfo index1 = null;
+    IndexInfo index2 = null;
+    ArrayList<Double> allCosts = new ArrayList<Double>();
+    ArrayList<String> allMessages = new ArrayList<String>();
     
-    public JoinCost(SystemInfo si, Condition condition ,TableInfo tabInfo1, TableInfo tabInfo2, IndexInfo indexes1, IndexInfo indexes2 ) {
+    
+    public JoinCost(SystemInfo si, Condition condition ,TableInfo tabInfo1, TableInfo tabInfo2, IndexInfo index1, IndexInfo index2 ) {
         this.si = si;
         this.condition = condition;
         this.tabInfo1 = tabInfo1;
         this.tabInfo2 = tabInfo2;
-        this.indexes1 = indexes1;
-        this.indexes2 = indexes2;
+        this.index1 = index1;
+        this.index2 = index2;
     }
 
     public double getCost() {
@@ -73,11 +76,237 @@ public class JoinCost {
     }
     
 
-    public double computeCost(boolean s1,boolean s2, boolean h1, boolean h2, boolean i1,boolean i2){
+    //public double computeCost(boolean s1,boolean s2, boolean h1, boolean h2, boolean i1,boolean i2){
+    public void computeCost(){
+        double costMerge = -1;
+        double costHash = -1;
+        double costBlockNested = -1;
+        int minNumCost = -1;
         
         calculateVariables();
         
-        double costMerge = mergeJoin(s1,s2);
+        if (index1 != null && index2 != null ){
+            if ( index1.getStructure().equals(index2.getStructure()) ){//same structure
+                if (index1.getStructure().equals("B+tree")){
+                    if (sameIndex(index1,index2)){
+                        costMerge = mergeJoin(true,true);
+                        allCosts.add(costMerge);
+                        allMessages.add("");
+                        
+                        costHash = hashJoin(false,false);
+                        allCosts.add(costHash);
+                        allMessages.add("");
+                        
+                        costBlockNested = blockNestedJoin();
+                        allCosts.add(costBlockNested);
+                        allMessages.add("");
+                    }
+                    else{
+                        costMerge = mergeJoin(true,false);
+                        allCosts.add(costMerge);
+                        allMessages.add("");
+                        
+                        costHash = hashJoin(false,false);
+                        allCosts.add(costHash);
+                        allMessages.add("");
+                        
+                        costBlockNested = blockNestedJoin();
+                        allCosts.add(costBlockNested);
+                        allMessages.add("");
+                        
+                        costMerge = mergeJoin(false,true);
+                        allCosts.add(costMerge);
+                        allMessages.add("");
+                        
+                        costHash = hashJoin(false,false);
+                        allCosts.add(costHash);
+                        allMessages.add("");
+                        
+                        costBlockNested = blockNestedJoin();
+                        allCosts.add(costBlockNested);
+                        allMessages.add("");
+                        
+                    }
+                }
+                else{
+                    if (sameIndex(index1,index2)){
+                        costMerge = mergeJoin(false,false);
+                        allCosts.add(costMerge);
+                        allMessages.add("");
+                        
+                        costHash = hashJoin(true,true);
+                        allCosts.add(costHash);
+                        allMessages.add("");
+                        
+                        costBlockNested  = blockNestedJoin();
+                        allCosts.add(costBlockNested);
+                        allMessages.add("");
+                    }
+                    else{
+                        costMerge = mergeJoin(false,false);
+                        allCosts.add(costMerge);
+                        allMessages.add("");
+                        
+                        costHash = hashJoin(true,false);
+                        allCosts.add(costHash);
+                        allMessages.add("");
+                        
+                        costBlockNested  = blockNestedJoin();
+                        allCosts.add(costBlockNested);
+                        allMessages.add("");
+                        
+                        costMerge = mergeJoin(false,false);
+                        allCosts.add(costMerge);
+                        allMessages.add("");
+                        
+                        costHash = hashJoin(false,true);
+                        allCosts.add(costHash);
+                        allMessages.add("");
+                        
+                        costBlockNested  = blockNestedJoin();
+                        allCosts.add(costBlockNested);
+                        allMessages.add("");
+                    }
+                }
+            }
+            else{//different structure
+                if (index1.getStructure().equals("B+tree")){
+                    costMerge = mergeJoin(true,false);
+                    allCosts.add(costMerge);
+                    allMessages.add("");
+                        
+                    costHash = hashJoin(false,true);
+                    allCosts.add(costHash);
+                    allMessages.add("");
+                        
+                    costBlockNested  = blockNestedJoin();
+                    allCosts.add(costBlockNested);
+                    allMessages.add("");
+                }
+                else{
+                    costMerge = mergeJoin(false,true);
+                    allCosts.add(costMerge);
+                    allMessages.add("");
+                        
+                    costHash = hashJoin(true,false);
+                    allCosts.add(costHash);
+                    allMessages.add("");
+                        
+                    costBlockNested  = blockNestedJoin();
+                    allCosts.add(costBlockNested);
+                    allMessages.add("");
+                }
+            }
+        
+        }
+        else{
+            if ( index1 != null ){
+                if ( index1.getStructure().equals("B+tree")){
+                    if ( index1.getSecondary() == null ){
+                        costMerge = mergeJoin(true,false);
+                        allCosts.add(costMerge);
+                        allMessages.add("");
+
+                        costHash = hashJoin(false,false);
+                        allCosts.add(costHash);
+                        allMessages.add("");
+                        
+                        costBlockNested  = blockNestedJoin();
+                        allCosts.add(costBlockNested);
+                        allMessages.add("");
+                    }
+                    else{
+                        costMerge = mergeJoin(false,false);//isws auto tha prepei na ginei(false,true)?????
+                        allCosts.add(costMerge);
+                        allMessages.add("");
+                        
+                        costHash = hashJoin(false,false);
+                        allCosts.add(costHash);
+                        allMessages.add("");
+                        
+                        costBlockNested  = blockNestedJoin();
+                        allCosts.add(costBlockNested);
+                        allMessages.add("");
+                    }
+                }
+                else{
+                    costMerge = mergeJoin(false,false);
+                    allCosts.add(costMerge);
+                    allMessages.add("");
+                    
+                    costHash = hashJoin(true,false);
+                    allCosts.add(costHash);
+                    allMessages.add("");
+                    
+                    costBlockNested  = blockNestedJoin();
+                    allCosts.add(costBlockNested);
+                    allMessages.add("");
+                }
+            
+            }
+            else if ( index2 != null ){
+                if ( index2.getStructure().equals("B+tree")){
+                    if ( index2.getSecondary() == null ){
+                        costMerge = mergeJoin(false,true);
+                        allCosts.add(costMerge);
+                        allMessages.add("");
+                        
+                        costHash = hashJoin(false,false);
+                        allCosts.add(costHash);
+                        allMessages.add("");
+                        
+                        costBlockNested  = blockNestedJoin();
+                        allCosts.add(costBlockNested);
+                        allMessages.add("");
+                    }
+                    else{
+                        costMerge = mergeJoin(false,false);//isws auto tha prepei na ginei(false,true)?????
+                        allCosts.add(costMerge);
+                        allMessages.add("");
+                        
+                        costHash = hashJoin(false,false);
+                        allCosts.add(costHash);
+                        allMessages.add("");
+                        
+                        costBlockNested  = blockNestedJoin();
+                        allCosts.add(costBlockNested);
+                        allMessages.add("");
+                    }
+                }
+                else{
+                    costMerge = mergeJoin(false,false);
+                    allCosts.add(costMerge);
+                    allMessages.add("");
+                    
+                    costHash = hashJoin(false,true);
+                    allCosts.add(costHash);
+                    allMessages.add("");
+                    
+                    costBlockNested  = blockNestedJoin();
+                    allCosts.add(costBlockNested);
+                    allMessages.add("");
+                }
+            }
+            else{
+                costMerge = mergeJoin(false,false);
+                allCosts.add(costMerge);
+                allMessages.add("");
+                
+                costHash = hashJoin(false,false);
+                allCosts.add(costHash);
+                allMessages.add("");
+                
+                costBlockNested  = blockNestedJoin();
+                allCosts.add(costBlockNested);
+                allMessages.add("");
+            }
+        }
+        
+        minNumCost = this.getMinCost();
+        cost = allCosts.get(minNumCost);
+        message = allMessages.get(minNumCost);
+        
+        /*double costMerge = mergeJoin(s1,s2);
         double costHash = hashJoin(h1,h2);
         double costBlockNested  = blockNestedJoin();
         //double costIndexedBlockNested = indexedBlockNestedJoin(i1, i2);
@@ -97,14 +326,14 @@ public class JoinCost {
             cost = costBlockNested;
             sorted=false;
         }
-       /* if(costIndexedBlockNested< cost){
-            annotation = indexedNestedAnnotation;
-            cost = costIndexedBlockNested;
-            sorted=false;
-        }*/
+       // if(costIndexedBlockNested< cost){
+        //    annotation = indexedNestedAnnotation;
+       //     cost = costIndexedBlockNested;
+       //     sorted=false;
+       // }
         //return br*tranferTime + (br/bb)*latency;
+       */
        
-       return cost;
     }
     
     public boolean getSorted(){
@@ -266,6 +495,42 @@ public class JoinCost {
         
         int diskSeeks = 2*((br/bb) + (bs/bb))* partitionPasses;
     
+    }
+    
+    public int getMinCost(){
+        double minCost = -1;
+        int position = -1;
+        
+        if ( allCosts.size() > 1 ){
+            minCost = allCosts.get(0);
+            position = 0;
+            for ( int i = 1 ; i < allCosts.size() ; i ++ ){
+                if ( minCost > allCosts.get(i)){
+                    minCost = allCosts.get(i);
+                    position = i;
+                }
+            }
+            return position;
+        }
+        else{
+            return 0;
+        }
+    }
+    
+    public boolean sameIndex(IndexInfo index1, IndexInfo index2){
+        if( index1.getIndexName().size() == index2.getIndexName().size()){
+            for ( String indexName : index1.getIndexName()){
+                if( !index2.getIndexName().contains(indexName)){
+                    return false;
+                }
+            }
+        }
+        else{
+            return false;
+        }
+        
+        return true;
+        
     }
     
    
