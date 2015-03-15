@@ -403,8 +403,4 @@ public class Catalog {
     public void setSystemInfo(SystemInfo systemInfo) {
         this.systemInfo = systemInfo;
     }
-    
-    
-    
-    
 }

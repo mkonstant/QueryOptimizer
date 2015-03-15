@@ -40,7 +40,7 @@ public class SetOperationCost {
         latency = si.getLatency();
         M = si.getNumOfBuffers();
         
-        bb= M/2;
+        bb= M-2;
         
         this.nr= tInfo1.getNumberOfTuples();
         br = (nr*tInfo1.getSizeOfTuple()) / si.getSizeOfBuffer();

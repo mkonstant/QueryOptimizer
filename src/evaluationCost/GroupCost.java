@@ -35,7 +35,7 @@ public class GroupCost {
         penaltyTime = si.getTimeForWritingPages();
         latency = si.getLatency();
         M = si.getNumOfBuffers();
-        bb= M/2;
+        bb= M-2;
         this.nr = tinfo.getNumberOfTuples();
         br = (nr*tinfo.getSizeOfTuple()) / si.getSizeOfBuffer();
         this.tinfo=tinfo;

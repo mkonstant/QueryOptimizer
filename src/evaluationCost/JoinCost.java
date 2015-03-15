@@ -368,8 +368,8 @@ public class JoinCost {
         sorted= allSorted.get(minNumCost);
         sortKey = allSortKey.get(minNumCost);
         
-        System.out.println("join Cost = " + cost);
-        System.out.println("message = " + message);
+        //System.out.println("join Cost = " + cost);
+        //System.out.println("message = " + message);
         
         /*double costMerge = mergeJoin(s1,s2);
         double costHash = hashJoin(h1,h2);

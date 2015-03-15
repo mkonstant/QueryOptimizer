@@ -50,10 +50,17 @@ public class QuerryOptimizer {
         // TODO code application logic here
         String dbFile = null;
         String sysFile = null;
+        boolean printAll=false;
         
         dbFile = args[0];
         sysFile = args[1];
         
+        if(args.length>3){
+            if(args[3].equals("-all"))
+            {
+                printAll= Boolean.parseBoolean(args[4]);
+            }
+        }
         
         catalog = new Catalog(dbFile,sysFile);
         catalog.processingDataBaseFile();
@@ -94,15 +101,15 @@ public class QuerryOptimizer {
             }
         }
         try{
-            //System.out.println("Query Materialization:");
-            //printPLan();
+            System.out.println("Query Materialization:");
+            printPLan();
             
             double cost = processPlan();
             System.out.println("\n\n\nQuery Materialization Annotated:");
             printPLan();
             System.out.println(cost);
             ComputeBestPlan cb = new ComputeBestPlan(operations, catalog, cost);
-            cb.ApplyTranformations();
+            cb.ApplyTranformations(printAll);
         }
         catch(RelationException ex){
             System.err.println(ex.getMessage());

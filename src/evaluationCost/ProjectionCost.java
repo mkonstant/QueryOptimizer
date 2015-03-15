@@ -39,7 +39,7 @@ public class ProjectionCost {
         penaltyTime = si.getTimeForWritingPages();
         latency = si.getLatency();
         M = si.getNumOfBuffers();
-        bb= M/2;
+        bb= M-2;
         nr = tinfo.getNumberOfTuples();
         br = (nr*tinfo.getSizeOfTuple()) / si.getSizeOfBuffer();
         

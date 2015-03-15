@@ -76,7 +76,8 @@ public abstract class Operator {
         tInfo2 = t;
     }
     public double getCost(){
-        return cost;
+        //query cost+ writting to disc 
+        return cost+outTable.getNumberOfTuples()*catalog.getSystemInfo().getTimeForWritingPages() + catalog.getSystemInfo().getLatency();
     }
     
     public void setCatalog(Catalog c){

@@ -69,5 +69,4 @@ public class Attributes {
     public Attributes fullCopy(){
         return new Attributes(this);
     }
-
 }

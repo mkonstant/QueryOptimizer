@@ -52,8 +52,6 @@ public class ComputeBestPlan {
             setCost(cost, plan);
         }
     }*/
-
-
     
           
     public ComputeBestPlan(ArrayList<Operator> operations , Catalog catalog, double cost) {
@@ -73,7 +71,7 @@ public class ComputeBestPlan {
         }
     }*/
     
-    public void ApplyTranformations(){
+    public void ApplyTranformations(boolean all){
         boolean t1=false,t2=false,t3=false,t4=false,t5=false,t6=false,t7=false,t8=false; 
         double cost;
         int i =0;
@@ -84,7 +82,8 @@ public class ComputeBestPlan {
             while(updateBest){
                 updateBest=false; 
                 i++;
-                System.out.println("\n\n\nPass "+i);
+                if(all)
+                    System.out.println("\n\n\nPass "+i);
 
 
                 temp = getPlanCopy(BestPlan);
@@ -92,8 +91,10 @@ public class ComputeBestPlan {
                 t1 = eliminateMultipleProjections(temp);
                 if(t1){                    
                     cost = processPlan(temp);
-                    System.out.println("\n\n\nQuery Projection Elmination:");
-                    printPLan(temp, cost);
+                    if(all){
+                         System.out.println("\n\n\nQuery Projection Elmination:");
+                        printPLan(temp, cost);
+                    }
                     if(updateBest)
                         break;
                     temp = getPlanCopy(BestPlan);
@@ -102,8 +103,10 @@ public class ComputeBestPlan {
                 t2 = pushProjectionsInSet(temp);
                 if(t2){
                     cost = processPlan(temp);
-                    System.out.println("\n\n\nPush Projection in Set:");
-                    printPLan(temp, cost);
+                    if(all){
+                        System.out.println("\n\n\nPush Projection in Set:");
+                        printPLan(temp, cost);
+                    }
                     if(updateBest){
                         break;
                     }
@@ -113,8 +116,10 @@ public class ComputeBestPlan {
                 t3 = pushProjectionsInJoin(temp);
                 if(t3){
                     cost = processPlan(temp);
-                    System.out.println("\n\n\nPush Projection in Join:");
-                    printPLan(temp, cost);
+                    if(all){
+                        System.out.println("\n\n\nPush Projection in Join:");
+                        printPLan(temp, cost);
+                    }
                     if(updateBest){
                         break;
                     }
@@ -124,8 +129,10 @@ public class ComputeBestPlan {
                 t4 = rearangeSelections(temp);
                 if(t4){
                     cost = processPlan(temp);
-                    System.out.println("\n\n\nSelection rearange:");
-                    printPLan(temp, cost);
+                    if(all){
+                        System.out.println("\n\n\nSelection rearange:");
+                        printPLan(temp, cost);
+                    }
                     if(updateBest)
                         break;
                     temp = getPlanCopy(BestPlan);
@@ -134,8 +141,10 @@ public class ComputeBestPlan {
                 t5 = rearangeSets(temp);
                 if(t5){
                     cost = processPlan(temp);
-                    System.out.println("\n\n\nSet rearange:");
-                    printPLan(temp, cost);
+                    if(all){
+                        System.out.println("\n\n\nSet rearange:");
+                        printPLan(temp, cost);
+                    }
                     if(updateBest)
                         break;
                     temp = getPlanCopy(BestPlan);
@@ -144,8 +153,10 @@ public class ComputeBestPlan {
                 t6 = pushSelectionInSet1(temp);
                 if(t6){
                     cost = processPlan(temp);
-                    System.out.println("\n\n\nPush Selection in Set:");
-                    printPLan(temp, cost);
+                    if(all){
+                        System.out.println("\n\n\nPush Selection in Set:");
+                        printPLan(temp, cost);
+                    }
                     if(updateBest)
                         break;
                     temp = getPlanCopy(BestPlan);
@@ -154,8 +165,10 @@ public class ComputeBestPlan {
                 t7 = pushSelectionInSet2(temp);
                 if(t7){
                     cost = processPlan(temp);
-                    System.out.println("\n\n\nPush Selection in Set::");
-                    printPLan(temp, cost);
+                    if(all){
+                        System.out.println("\n\n\nPush Selection in Set::");
+                        printPLan(temp, cost);
+                    }
                     if(updateBest)
                         break;
                     temp = getPlanCopy(BestPlan);
@@ -164,8 +177,10 @@ public class ComputeBestPlan {
                 t8 = pushSelectionInJoin(temp);
                 if(t8){
                     cost = processPlan(temp);
-                    System.out.println("\n\n\nPush Projection in Join:");
-                    printPLan(temp, cost);
+                    if(all){
+                        System.out.println("\n\n\nPush Projection in Join:");
+                        printPLan(temp, cost);
+                    }
                     if(updateBest)
                         break;
                     temp = getPlanCopy(BestPlan);
@@ -717,7 +732,6 @@ public class ComputeBestPlan {
     
     
     
-    
     public boolean allProjectedAttrs(ArrayList<String> proj1, ArrayList<String> proj2, ArrayList<String> proj){
         
         for(int i =0; i<proj.size();i++){
@@ -912,6 +926,4 @@ public class ComputeBestPlan {
         }
         return copy;
     }
-    
-    
 }

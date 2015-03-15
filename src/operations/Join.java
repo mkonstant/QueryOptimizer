@@ -262,7 +262,7 @@ public  class Join extends Operator{
             }
             outTable.setSorted(sorted);
             
-            System.out.println(" cost = " + allCosts.get(minNumCost) );
+            //System.out.println(" cost = " + allCosts.get(minNumCost) );
             
         }
         else if ( this.complexCondtion.equals("and")){
