@@ -109,7 +109,7 @@ public class JoinCost {
         if (index1 != null && index2 != null ){
             if ( index1.getStructure().equals(index2.getStructure()) ){//same structure
                 if (index1.getStructure().equals("B+tree")){
-                    if (sameIndex(index1,index2)){
+                    if (this.sameSortedKey(index1.getIndexName(),index2.getIndexName())){
                         costMerge = mergeJoin(true,true);
                         allCosts.add(costMerge);
                         allSorted.add(true);
@@ -135,7 +135,7 @@ public class JoinCost {
                         
                 }
                 else{
-                    if (sameIndex(index1,index2)){
+                    if (this.sameSortedKey(index1.getIndexName(),index2.getIndexName())){
                                               
                         costHash = hashJoin(true,true);
                         allCosts.add(costHash);
@@ -585,7 +585,7 @@ public class JoinCost {
         }
     }
     
-    public boolean sameIndex(IndexInfo index1, IndexInfo index2){
+    /*public boolean sameIndex(IndexInfo index1, IndexInfo index2){
         if( index1.getIndexName().size() == index2.getIndexName().size()){
             for ( String indexName : index1.getIndexName()){
                 if( !index2.getIndexName().contains(indexName)){
@@ -599,7 +599,7 @@ public class JoinCost {
         
         return true;
         
-    }
+    }*/
     
     public boolean sameSortedKey(Set <String> set1, Set <String> set2){
         boolean FLAG = true;
