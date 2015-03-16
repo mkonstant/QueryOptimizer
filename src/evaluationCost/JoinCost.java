@@ -5,10 +5,14 @@
  */
 package evaluationCost;
 
+import catalog.ForeignIndexInfo;
 import catalog.IndexInfo;
 import catalog.SystemInfo;
 import catalog.TableInfo;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import operations.Condition;
 
@@ -45,15 +49,17 @@ public class JoinCost {
     ArrayList<String> allMessages = new ArrayList<String>();
     ArrayList<Boolean> allSorted = new ArrayList<Boolean>();
     ArrayList<Set<String>> allSortKey =new ArrayList<Set<String>>(); 
+    Map<String,String> attributes = null;
     
     
-    public JoinCost(SystemInfo si, Condition condition ,TableInfo tabInfo1, TableInfo tabInfo2, IndexInfo index1, IndexInfo index2 ) {
+    public JoinCost(SystemInfo si, Condition condition ,TableInfo tabInfo1, TableInfo tabInfo2, IndexInfo index1, IndexInfo index2, Map attributes ) {
         this.si = si;
         this.condition = condition;
         this.tabInfo1 = tabInfo1;
         this.tabInfo2 = tabInfo2;
         this.index1 = index1;
         this.index2 = index2;
+        this.attributes = attributes;
     }
 
     public double getCost() {
@@ -194,6 +200,7 @@ public class JoinCost {
                 if ( index1.getStructure().equals("B+tree")){
                     if ( tabInfo2.getSorted() ){
                         Set <String> sortedKey = tabInfo2.getSortKet();
+                        int choice = 1;
                         if ( this.sameSortedKey(index1.getIndexName(), sortedKey)){//both sorted same key
                             //sorted2 = true;
                             costMerge = mergeJoin(true,true);
@@ -252,7 +259,8 @@ public class JoinCost {
                 if ( index2.getStructure().equals("B+tree")){
                      if ( tabInfo1.getSorted() ){
                         Set <String> sortedKey = tabInfo1.getSortKet();
-                        if ( this.sameSortedKey(index2.getIndexName(), sortedKey)){
+                        int choice = 2;
+                        if ( this.sameSortedKey(index2.getIndexName(),sortedKey)){
                             costMerge = mergeJoin(true,true);
                             allCosts.add(costMerge);
                             allSorted.add(true);
@@ -307,6 +315,7 @@ public class JoinCost {
             else{
                 if ( tabInfo1.getSorted()){
                     if ( tabInfo2.getSorted()){
+                        int choice = 1;
                         if ( this.sameSortedKey(tabInfo1.getSortKet(), tabInfo2.getSortKet())){
                             costMerge = mergeJoin(true,true);
                             allCosts.add(costMerge);
@@ -593,9 +602,26 @@ public class JoinCost {
     }
     
     public boolean sameSortedKey(Set <String> set1, Set <String> set2){
+        boolean FLAG = true;
+        Set <String> iName = new HashSet<String>();
+        
+        if( set1.size() == set2.size()){
+            for ( String str : set1){
+                iName.add(attributes.get(str));
+            }
+            
+            for (String str : iName){
+                if (!set2.contains(str)){
+                    return false;
+                }
+            }
+        }
+        else{
+            return false;
+        }
         
         
-        return false;
+        return true;
     }
     
    
