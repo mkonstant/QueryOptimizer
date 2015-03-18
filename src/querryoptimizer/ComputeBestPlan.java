@@ -5,6 +5,7 @@
  */
 package querryoptimizer;
 
+import catalog.Attributes;
 import catalog.Catalog;
 import catalog.TableInfo;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import operations.Operator;
 import operations.Projection;
 import operations.Selection;
 import operations.SetOp;
+import syntaxtree.Attribute;
 
 /**
  *
@@ -72,7 +74,7 @@ public class ComputeBestPlan {
     }*/
     
     public void ApplyTranformations(boolean all){
-        boolean t1=false,t2=false,t3=false,t4=false,t5=false,t6=false,t7=false,t8=false; 
+        boolean t1=false,t2=false,t3=false,t4=false,t5=false,t6=false,t7=false,t8=false,t9=false; 
         double cost;
         int i =0;
         ArrayList<Operator> temp ;
@@ -87,7 +89,6 @@ public class ComputeBestPlan {
 
 
                 temp = getPlanCopy(BestPlan);
-                
                 t1 = eliminateMultipleProjections(temp);
                 if(t1){                    
                     cost = processPlan(temp);
@@ -185,6 +186,19 @@ public class ComputeBestPlan {
                         break;
                     temp = getPlanCopy(BestPlan);
                 }
+                
+                
+                t9 = rearangeJoins(temp);
+                if(t9){
+                    cost = processPlan(temp);
+                    if(all){
+                        System.out.println("\n\n\nRearrange Join:");
+                        printPLan(temp, cost);
+                    }
+                    if(updateBest)
+                        break;
+                    temp = getPlanCopy(BestPlan);
+                }
             } 
         }
         
@@ -213,9 +227,12 @@ public class ComputeBestPlan {
                         temp1.setRelation1(temp2.getRelation1());
                         temp1.setRelationOp1(temp2.getRelationOp1());
                         ops.remove(temp2);
+                        for(int k = ops.size()-1; k > i+1 ;k--)
+                        {
+                            ops.get(k).updateRelOp(temp2, temp1);
+                        }
                         eliminate = true;
                         transformed = true;
-                        
                         break;
                     }
                 }
@@ -246,6 +263,10 @@ public class ComputeBestPlan {
                         
                         ops.remove(temp2);
                         ops.add(i,temp2);
+                        for(int k = ops.size()-1; k > i+1 ;k--)
+                        {
+                            ops.get(k).updateRelOp(temp2, temp1);
+                        }
                         
                         transformed = true;
                         break;
@@ -275,6 +296,12 @@ public class ComputeBestPlan {
                                     
                                     temp1.setRelation1(tempRel);
                                     temp1.setTabInfo1(tempInfo);
+                                    
+                                    for(int k = ops.size()-1; k > i+1 ;k--)
+                                    {
+                                        ops.get(k).updateRelOp(temp1, temp);
+                                    }
+                                    
                                     transformed = true;
                                     break;
                                 }
@@ -287,6 +314,12 @@ public class ComputeBestPlan {
                                     
                                     temp1.setRelation2(tempRel);
                                     temp1.setTabInfo2(tempInfo);
+                                    
+                                    for(int k = ops.size()-1; k > i+1 ;k--)
+                                    {
+                                        ops.get(k).updateRelOp(temp1, temp);
+                                    }
+                                    
                                     transformed = true;
                                     break;
                                 }
@@ -303,6 +336,10 @@ public class ComputeBestPlan {
                                     
                                     temp2.setRelation1(tempRel);
                                     temp2.setTabInfo1(tempInfo);
+                                    for(int k = ops.size()-1; k > i+1 ;k--)
+                                    {
+                                        ops.get(k).updateRelOp(temp2, temp);
+                                    }
                                     transformed = true;
                                     break;
                                 }
@@ -315,6 +352,10 @@ public class ComputeBestPlan {
                                     
                                     temp2.setRelation2(tempRel);
                                     temp2.setTabInfo2(tempInfo);
+                                    for(int k = ops.size()-1; k > i+1 ;k--)
+                                    {
+                                        ops.get(k).updateRelOp(temp2, temp);
+                                    }
                                     transformed = true;
                                     break;
                                 }
@@ -473,13 +514,11 @@ public class ComputeBestPlan {
     }
     
      private boolean pushProjectionsInJoin(ArrayList<Operator> ops){
-        boolean tranformflag=true;
         boolean tranformed = false;
         Operator temp=null;     //the setoperation
         Operator temp1,temp2;  //the projections
         
-        while(tranformflag){
-            tranformflag=false;
+
             for(int i=ops.size()-1; i>-1; i--){
                 temp1 = ops.get(i);
                 if( temp1 instanceof Projection ){
@@ -527,15 +566,20 @@ public class ComputeBestPlan {
                                 ops.remove(startProj);                 
                             }*/
                             
+                            for(int k = ops.size()-1; k > i+1 ;k--)
+                            {
+                                ops.get(k).updateRelOp(temp1, temp);
+                            }
+                            
+                            
                             
                             tranformed=true;
-                            tranformflag=true;
                             break;
                         }
                     }                 
                 }    
             }
-        }
+        
     
         return tranformed;
     }
@@ -543,13 +587,10 @@ public class ComputeBestPlan {
      
      
      private boolean pushSelectionInJoin(ArrayList<Operator> ops){
-        boolean tranformflag=true;
         boolean tranformed = false;
         Operator temp=null;     //the join
         Operator temp1,temp2;  //the selections
         
-        //while(tranformflag){
-            tranformflag=false;
             for(int i=ops.size()-1; i>-1; i--){
                 temp1 = ops.get(i);
                 if( temp1 instanceof Selection ){
@@ -603,6 +644,11 @@ public class ComputeBestPlan {
                                 ops.remove(temp1);        //restore this
                                 ops.add(i-1, temp1);
                                 
+                                for(int k = ops.size()-1; k > i+1 ;k--)
+                                {
+                                    ops.get(k).updateRelOp(temp1, temp);
+                                }
+                                
                             }
                             if(selAttrs2!=null){
                                 if(selAttrs1==null)
@@ -636,19 +682,153 @@ public class ComputeBestPlan {
                                     ops.remove(temp2);        //restore this
                                 ops.add(i-1, temp2);
                                 
+                                for(int k = ops.size()-1; k > i+1 ;k--)
+                                {
+                                    ops.get(k).updateRelOp(temp2, temp);
+                                }
+                                
                             }
                             tranformed=true;
-                            tranformflag=true;
                             break;
                         }
                     }                 
                 }    
             }
-        //}
-    
         return tranformed;
     }
     
+     
+    private boolean rearangeJoins(ArrayList<Operator> ops){
+        
+        Operator temp=null;     //the join
+        Operator temp1,temp2;  //the selections
+        Boolean transformed=false;
+       
+            for(int i=ops.size()-1; i>-1; i--){
+                temp = ops.get(i);
+                if( temp instanceof Join ){
+                    temp1 = temp.getRelationOp1();
+                    temp2 = temp.getRelationOp2();
+                    
+                    ArrayList<Condition> tempConditions= temp.getConditions();      
+                    if(tempConditions.size()>1 && temp.getComplexCondtion().equals("and")){
+                        if(temp1!=null && (temp1 instanceof Join)){  
+                           Map<String, Attributes> attrs1_1 = temp1.getOutTableInfo1().getAttributes();
+                           Map<String, Attributes> attrs1_2 = temp1.getOutTableInfo2().getAttributes();
+                           ArrayList<Condition> tempConditions1= temp1.getConditions();
+
+                           if(tempConditions1.size()==1){
+                                ArrayList<Condition> newJoinCond= new ArrayList<Condition>();
+                                transformed=true;
+                                while(transformed){
+                                    transformed=false;
+                                    for(int k=0;k<tempConditions.size();k++){
+                                        String conditionAttr = tempConditions.get(k).getAttr1();
+                                        if(attrs1_1.containsKey(conditionAttr) && !attrs1_2.containsKey(conditionAttr)){
+                                            
+                                            newJoinCond.add(tempConditions.get(k));
+                                            temp.RemoveCondition(tempConditions.get(k)); 
+                                            transformed=true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(newJoinCond.size()>0){
+                                    unionConds(tempConditions,tempConditions1 );
+                                    if(temp.getConditions().size()>1)
+                                        temp.setComplexCondition("and");
+                                    else
+                                        temp.setComplexCondition(null);
+                                    temp1.setCondition(newJoinCond);
+                                    if(temp1.getConditions().size()>1)
+                                        temp1.setComplexCondition("and");
+                                    else
+                                        temp1.setComplexCondition(null);
+
+                                    String toSwitch = temp1.getRelation2();
+                                    Operator toSwitchOp = temp1.getRelationOp2();
+
+                                    temp1.setRelation2(temp.getRelation2());
+                                    temp1.setRelationOp2(temp.getRelationOp2());
+
+                                    temp.setRelation2(toSwitch);
+                                    temp.setRelationOp2(toSwitchOp);
+
+                                    ops.remove(temp1);
+                                    ops.add(i-1, temp1);
+                                    
+                                    for(int k = ops.size()-1; k > i+1 ;k--)
+                                    {
+                                        ops.get(k).updateRelOp(temp1, temp);
+                                    }
+
+                                    transformed=true;
+                                    break;
+                                }
+                           }
+                        }
+                        else if(temp2!=null && (temp2 instanceof Join)){  
+                           Map<String, Attributes> attrs2_1 = temp2.getOutTableInfo1().getAttributes();
+                           Map<String, Attributes> attrs2_2 = temp2.getOutTableInfo2().getAttributes();
+                           ArrayList<Condition> tempConditions2= temp2.getConditions();
+                          
+
+                           if(tempConditions2.size()==1){
+                                ArrayList<Condition> newJoinCond= new ArrayList<Condition>();
+                                transformed=true;
+                                while(transformed){
+                                    transformed=false;
+                                    for(int k=0;k<tempConditions.size();k++){
+                                        String conditionAttr = tempConditions.get(k).getAttr1();
+                                        if(attrs2_2.containsKey(conditionAttr) && !attrs2_1.containsKey(conditionAttr)){
+                                            
+                                            newJoinCond.add(tempConditions.get(k));
+                                            temp.RemoveCondition(tempConditions.get(k)); 
+                                            transformed=true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(newJoinCond.size()>0){
+                                    unionConds(tempConditions,tempConditions2 );
+                                    if(temp.getConditions().size()>1)
+                                        temp.setComplexCondition("and");
+                                    else
+                                        temp.setComplexCondition(null);
+                                    temp2.setCondition(newJoinCond);
+                                    if(temp2.getConditions().size()>1)
+                                        temp2.setComplexCondition("and");
+                                    else
+                                        temp2.setComplexCondition(null);
+
+                                    String toSwitch = temp2.getRelation1();
+                                    Operator toSwitchOp = temp2.getRelationOp1();
+
+                                    temp2.setRelation1(temp.getRelation1());
+                                    temp2.setRelationOp1(temp.getRelationOp1());
+
+                                    temp.setRelation1(toSwitch);
+                                    temp.setRelationOp1(toSwitchOp);
+
+                                    ops.remove(temp2);
+                                    ops.add(i-1, temp2);
+                                    
+                                    for(int k = ops.size()-1; k > i+1 ;k--)
+                                    {
+                                        ops.get(k).updateRelOp(temp2, temp);
+                                    }
+
+                                    transformed=true;
+                                    break;
+                                }
+                           }
+                        }
+                    }
+                }
+            }
+                       
+        return transformed;
+    }
     
     
     
@@ -664,14 +844,14 @@ public class ComputeBestPlan {
     }
     
     
-    public ArrayList<String> unionAttrs(ArrayList<String> proj, ArrayList<String> needed){
-        String temp;
-        for(int i =0; i<needed.size();i++){
-            temp = needed.get(i);
-            if(!proj.contains(temp))
-                proj.add(temp);
+    public void unionConds(ArrayList<Condition> first, ArrayList<Condition> second){
+        Condition temp;
+        for(int i =0; i<second.size();i++){
+            temp = second.get(i);
+            if(!first.contains(temp))
+                first.add(temp);
         }
-        return proj;
+        //return proj;
     }
     
     public ArrayList<String> findProjAttrs(ArrayList<String> rel, ArrayList<String> proj, ArrayList<String> needed){

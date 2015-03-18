@@ -61,6 +61,8 @@ public  class Join extends Operator{
         this.tInfo2 = old.getOutTableInfo2().fullCopy();
         
         this.conditions = old.getConditionCopy(old.getConditions());
+        if(old.getComplexCondtion()!=null)
+            this.complexCondtion = new String(old.getComplexCondtion());
         
     }
      
@@ -120,10 +122,27 @@ public  class Join extends Operator{
         conditions.add(new Condition(attr1, attr2, action));
     }
     
+    @Override
+    public void AddCondition(Condition c){
+        conditions.add(c);
+        if(conditions.size()==2)
+            complexCondtion="and";
+    }
+    
+    @Override
+    public void RemoveCondition(Condition c){
+        conditions.remove(c);
+        if(conditions.size()==1)
+            complexCondtion=null;
+    }
     
     @Override
     public ArrayList<Condition> getConditions(){
         return conditions;
+    }
+    
+    public void setCondition(ArrayList<Condition> con){
+        conditions=con;
     }
     
     

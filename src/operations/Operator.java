@@ -57,6 +57,8 @@ public abstract class Operator {
     public void AddAttr(String attr){};
     public ArrayList<String> getAttrs(){return null;};
     public void AddCondition(String attr1, String attr2, String action){};
+    public void AddCondition(Condition c){};
+    public void RemoveCondition(Condition c){};
     public ArrayList<Condition> getConditions(){return null;};
     protected void prePrint(){};
     public void computeCost(){};    
