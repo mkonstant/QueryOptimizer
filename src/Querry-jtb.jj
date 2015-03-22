@@ -107,31 +107,22 @@ TOKEN :
 
 Query Query() :
 {
-   NodeOptional n0 = new NodeOptional();
-   NodeSequence n1;
+   Operators n0;
+   NodeListOptional n1 = new NodeListOptional();
    Operators n2;
-   NodeListOptional n3;
-   Operators n4;
 
    
 }
 {
+   n0=Operators()
    (
-      { n3 = new NodeListOptional(); }
-      { n1 = new NodeSequence(2); }
+      LOOKAHEAD(2)
       n2=Operators()
       { n1.addNode(n2); }
-      (
-         LOOKAHEAD(2)
-         n4=Operators()
-         { n3.addNode(n4); }
-      )*
-      { n3.nodes.trimToSize(); }
-      { n1.addNode(n3); }
-      { n0.addNode(n1); }
-   )?
+   )*
+   { n1.nodes.trimToSize(); }
    
-   { return new Query(n0); }
+   { return new Query(n0,n1); }
 }
 
 Operators Operators() :

@@ -27,7 +27,8 @@ public interface GJVisitor<R,A> {
    //
 
    /**
-    * f0 -> ( Operators() ( Operators() )* )?
+    * f0 -> Operators()
+    * f1 -> ( Operators() )*
     */
    public R visit(Query n, A argu);
 

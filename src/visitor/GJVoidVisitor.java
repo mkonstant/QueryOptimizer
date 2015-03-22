@@ -27,7 +27,8 @@ public interface GJVoidVisitor<A> {
    //
 
    /**
-    * f0 -> ( Operators() ( Operators() )* )?
+    * f0 -> Operators()
+    * f1 -> ( Operators() )*
     */
    public void visit(Query n, A argu);
 

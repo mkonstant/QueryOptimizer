@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import myVisitor.TestVisitor;
+import myVisitor.CheckQueryVisitor;
 import syntaxtree.Query;
 import catalog.Attributes;
 import catalog.Catalog;
@@ -39,6 +39,7 @@ import operations.Operator;
 public class QuerryOptimizer {
 
     static ArrayList<Operator> operations;
+    static ArrayList<ArrayList<Operator>> alloperations;
     static Catalog catalog;
     
     /**
@@ -80,9 +81,9 @@ public class QuerryOptimizer {
             }   fis = new FileInputStream(args[2]);
             QueryParser parser = new QueryParser(fis);
             Query tree = parser.Query();
-            TestVisitor tv = new TestVisitor();
+            CheckQueryVisitor tv = new CheckQueryVisitor();
             tree.accept(tv,null);
-            operations = tv.getOperations();
+            alloperations = tv.getAllOperations();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(QuerryOptimizer.class.getName()).log(Level.SEVERE, null, ex);
         }catch(ComplexConditionException ex){
@@ -101,15 +102,24 @@ public class QuerryOptimizer {
             }
         }
         try{
-            System.out.println("Query Materialization:");
-            printPLan();
             
-            double cost = processPlan();
-            System.out.println("\n\n\nQuery Materialization Annotated:");
-            printPLan();
-            System.out.println(cost);
-            ComputeBestPlan cb = new ComputeBestPlan(operations, catalog, cost);
-            cb.ApplyTranformations(printAll);
+            for(int i=0; i<alloperations.size();i++){
+                System.out.println("**********************************************Query "+ (i+1)+"*****************************************************");
+                
+                operations = alloperations.get(i);
+                System.out.println("Query Materialization:");
+                printPLan();
+
+                double cost = processPlan();
+                System.out.println("\n\n\nQuery Materialization Annotated:");
+                printPLan();
+                System.out.println(cost);
+                ComputeBestPlan cb = new ComputeBestPlan(operations, catalog, cost);
+                cb.ApplyTranformations(printAll);
+                System.out.println("\n\n\n");
+            }
+            
+            
         }
         catch(RelationException ex){
             System.err.println(ex.getMessage());

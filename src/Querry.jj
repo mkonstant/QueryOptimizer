@@ -103,7 +103,7 @@ TOKEN : /* LITERALS */
 void Query() : {}
 {
 	
-	(Operators() (LOOKAHEAD(2) Operators() )* )? 	
+	Operators() (LOOKAHEAD(2) Operators() )* 	
 
 }
 

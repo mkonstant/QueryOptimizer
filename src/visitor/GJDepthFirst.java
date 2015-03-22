@@ -68,10 +68,14 @@ public class GJDepthFirst<R,A> implements GJVisitor<R,A> {
    //
 
    /**
-    * f0 -> ( Operators() ( Operators() )* )?
+    * f0 -> Operators()
+    * f1 -> ( Operators() )*
     */
    public R visit(Query n, A argu) {
-      return n.f0.accept(this, argu);
+      R _ret=null;
+      n.f0.accept(this, argu);
+      n.f1.accept(this, argu);
+      return _ret;
    }
 
    /**

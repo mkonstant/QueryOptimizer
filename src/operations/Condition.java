@@ -61,4 +61,20 @@ public class Condition {
     }
     
     
+    public void opposite(){
+        String temp = attr1;
+        attr1=attr2;
+        attr2= temp;
+        
+        if(action.equals(">"))
+            action="<";
+        else if(action.equals("<"))
+            action =">";
+        else if(action.equals(">="))
+            action="<=";
+        else if(action.equals("<="))
+            action = ">=";
+                    
+    }
+    
 }

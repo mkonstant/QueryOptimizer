@@ -46,12 +46,17 @@ import syntaxtree.UDF;
  */
 
 
-public class TestVisitor extends visitor.GJDepthFirst<String,String> {
+public class CheckQueryVisitor extends visitor.GJDepthFirst<String,String> {
 
     
-   ArrayList<Operator> operations = new ArrayList<Operator>();
+   ArrayList<ArrayList<Operator>>  alloperations =  new ArrayList<ArrayList<Operator>>();
+   ArrayList<Operator> operations;
    public ArrayList<Operator> getOperations(){
        return operations;
+   } 
+   
+      public ArrayList<ArrayList<Operator>>  getAllOperations(){
+       return alloperations;
    } 
    
    String complexCondition;
@@ -63,10 +68,16 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
     
   
    /**
-    * f0 -> ( Operators() ( Operators() )* )?
+    * f0 -> Operators()
+    * f1 -> ( Operators() )*
     */
    public String visit(Query n, String argu) {
-      return n.f0.accept(this, argu);
+      operations = new ArrayList<Operator>();
+      n.f0.accept(this, argu);
+      alloperations.add(operations);
+      
+      return n.f1.accept(this, "start");
+      
    }
 
    /**
@@ -78,8 +89,14 @@ public class TestVisitor extends visitor.GJDepthFirst<String,String> {
     *       | ParOp()
     */
    public String visit(Operators n, String argu) {
-      n.f0.accept(this, argu);
-      return "op";
+       if(argu != null && argu.equals("start")){
+           operations = new ArrayList<Operator>();
+           n.f0.accept(this, null);
+           alloperations.add(operations);
+       }
+       else
+            n.f0.accept(this, argu);
+       return "op";
    }
 
    /**

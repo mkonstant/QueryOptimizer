@@ -42,10 +42,12 @@ public class DepthFirstVisitor implements Visitor {
    //
 
    /**
-    * f0 -> ( Operators() ( Operators() )* )?
+    * f0 -> Operators()
+    * f1 -> ( Operators() )*
     */
    public void visit(Query n) {
       n.f0.accept(this);
+      n.f1.accept(this);
    }
 
    /**

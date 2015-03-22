@@ -68,10 +68,14 @@ public class GJNoArguDepthFirst<R> implements GJNoArguVisitor<R> {
    //
 
    /**
-    * f0 -> ( Operators() ( Operators() )* )?
+    * f0 -> Operators()
+    * f1 -> ( Operators() )*
     */
    public R visit(Query n) {
-      return n.f0.accept(this);
+      R _ret=null;
+      n.f0.accept(this);
+      n.f1.accept(this);
+      return _ret;
    }
 
    /**

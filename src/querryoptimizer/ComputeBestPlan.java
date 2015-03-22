@@ -72,9 +72,9 @@ public class ComputeBestPlan {
             
         }
     }*/
+      
     
     public void ApplyTranformations(boolean all){
-        boolean t1=false,t2=false,t3=false,t4=false,t5=false,t6=false,t7=false,t8=false,t9=false; 
         double cost;
         int i =0;
         ArrayList<Operator> temp ;
@@ -89,8 +89,7 @@ public class ComputeBestPlan {
 
 
                 temp = getPlanCopy(BestPlan);
-                t1 = eliminateMultipleProjections(temp);
-                if(t1){                    
+                if(eliminateMultipleProjections(temp)){                    
                     cost = processPlan(temp);
                     if(all){
                          System.out.println("\n\n\nQuery Projection Elmination:");
@@ -100,9 +99,7 @@ public class ComputeBestPlan {
                         break;
                     temp = getPlanCopy(BestPlan);
                 }
-                
-                t2 = pushProjectionsInSet(temp);
-                if(t2){
+                if(pushProjectionsInSet(temp)){
                     cost = processPlan(temp);
                     if(all){
                         System.out.println("\n\n\nPush Projection in Set:");
@@ -113,9 +110,7 @@ public class ComputeBestPlan {
                     }
                     temp = getPlanCopy(BestPlan);
                 }
-                
-                t3 = pushProjectionsInJoin(temp);
-                if(t3){
+                if(pushProjectionsInJoin(temp)){
                     cost = processPlan(temp);
                     if(all){
                         System.out.println("\n\n\nPush Projection in Join:");
@@ -126,9 +121,7 @@ public class ComputeBestPlan {
                     }
                     temp = getPlanCopy(BestPlan);
                 }
-                
-                t4 = rearangeSelections(temp);
-                if(t4){
+                if(rearangeSelections(temp)){
                     cost = processPlan(temp);
                     if(all){
                         System.out.println("\n\n\nSelection rearange:");
@@ -138,9 +131,7 @@ public class ComputeBestPlan {
                         break;
                     temp = getPlanCopy(BestPlan);
                 }
-                
-                t5 = rearangeSets(temp);
-                if(t5){
+                if(rearangeSets(temp)){
                     cost = processPlan(temp);
                     if(all){
                         System.out.println("\n\n\nSet rearange:");
@@ -150,9 +141,7 @@ public class ComputeBestPlan {
                         break;
                     temp = getPlanCopy(BestPlan);
                 }
-                
-                t6 = pushSelectionInSet1(temp);
-                if(t6){
+                if(pushSelectionInSet1(temp)){
                     cost = processPlan(temp);
                     if(all){
                         System.out.println("\n\n\nPush Selection in Set:");
@@ -162,9 +151,7 @@ public class ComputeBestPlan {
                         break;
                     temp = getPlanCopy(BestPlan);
                 }
-                
-                t7 = pushSelectionInSet2(temp);
-                if(t7){
+                if( pushSelectionInSet2(temp)){
                     cost = processPlan(temp);
                     if(all){
                         System.out.println("\n\n\nPush Selection in Set::");
@@ -174,9 +161,7 @@ public class ComputeBestPlan {
                         break;
                     temp = getPlanCopy(BestPlan);
                 }
-                
-                t8 = pushSelectionInJoin(temp);
-                if(t8){
+                if(pushSelectionInJoin(temp)){
                     cost = processPlan(temp);
                     if(all){
                         System.out.println("\n\n\nPush Projection in Join:");
@@ -186,10 +171,7 @@ public class ComputeBestPlan {
                         break;
                     temp = getPlanCopy(BestPlan);
                 }
-                
-                
-                t9 = rearangeJoins(temp);
-                if(t9){
+                if(rearangeJoins(temp)){
                     cost = processPlan(temp);
                     if(all){
                         System.out.println("\n\n\nRearrange Join:");
@@ -540,13 +522,13 @@ public class ComputeBestPlan {
                         if(allProjectedAttrs(projAttrs1, projAttrs2, projAttrs)){
                             Operator startProj = temp1;  //delete thus
                             if(projAttrs1!=null){
-                               // temp1 = new Projection(); //delete this
+                                temp1 = new Projection(); //delete this
                                 temp1.setRelation1(temp.getRelation1());
                                 temp1.setRelationOp1(temp.getRelationOp1());
                                 temp1.setAttributes(projAttrs1);
                                         temp.setRelation1(null);
                                         temp.setRelationOp1(temp1);
-                                       ops.remove(temp1);        //restore this
+                                       // ops.remove(temp1);        //restore this
                                         ops.add(i-1, temp1);
                                 
                             }
@@ -560,16 +542,15 @@ public class ComputeBestPlan {
                                         ops.add(i-1, temp2);
                             }
                             
-                            //delete this
-                            /*
-                            if(!extraNeededProjAttrs(projAttrs1, projAttrs2, projAttrs)){
-                                ops.remove(startProj);                 
-                            }*/
                             
-                            for(int k = ops.size()-1; k > i+1 ;k--)
-                            {
-                                ops.get(k).updateRelOp(temp1, temp);
+                            if(checkAttrs(projAttrs2, projAttrs1) && checkAttrs( projAttrs1,projAttrs) ){
+                                ops.remove(startProj);
+                                for(int k = ops.size()-1; k > i+1 ;k--)
+                                {
+                                    ops.get(k).updateRelOp(startProj, temp);
+                                }
                             }
+                            
                             
                             
                             

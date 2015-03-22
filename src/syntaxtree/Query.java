@@ -6,13 +6,16 @@ package syntaxtree;
 
 /**
  * Grammar production:
- * f0 -> ( Operators() ( Operators() )* )?
+ * f0 -> Operators()
+ * f1 -> ( Operators() )*
  */
 public class Query implements Node {
-   public NodeOptional f0;
+   public Operators f0;
+   public NodeListOptional f1;
 
-   public Query(NodeOptional n0) {
+   public Query(Operators n0, NodeListOptional n1) {
       f0 = n0;
+      f1 = n1;
    }
 
    public void accept(visitor.Visitor v) {
