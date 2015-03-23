@@ -192,7 +192,7 @@ public class ComputeBestPlan {
     public ArrayList<Operator> getBestPlan(){
         return BestPlan;
     }
-    
+    s
     /*********************** transformations***********************/
     
     private boolean eliminateMultipleProjections(ArrayList<Operator> ops){
@@ -606,7 +606,7 @@ public class ComputeBestPlan {
                                 ArrayList<Condition> newCon = new ArrayList<Condition>();                                
                                 for(int l=0; l < selAttrs1.size();l++){
                                     String selatr = selAttrs1.get(l);
-                                    System.out.println(selatr);
+                                    //System.out.println(selatr);
                                     
                                     for(int k=0;k<con.size();k++){
                                         Condition selc = con.get(k);
