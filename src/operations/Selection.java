@@ -224,7 +224,7 @@ public class Selection extends Operator {
         }
         outTable.setSorted(sorted);
         outTable.setOperator(true);
-        System.out.println("cost = " + this.cost + " message = " + this.annotation);   
+        //System.out.println("cost = " + this.cost + " message = " + this.annotation);   
         
     }
     
