@@ -192,7 +192,7 @@ public class ComputeBestPlan {
     public ArrayList<Operator> getBestPlan(){
         return BestPlan;
     }
-    s
+    
     /*********************** transformations***********************/
     
     private boolean eliminateMultipleProjections(ArrayList<Operator> ops){
